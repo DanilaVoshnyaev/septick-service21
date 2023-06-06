@@ -1,0 +1,33 @@
+$font-family-Montserrat: "Montserrat", sans-serif;
+
+@mixin font-base {
+  font-style: normal;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  font-family: $font-family-Montserrat;;
+}
+
+@mixin fontMontserratRegular($size) {
+  font-size: $size;
+  font-weight: 400;
+  @include font-base;
+}
+
+
+@mixin fontMontserratNormal($size) {
+  font-size: $size;
+  font-weight: 500;
+  @include font-base;
+}
+
+@mixin fontMontserratSamiBold($size) {
+  font-size: $size;
+  font-weight: 600;
+  @include font-base;
+}
+
+@mixin fontMontserratBold($size) {
+  font-size: $size;
+  font-weight: 700;
+  @include font-base;
+}

@@ -1,0 +1,3 @@
+<?php 
+$GLOBALS['DONT_SHOW_PAGE_TITLE'] = 1;
+?>
