@@ -1,6 +1,6 @@
 <?php
 /**
- * Шаблон страницы «О компании» — премиум-стиль
+ * Шаблон страницы «О компании» — премиум-стиль (единая схема с хедером)
  * Template Name: О компании
  */
 
@@ -10,28 +10,36 @@ get_header();
     <!-- 🎨 СТИЛИ (цвета из хедера) -->
     <style>
         :root {
-            --gold: #d4af37;
-            --gold-hover: #f4d03f;
+            /* ===== ЦВЕТОВАЯ СХЕМА ИЗ ХЕДЕРА ===== */
+            --green: #21b224;                    /* ✅ Основной акцент */
+            --green-hover: #f4d03f;              /* ✅ Ховер-эффект */
             --blue: #2563eb;
             --blue-hover: #1d4ed8;
             --text: #1e293b;
             --text-muted: #64748b;
-            --bg: #f8fafc;
+            --bg: rgba(255, 255, 255, 0.95);     /* ✅ Фон с прозрачностью */
             --card-bg: #ffffff;
-            --border: rgba(0, 0, 0, 0.08);
+            --border: rgba(0, 0, 0, 0.08);       /* ✅ Границы как в хедере */
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             --radius: 12px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);  /* ✅ Анимации как в хедере */
         }
 
-        .about-page { padding: 2rem 0; background: var(--bg); }
+        .about-page {
+            padding: 2rem 0;
+            background: var(--bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
         .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
 
         /* Hero */
         .about-hero {
-            background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg) 100%);
+            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(248,250,252,0.5) 100%);
             border-radius: var(--radius); padding: 3rem 2rem; text-align: center;
-            margin-bottom: 3rem; box-shadow: var(--shadow); border-top: 4px solid var(--gold);
+            margin-bottom: 3rem; box-shadow: var(--shadow);
+            border-top: 4px solid var(--green);  /* ✅ Было: var(--gold) */
+            border: 1px solid var(--border);
         }
         .about-hero__title {
             font-size: 2rem; font-weight: 700; color: var(--text); margin: 0 0 1rem;
@@ -41,13 +49,14 @@ get_header();
         }
         .about-hero__cta {
             display: inline-flex; align-items: center; gap: 0.5rem;
-            padding: 0.85rem 1.75rem; background: var(--gold); color: #0f172a;
+            padding: 0.85rem 1.75rem; background: var(--green); color: white;  /* ✅ Было: var(--gold), color: #0f172a */
             border-radius: 8px; text-decoration: none; font-weight: 600;
-            transition: var(--transition);
+            transition: var(--transition); border: 1px solid var(--green);
         }
         .about-hero__cta:hover {
-            background: var(--gold-hover); transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35);
+            background: #fff; color: #0f172a;  /* ✅ Логика хедера: инверсия при ховере */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(33, 178, 36, 0.35);
         }
         .about-hero__cta .icon { width: 18px; height: 18px; }
 
@@ -55,12 +64,13 @@ get_header();
         .about-section {
             background: var(--card-bg); border-radius: var(--radius);
             padding: 2rem; margin-bottom: 1.5rem; box-shadow: var(--shadow);
+            border: 1px solid var(--border);  /* ✅ Добавлена граница */
         }
         .section-title {
             font-size: 1.4rem; font-weight: 600; color: var(--text);
             margin: 0 0 1.25rem; display: flex; align-items: center; gap: 0.6rem;
         }
-        .section-title .icon { width: 24px; height: 24px; color: var(--gold); }
+        .section-title .icon { width: 24px; height: 24px; color: var(--green); }  /* ✅ Было: var(--gold) */
         .section-content { color: var(--text-muted); line-height: 1.7; font-size: 1rem; }
         .section-content p { margin: 0 0 1rem; }
         .section-content p:last-child { margin-bottom: 0; }
@@ -76,7 +86,7 @@ get_header();
             border-radius: var(--radius); border: 1px solid var(--border);
         }
         .stat-number {
-            font-size: 2rem; font-weight: 700; color: var(--gold);
+            font-size: 2rem; font-weight: 700; color: var(--green);  /* ✅ Было: var(--gold) */
             display: block; margin-bottom: 0.25rem;
         }
         .stat-label { font-size: 0.9rem; color: var(--text-muted); }
@@ -90,7 +100,7 @@ get_header();
             display: flex; align-items: center; gap: 0.5rem;
             padding: 0.5rem 0; color: var(--text); font-size: 0.95rem;
         }
-        .geo-list .icon { width: 16px; height: 16px; color: var(--blue); flex-shrink: 0; }
+        .geo-list .icon { width: 16px; height: 16px; color: var(--green); flex-shrink: 0; }  /* ✅ Было: var(--blue) */
 
         /* Процесс */
         .process-steps {
@@ -103,9 +113,9 @@ get_header();
         .process-step__number {
             position: absolute; left: 0; top: 0;
             width: 32px; height: 32px; border-radius: 50%;
-            background: var(--gold); color: #0f172a;
+            background: var(--green); color: white;  /* ✅ Было: color: #0f172a */
             display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 1rem;
+            font-weight: 700; font-size: 1rem; border: 1px solid var(--green);
         }
         .process-step__title {
             font-weight: 600; color: var(--text); margin: 0 0 0.4rem;
@@ -121,10 +131,10 @@ get_header();
         }
         .benefit-item {
             display: flex; gap: 0.75rem; padding: 1rem;
-            background: var(--bg); border-radius: var(--radius);
+            background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border);
         }
         .benefit-item .icon {
-            width: 24px; height: 24px; color: var(--gold); flex-shrink: 0; margin-top: 2px;
+            width: 24px; height: 24px; color: var(--green); flex-shrink: 0; margin-top: 2px;  /* ✅ Было: var(--gold) */
         }
         .benefit-item__title {
             font-weight: 600; color: var(--text); margin: 0 0 0.3rem; font-size: 1rem;
@@ -135,29 +145,30 @@ get_header();
 
         /* CTA блок */
         .about-cta {
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-hover) 100%);
+            background: var(--green);  /* ✅ Было: линейный градиент с gold */
             border-radius: var(--radius); padding: 2.5rem 2rem; text-align: center;
-            margin-top: 2rem;
+            margin-top: 2rem; border: 1px solid var(--green);
         }
         .about-cta h2 {
-            color: #0f172a; font-size: 1.5rem; margin: 0 0 0.75rem;
+            color: white; font-size: 1.5rem; margin: 0 0 0.75rem;  /* ✅ Было: #0f172a */
         }
         .about-cta p {
-            color: rgba(15, 23, 42, 0.85); margin: 0 0 1.5rem; max-width: 600px; margin-left: auto; margin-right: auto;
+            color: rgba(255, 255, 255, 0.9); margin: 0 0 1.5rem; max-width: 600px; margin-left: auto; margin-right: auto;  /* ✅ Было: rgba(15,23,42,0.85) */
         }
         .about-cta .btn {
             display: inline-flex; align-items: center; gap: 0.5rem;
-            padding: 0.85rem 1.75rem; background: #0f172a; color: #fff;
+            padding: 0.85rem 1.75rem; background: #fff; color: #0f172a;  /* ✅ Инверсия: белая кнопка на зелёном фоне */
             border-radius: 8px; text-decoration: none; font-weight: 600;
-            transition: var(--transition); border: none; cursor: pointer;
+            transition: var(--transition); border: 1px solid #fff; cursor: pointer;
         }
         .about-cta .btn:hover {
-            background: #1e293b; transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(15, 23, 42, 0.3);
+            background: var(--green); color: #fff; border-color: var(--green);  /* ✅ При ховере: зелёная кнопка */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
         }
         .about-cta .btn .icon { width: 18px; height: 18px; }
         .about-cta__note {
-            color: rgba(15, 23, 42, 0.7); font-size: 0.85rem; margin-top: 1rem;
+            color: rgba(255, 255, 255, 0.8); font-size: 0.85rem; margin-top: 1rem;  /* ✅ Было: rgba(15,23,42,0.7) */
         }
 
         /* Адаптив */
@@ -178,7 +189,7 @@ get_header();
         .icon { display: inline-block; vertical-align: middle; }
     </style>
 
-    <!-- 🔷 SVG СПРАЙТ -->
+    <!-- 🔷 SVG СПРАЙТ (без изменений) -->
     <svg style="display:none">
         <symbol id="icon-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
         <symbol id="icon-map" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></symbol>
@@ -203,9 +214,9 @@ get_header();
                     Профессиональная установка автономных канализаций ТОПАС в Чувашской Республике.
                     Надёжно • Быстро • С гарантией
                 </p>
-                <a href="tel:<?php echo preg_replace('/[^0-9+]/', '', getCarbonFields('theme_phones')[0]['phone_numbers'][0]['phone_number'] ?? '+74998400555'); ?>" class="about-hero__cta">
+                <a href="tel:+79083033282" class="about-hero__cta">
                     <svg class="icon"><use href="#icon-phone"/></svg>
-                    +7 (499) 840-05-55
+                    8908 303 32 82
                 </a>
             </section>
 
@@ -316,13 +327,6 @@ get_header();
                     <div class="benefit-item">
                         <svg class="icon"><use href="#icon-check"/></svg>
                         <div>
-                            <h4 class="benefit-item__title">Официальный дилер</h4>
-                            <p class="benefit-item__desc">Работаем напрямую с заводом, полная гарантия</p>
-                        </div>
-                    </div>
-                    <div class="benefit-item">
-                        <svg class="icon"><use href="#icon-check"/></svg>
-                        <div>
                             <h4 class="benefit-item__title">Монтаж за 1 день</h4>
                             <p class="benefit-item__desc">Собственная бригада, без субподрядчиков</p>
                         </div>
@@ -362,7 +366,7 @@ get_header();
             <section class="about-cta">
                 <h2>Готовы обсудить ваш проект?</h2>
                 <p>Оставьте заявку — инженер бесплатно проконсультирует и подберёт оптимальное решение для вашего участка в Чувашии</p>
-                <a href="tel:<?php echo preg_replace('/[^0-9+]/', '', getCarbonFields('theme_phones')[0]['phone_numbers'][0]['phone_number'] ?? '+74998400555'); ?>" class="btn">
+                <a href="tel:+79083033282" class="btn">
                     <svg class="icon"><use href="#icon-phone"/></svg>
                     Позвонить сейчас
                 </a>

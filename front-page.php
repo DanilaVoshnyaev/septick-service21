@@ -27,14 +27,58 @@ $company = array(
             --premium-darker: #020617;
             --premium-light: #f8fafc;
             --premium-gray: #64748b;
-            --premium-gold: #d4af37;
-            --premium-gold-light: #f4d03f;
+            --premium-gold: #21b224;
+            --premium-gold-light: #21b224;
             --premium-blue: #2563eb;
             --premium-blue-dark: #1d4ed8;
             --premium-text: #1e293b;
             --premium-border: #e2e8f0;
             --transition: all 0.3s ease;
+            --color-primary: #22c55e;           /* Основной зелёный */
+            --color-primary-dark: #16a34a;      /* Тёмно-зелёный для ховера */
+            --color-primary-light: #4ade80;     /* Светло-зелёный для акцентов */
+            --color-primary-soft: #dcfce7;
+            --card-green: #22c55e;
+            --card-green-hover: #16a34a;
+            --card-blue: #2563eb;
+            --card-text: #1e293b;
+            --card-text-muted: #64748b;
+            --card-bg: #ffffff;
+            --card-border: rgba(0,0,0,0.08);
+            --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --card-radius: 12px;
+            --card-transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+
+            /* 🔤 Текст */
+            --text-primary: #1e293b;            /* Тёмный текст */
+            --text-secondary: #64748b;          /* Вторичный текст */
+            --text-muted: #94a3b8;              /* Приглушённый */
+            --text-inverse: #ffffff;            /* Белый текст на тёмном */
+
+            /* 🖼️ Фоны — СВЕТЛЫЕ */
+            --bg-primary: #ffffff;              /* Белый для карточек */
+            --bg-secondary: #f8fafc;            /* Основной фон страницы */
+            --bg-tertiary: #f1f5f9;             /* Альтернативный фон */
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+
+            /* 📐 Границы и тени */
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.03);
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.06);
+            --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.08);
+            --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.1);
+
+            /* ⭕ Радиусы */
+            --radius: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+
+            /* ⏱️ Анимации */
+            --transition: all 0.25s ease;
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
 
         /* Base Reset */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -98,7 +142,7 @@ $company = array(
             margin-bottom: 24px; color: #fff; letter-spacing: -1px;
         }
         .gradient-text {
-            background: linear-gradient(135deg, var(--premium-gold) 0%, var(--premium-gold-light) 100%);
+            background: linear-gradient(135deg, var(--header-green) 0%, var(--premium-gold-light) 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             background-clip: text; font-weight: 400;
         }
@@ -127,6 +171,11 @@ $company = array(
             padding: 14px 28px; border-radius: 8px; font-weight: 500; font-size: 15px;
             transition: var(--transition); border: none; cursor: pointer; position: relative; overflow: hidden;
         }
+        @media (max-width: 480px) {
+            .btn-premium{
+                width: 100%;
+            }
+        }
         .btn-premium::before {
             content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0;
             border-radius: 50%; background: rgba(255,255,255,0.2);
@@ -135,10 +184,15 @@ $company = array(
         .btn-premium:hover::before { width: 300px; height: 300px; }
 
         .btn-premium.btn-primary {
-            background: linear-gradient(135deg, var(--premium-gold) 0%, var(--premium-gold-light) 100%);
-            color: var(--premium-darker); box-shadow: 0 4px 20px rgba(212,175,55,0.35);
+            background:  var(--premium-gold);
+            color: white;
+            border: 1px solid var(--premium-gold);
         }
-        .btn-premium.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(212,175,55,0.5); }
+        .btn-premium.btn-primary:hover {
+            transform: translateY(-2px);
+            background-color: white;
+            color: black;
+        }
 
         .btn-premium.btn-outline {
             background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.4);
@@ -276,20 +330,33 @@ $company = array(
 
         .catalog-cta-premium {
             text-align: center; padding: 24px; background: var(--premium-light);
-            border-radius: 12px; font-size: 15px; color: var(--premium-gray);
+            border-radius: 12px; font-size: 15px; color: white;position: relative;
+        }
+        .catalog-cta-premium::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(
+                    135deg,
+                    rgba(15, 23, 42, 0.55) 0%,
+                    rgba(30, 41, 59, 0.65) 50%,
+                    rgba(15, 23, 42, 0.5) 100%
+            );
+        }
+        .catalog-cta-premium--block{
+            position: relative;
+            z-index: 1;
         }
         .catalog-cta-premium p { margin-bottom: 8px; }
-        .catalog-cta-premium strong { color: var(--premium-text); }
+        .catalog-cta-premium strong { color: white; }
         .phone-link-premium {
-            font-size: 20px; font-weight: 700; color: var(--premium-blue);
+            font-size: 20px; font-weight: 700; color: var(--header-green);
             margin: 0 8px;
         }
-        .phone-link-premium:hover { color: var(--premium-blue-dark); }
+        .phone-link-premium:hover { transform: translateX(3px);  }
 
         /* ===== WHY CHOOSE PREMIUM ===== */
         .why-choose-premium { padding: clamp(80px, 12vw, 120px) 0; background: var(--premium-light); }
         .split-layout {
-            display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: center;
+            display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: start;
         }
         @media (max-width: 968px) { .split-layout { grid-template-columns: 1fr; gap: 40px; } }
 
@@ -383,8 +450,16 @@ $company = array(
         /* ===== CTA PREMIUM ===== */
         .cta-premium {
             position: relative; padding: clamp(80px, 12vw, 120px) 0;
-            background: linear-gradient(135deg, var(--premium-blue) 0%, var(--premium-blue-dark) 100%);
             overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .cta-premium::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.55) 0%, rgba(30, 41, 59, 0.65) 50%, rgba(15, 23, 42, 0.5) 100%);
         }
         .cta-bg-pattern {
             position: absolute; inset: 0; pointer-events: none;
@@ -411,6 +486,9 @@ $company = array(
         .form-note a:hover { text-decoration: underline; }
 
         .cta-contacts-premium { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+        .cta-contacts-premium a{
+            color: white;
+        }
         .contact-link {
             display: flex; align-items: center; gap: 10px; color: #fff;
             font-size: 15px; font-weight: 500; transition: var(--transition);
@@ -492,6 +570,74 @@ $company = array(
             .product-card-premium.featured { transform: none; }
             .product-card-premium.featured:hover { transform: translateY(-6px); }
         }
+        /* Карточка как в архиве, но с зелёным акцентом */
+        .station-card-home {
+            background: var(--card-bg); border-radius: var(--card-radius);
+            overflow: hidden; box-shadow: var(--card-shadow);
+            transition: var(--card-transition); display: flex; flex-direction: column;
+            position: relative; border: 1px solid transparent;
+        }
+        .station-card-home:hover {
+            transform: translateY(-4px);
+            border-color: var(--card-green);
+            box-shadow: 0 10px 30px rgba(34,197,94,0.15);
+        }
+        .station-badge-home {
+            position: absolute; top: 1rem; left: 1rem; z-index: 2;
+            background: var(--card-green); color: #fff;
+            padding: 0.35rem 0.85rem; border-radius: 20px;
+            font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+        }
+        .station-card-home__image {
+            aspect-ratio: 4/3; overflow: hidden; background: white;
+        }
+        .station-card-home__image a { display: block; height: 100%; }
+        .station-card-home__image img {
+            width: 100%; height: 100%; object-fit: contain; padding: 1rem;
+            transition: transform 0.3s ease;
+        }
+        .station-card-home:hover .station-card-home__image img { transform: scale(1.05); }
+        .station-card-home__content { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+        .station-card-home__title {
+            margin: 0 0 0.5rem; font-size: 1.1rem; font-weight: 600; color: var(--card-text); line-height: 1.4;
+        }
+        .station-card-home__title a { color: inherit; text-decoration: none; }
+        .station-card-home__title a:hover { color: var(--card-blue); }
+        .station-card-home__people {
+            margin: 0 0 1rem; color: var(--card-text-muted); font-size: 0.9rem;
+            display: flex; align-items: center; gap: 0.4rem;
+        }
+        .station-card-home__price { margin-top: auto; margin-bottom: 1rem; }
+        .price-old {
+            display: block; color: var(--card-text-muted); text-decoration: line-through;
+            font-size: 0.9rem; margin-bottom: 0.25rem;
+        }
+        .price-current { font-size: 1.35rem; font-weight: 700; color: var(--card-text); }
+        .station-card-home__actions {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;
+        }
+        .btn-card-home {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 0.65rem 0.85rem; border-radius: 8px;
+            font-weight: 600; font-size: 0.9rem; text-decoration: none;
+            transition: var(--card-transition); text-align: center; border: none; cursor: pointer;
+        }
+        .btn-card-home.btn-outline {
+            background: transparent; border: 2px solid var(--card-blue); color: var(--card-blue);
+        }
+        .btn-card-home.btn-outline:hover { background: var(--card-blue); color: #fff; }
+        .btn-card-home.btn-green {
+            background: linear-gradient(135deg, var(--card-green) 0%, var(--card-green-hover) 100%);
+            color: #fff;
+        }
+        .btn-card-home.btn-green:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(34,197,94,0.35);
+        }
+        @media (max-width: 768px) {
+            .station-card-home__actions { grid-template-columns: 1fr; }
+        }
+        .icon { display: inline-block; vertical-align: middle; }
     </style>
 
     <main class="main-content">
@@ -607,131 +753,115 @@ $company = array(
             </div>
         </section>
 
-        <!-- Catalog Premium -->
-        <section id="catalog" class="catalog-premium">
+        <?php
+        // Параметры запроса
+        $args = array(
+            'post_type' => 'stations',
+            'posts_per_page' => 8,
+            'orderby' => 'menu_order',
+            'order' => 'ASC',
+
+        );
+        $stations_query = new WP_Query($args);
+        ?>
+
+        <section id="catalog" class="catalog-premium" style="background: var(--bg-secondary); padding: clamp(80px, 12vw, 120px) 0;">
             <div class="container">
-                <div class="section-header">
-                    <span class="section-label">Каталог</span>
-                    <h2 class="section-title">Выберите идеальную станцию</h2>
-                    <p class="section-subtitle">Индивидуальный подбор под количество проживающих и особенности участка</p>
+
+                <!-- Заголовок -->
+                <div class="section-header" style="text-align: center; margin-bottom: 48px;">
+            <span class="section-label" style="display: inline-block; font-size: 12px; font-weight: 600; color: var(--color-primary); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; padding: 6px 16px; background: var(--color-primary-soft); border-radius: 20px;">
+                Каталог
+            </span>
+                    <h2 class="section-title" style="font-size: clamp(28px, 4vw, 40px); font-weight: 600; color: var(--text-primary); margin-bottom: 12px;">
+                        Выберите идеальную станцию
+                    </h2>
+                    <p class="section-subtitle" style="font-size: 16px; color: var(--text-secondary); max-width: 600px; margin: 0 auto; line-height: 1.6;">
+                        Индивидуальный подбор под количество проживающих и особенности участка
+                    </p>
                 </div>
 
-                <div class="catalog-tabs">
-                    <button class="tab-btn active" data-tab="all">Все модели</button>
-                    <button class="tab-btn" data-tab="small">До 5 человек</button>
-                    <button class="tab-btn" data-tab="medium">5-10 человек</button>
-                    <button class="tab-btn" data-tab="large">10+ человек</button>
+                <!-- Табы -->
+                <div class="catalog-tabs" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 40px; flex-wrap: wrap;">
+                    <button class="tab-btn active" data-tab="all" style="padding: 10px 22px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 30px; cursor: pointer; transition: var(--transition); font-size: 14px; font-weight: 500; color: var(--text-secondary);">Все модели</button>
+                    <button class="tab-btn" data-tab="small" style="padding: 10px 22px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 30px; cursor: pointer; transition: var(--transition); font-size: 14px; font-weight: 500; color: var(--text-secondary);">До 5 человек</button>
+                    <button class="tab-btn" data-tab="medium" style="padding: 10px 22px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 30px; cursor: pointer; transition: var(--transition); font-size: 14px; font-weight: 500; color: var(--text-secondary);">5-10 человек</button>
+                    <button class="tab-btn" data-tab="large" style="padding: 10px 22px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 30px; cursor: pointer; transition: var(--transition); font-size: 14px; font-weight: 500; color: var(--text-secondary);">10+ человек</button>
                 </div>
 
-                <div class="catalog-grid-premium">
-                    <!-- ТОПАС 5 -->
-                    <div class="product-card-premium" data-category="small">
-                        <div class="product-badge-premium">Хит</div>
-                        <div class="product-image-wrapper">
-                            <img src="https://topas.pro/upload/iblock/3d5/topas-5.png" alt="ТОПАС 5" class="product-image">
-                            <div class="product-overlay">
-                                <button class="btn-quick-view open-modal" data-modal="product" data-product="ТОПАС 5">Характеристики</button>
-                            </div>
-                        </div>
-                        <div class="product-content">
-                            <h3 class="product-title">ТОПАС 5</h3>
-                            <div class="product-specs-premium">
-                                <div class="spec-item"><span class="spec-icon">👥</span><span>До 5 человек</span></div>
-                                <div class="spec-item"><span class="spec-icon">💧</span><span>1 м³/сут</span></div>
-                                <div class="spec-item"><span class="spec-icon">⚡</span><span>1.5 кВт/сут</span></div>
-                                <div class="spec-item"><span class="spec-icon">📏</span><span>Залповый сброс: 220 л</span></div>
-                            </div>
-                            <div class="product-footer">
-                                <div class="product-price-premium">
-                                    <span class="price-current">124 900 ₽</span>
-                                </div>
-                                <button class="btn-premium btn-primary btn-full open-modal" data-modal="callback" data-product="ТОПАС 5">Заказать</button>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Сетка карточек -->
+                <div class="catalog-grid-premium" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; margin-bottom: 48px;">
+                    <?php if ($stations_query->have_posts()) : ?>
+                        <?php while ($stations_query->have_posts()) : $stations_query->the_post();
+                            $price = carbon_get_post_meta(get_the_ID(), 'crb_price');
+                            $old_price = carbon_get_post_meta(get_the_ID(), 'crb_old_price');
+                            $people = carbon_get_post_meta(get_the_ID(), 'crb_people_count_text');
+                            $is_hit = carbon_get_post_meta(get_the_ID(), 'crb_is_hit');
 
-                    <!-- ТОПАС 8 -->
-                    <div class="product-card-premium featured" data-category="small">
-                        <div class="product-badge-premium best">Рекомендуем</div>
-                        <div class="product-image-wrapper">
-                            <img src="https://topas.pro/upload/iblock/8f2/topas-8.png" alt="ТОПАС 8" class="product-image">
-                            <div class="product-overlay">
-                                <button class="btn-quick-view open-modal" data-modal="product" data-product="ТОПАС 8">Характеристики</button>
-                            </div>
-                        </div>
-                        <div class="product-content">
-                            <h3 class="product-title">ТОПАС 8</h3>
-                            <div class="product-specs-premium">
-                                <div class="spec-item"><span class="spec-icon">👥</span><span>До 8 человек</span></div>
-                                <div class="spec-item"><span class="spec-icon">💧</span><span>1.5 м³/сут</span></div>
-                                <div class="spec-item"><span class="spec-icon">⚡</span><span>2 кВт/сут</span></div>
-                                <div class="spec-item"><span class="spec-icon">📏</span><span>Залповый сброс: 440 л</span></div>
-                            </div>
-                            <div class="product-footer">
-                                <div class="product-price-premium">
-                                    <span class="price-current">145 900 ₽</span>
-                                </div>
-                                <button class="btn-premium btn-primary btn-full open-modal" data-modal="callback" data-product="ТОПАС 8">Заказать</button>
-                            </div>
-                        </div>
-                    </div>
+                            $people_num = (int) preg_replace('/[^0-9]/', '', $people);
+                            $category = $people_num <= 5 ? 'small' : ($people_num <= 10 ? 'medium' : 'large');
+                            ?>
+                            <article class="station-card-home" data-category="<?php echo esc_attr($category); ?>">
+                                <?php if ($is_hit) : ?>
+                                    <span class="station-badge-home">✓ Хит</span>
+                                <?php endif; ?>
 
-                    <!-- ТОПАС 10 -->
-                    <div class="product-card-premium" data-category="medium">
-                        <div class="product-image-wrapper">
-                            <img src="https://topas.pro/upload/iblock/a88/topas-10.png" alt="ТОПАС 10" class="product-image">
-                            <div class="product-overlay">
-                                <button class="btn-quick-view open-modal" data-modal="product" data-product="ТОПАС 10">Характеристики</button>
-                            </div>
-                        </div>
-                        <div class="product-content">
-                            <h3 class="product-title">ТОПАС 10</h3>
-                            <div class="product-specs-premium">
-                                <div class="spec-item"><span class="spec-icon">👥</span><span>До 10 человек</span></div>
-                                <div class="spec-item"><span class="spec-icon">💧</span><span>2 м³/сут</span></div>
-                                <div class="spec-item"><span class="spec-icon">⚡</span><span>2.5 кВт/сут</span></div>
-                                <div class="spec-item"><span class="spec-icon">📏</span><span>Залповый сброс: 760 л</span></div>
-                            </div>
-                            <div class="product-footer">
-                                <div class="product-price-premium">
-                                    <span class="price-current">175 900 ₽</span>
+                                <div class="station-card-home__image">
+                                    <a href="<?php the_permalink(); ?>">
+                                        <?php if (has_post_thumbnail()) : ?>
+                                            <?php the_post_thumbnail('medium_large', array('loading' => 'lazy', 'style' => 'width:100%;height:100%;object-fit:contain;padding:1rem;')); ?>
+                                        <?php else : ?>
+                                            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/no-image.jpg" loading="lazy" style="width:100%;height:100%;object-fit:contain;padding:1rem;">
+                                        <?php endif; ?>
+                                    </a>
                                 </div>
-                                <button class="btn-premium btn-primary btn-full open-modal" data-modal="callback" data-product="ТОПАС 10">Заказать</button>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- ТОПАС 15 -->
-                    <div class="product-card-premium" data-category="large">
-                        <div class="product-image-wrapper">
-                            <img src="https://topas.pro/upload/iblock/c5c/topas-15.png" alt="ТОПАС 15" class="product-image">
-                            <div class="product-overlay">
-                                <button class="btn-quick-view open-modal" data-modal="product" data-product="ТОПАС 15">Характеристики</button>
-                            </div>
-                        </div>
-                        <div class="product-content">
-                            <h3 class="product-title">ТОПАС 15</h3>
-                            <div class="product-specs-premium">
-                                <div class="spec-item"><span class="spec-icon">👥</span><span>До 15 человек</span></div>
-                                <div class="spec-item"><span class="spec-icon">💧</span><span>3 м³/сут</span></div>
-                                <div class="spec-item"><span class="spec-icon">⚡</span><span>3 кВт/сут</span></div>
-                                <div class="spec-item"><span class="spec-icon">📏</span><span>Залповый сброс: 850 л</span></div>
-                            </div>
-                            <div class="product-footer">
-                                <div class="product-price-premium">
-                                    <span class="price-current">215 900 ₽</span>
+                                <div class="station-card-home__content">
+                                    <h3 class="station-card-home__title">
+                                        <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                                    </h3>
+
+                                    <?php if ($people) : ?>
+                                        <p class="station-card-home__people">
+                                            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                                            </svg>
+                                            <?php echo esc_html($people); ?>
+                                        </p>
+                                    <?php endif; ?>
+
+                                    <div class="station-card-home__price">
+                                        <?php if ($old_price && $old_price > $price) : ?>
+                                            <span class="price-old"><?php echo number_format($old_price, 0, '.', ' '); ?> ₽</span>
+                                        <?php endif; ?>
+                                        <span class="price-current">
+                                    <?php echo $price ? number_format($price, 0, '.', ' ') . ' ₽' : 'По запросу'; ?>
+                                </span>
+                                    </div>
+
+                                    <div class="station-card-home__actions">
+                                        <a href="<?php the_permalink(); ?>" class="btn-card-home btn-outline">Подробнее</a>
+                                        <a href="<?php the_permalink(); ?>#order" class="btn-card-home btn-green">Заказать</a>
+                                    </div>
                                 </div>
-                                <button class="btn-premium btn-primary btn-full open-modal" data-modal="callback" data-product="ТОПАС 15">Заказать</button>
-                            </div>
+                            </article>
+                        <?php endwhile; ?>
+                    <?php else : ?>
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: var(--bg-primary); border-radius: var(--radius-lg);">
+                            <p style="color: var(--text-secondary);">Станции пока не добавлены в каталог</p>
                         </div>
+                    <?php endif; ?>
+                    <?php wp_reset_postdata(); ?>
+                </div>
+
+                <div class="catalog-cta-premium" style="background-image: url(<?=assets('/images/cta.jpg')?>;">
+                    <div class="catalog-cta-premium--block">
+                        <p>Не нашли подходящую модель? <strong>Мы поставляем всю линейку ТОПАС</strong></p>
+                        <a href="tel:<?php echo $company['phone_clean']; ?>" class="phone-link-premium"><?php echo $company['phone']; ?></a>
+                        <span>— подберем индивидуально за 5 минут</span>
                     </div>
                 </div>
 
-                <div class="catalog-cta-premium">
-                    <p>Не нашли подходящую модель? <strong>Мы поставляем всю линейку ТОПАС</strong></p>
-                    <a href="tel:<?php echo $company['phone_clean']; ?>" class="phone-link-premium"><?php echo $company['phone']; ?></a>
-                    <span>— подберем индивидуально за 5 минут</span>
-                </div>
             </div>
         </section>
 
@@ -741,7 +871,7 @@ $company = array(
                 <div class="split-layout">
                     <div class="split-image">
                         <div class="image-wrapper">
-                            <img src="https://topas.pro/upload/iblock/montage/installation-process.jpg" alt="Монтаж ТОПАС">
+                            <img src=<?=assets('/images/topas-montazh.jpg')?>" alt="Монтаж ТОПАС">
                             <div class="image-badge">
                                 <span class="badge-number">1 день</span>
                                 <span class="badge-text">монтаж под ключ</span>
@@ -877,7 +1007,7 @@ $company = array(
         </section>
 
         <!-- CTA Premium -->
-        <section class="cta-premium" id="contacts">
+        <section class="cta-premium" id="contacts" style="background-image: url(<?=assets('/images/cta.jpg')?>;">
             <div class="cta-bg-pattern"></div>
             <div class="container">
                 <div class="cta-content">
@@ -890,7 +1020,7 @@ $company = array(
                             <span>Получить консультацию</span>
                             <svg class="btn-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                         </button>
-                        <p class="form-note">Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой конфиденциальности</a></p>
+                        <p class="form-note" style="color: white">Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой конфиденциальности</a></p>
                     </form>
                     <div class="cta-contacts-premium">
                         <a href="tel:<?php echo $company['phone_clean']; ?>" class="contact-link">
@@ -987,7 +1117,7 @@ $company = array(
                     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                     const filter = this.dataset.tab;
-                    document.querySelectorAll('.product-card-premium').forEach(card => {
+                    document.querySelectorAll('.station-card-home').forEach(card => {
                         const cat = card.dataset.category;
                         const show = filter === 'all' || (cat && cat.includes(filter));
                         card.style.display = show ? 'flex' : 'none';

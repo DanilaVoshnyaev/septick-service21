@@ -1,6 +1,7 @@
 <?php
 /**
  * Шаблон отдельной услуги — две колонки (ПК) / одна (моб.)
+ * Единая цветовая схема с хедером
  * Template Name: Service Two Column
  */
 
@@ -23,23 +24,35 @@ while (have_posts()) : the_post();
     // Телефон из настроек темы
     $phone_raw = getCarbonFields('theme_phones')[0]['phone_numbers'][0]['phone_number'] ?? '+79083033282';
     $phone_clean = preg_replace('/[^0-9+]/', '', $phone_raw);
+
+    // Изображение
+    $service_image = has_post_thumbnail() ? get_the_post_thumbnail_url(get_the_ID(), 'large') : '';
     ?>
 
-    <!-- 🎨 СТИЛИ -->
+    <!-- 🎨 СТИЛИ (цвета из хедера) -->
     <style>
         :root {
-            --gold: #d4af37;
-            --gold-hover: #f4d03f;
+            /* ===== ЦВЕТОВАЯ СХЕМА ИЗ ХЕДЕРА ===== */
+            --green: #21b224;                    /* ✅ Основной акцент */
+            --green-hover: #f4d03f;              /* ✅ Ховер-эффект */
             --blue: #2563eb;
+            --blue-hover: #1d4ed8;
             --text: #1e293b;
             --text-muted: #64748b;
-            --bg: #f8fafc;
+            --bg: rgba(255, 255, 255, 0.95);     /* ✅ Фон с прозрачностью */
             --card-bg: #ffffff;
-            --border: rgba(0,0,0,0.08);
-            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --border: rgba(0, 0, 0, 0.08);       /* ✅ Границы как в хедере */
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             --radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);  /* ✅ Анимации как в хедере */
         }
-        .service-page { padding: 2rem 0; background: var(--bg); }
+
+        .service-page {
+            padding: 2rem 0;
+            background: var(--bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
         .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
 
         /* Бейджи */
@@ -48,7 +61,7 @@ while (have_posts()) : the_post();
             padding: 0.35rem 0.8rem; border-radius: 20px;
             font-size: 0.8rem; font-weight: 600; color: #fff;
         }
-        .badge--popular { background: var(--gold); }
+        .badge--popular { background: var(--green); }  /* ✅ Было: var(--gold) */
         .badge--new { background: var(--blue); }
         .badge--stock { background: var(--text-muted); }
         .badge--stock.in-stock { background: #10b981; }
@@ -75,8 +88,10 @@ while (have_posts()) : the_post();
             width: 100%; aspect-ratio: 4/3; border-radius: var(--radius);
             overflow: hidden; background: #f1f5f9; margin-bottom: 1rem;
             display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--border);  /* ✅ Добавлена граница */
         }
-        .service-image img { width: 100%; height: 100%; object-fit: cover; }
+        .service-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+        .service-image:hover img { transform: scale(1.03); }  /* ✅ Добавлен зум при ховере */
         .service-image .placeholder { color: var(--text-muted); }
         .service-image .placeholder .icon { width: 48px; height: 48px; opacity: 0.6; }
 
@@ -84,7 +99,8 @@ while (have_posts()) : the_post();
         .price-box {
             background: var(--card-bg); border-radius: var(--radius);
             padding: 1.25rem; box-shadow: var(--shadow);
-            border-top: 3px solid var(--gold); text-align: center;
+            border-top: 3px solid var(--green); text-align: center;  /* ✅ Было: var(--gold) */
+            border: 1px solid var(--border);
         }
         .price-old { display: block; color: var(--text-muted); text-decoration: line-through; font-size: 1rem; margin-bottom: 0.3rem; }
         .price-discount { display: inline-block; background: #ef4444; color: #fff; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.5rem; }
@@ -95,6 +111,7 @@ while (have_posts()) : the_post();
         .service-content-col {
             background: var(--card-bg); border-radius: var(--radius);
             padding: 1.75rem; box-shadow: var(--shadow);
+            border: 1px solid var(--border);  /* ✅ Добавлена граница */
         }
 
         /* Описание из редактора */
@@ -116,36 +133,43 @@ while (have_posts()) : the_post();
         .features__title { font-size: 1.05rem; font-weight: 600; color: var(--text); margin: 0 0 0.75rem; }
         .features-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.6rem; }
         .feature-item { display: flex; gap: 0.6rem; font-size: 0.95rem; color: var(--text); }
-        .feature-icon { width: 20px; height: 20px; color: var(--gold); flex-shrink: 0; margin-top: 2px; }
+        .feature-icon { width: 20px; height: 20px; color: var(--green); flex-shrink: 0; margin-top: 2px; }  /* ✅ Было: var(--gold) */
         .feature-title { font-weight: 600; display: block; margin-bottom: 0.15rem; }
         .feature-desc { color: var(--text-muted); font-size: 0.9rem; }
 
-        /* Кнопка заказать звонок */
+        /* Кнопка заказать звонок — логика хедера */
         .btn-call {
             display: flex; align-items: center; justify-content: center; gap: 0.5rem;
             width: 100%; padding: 0.95rem 1.5rem; border-radius: 8px;
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-hover) 100%);
-            color: #0f172a; font-weight: 700; font-size: 1rem;
-            text-decoration: none; border: none; cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            background: var(--green); color: white;  /* ✅ Было: линейный градиент с gold */
+            font-weight: 700; font-size: 1rem;
+            text-decoration: none; border: 1px solid var(--green); cursor: pointer;
+            transition: var(--transition);
         }
         .btn-call:hover {
+            background: #fff; color: #0f172a;  /* ✅ Логика хедера: инверсия при ховере */
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35);
+            box-shadow: 0 6px 20px rgba(33, 178, 36, 0.35);
         }
         .btn-call .icon { width: 18px; height: 18px; }
 
-        /* CTA блок внизу */
+        /* CTA блок внизу — инвертированная схема */
         .cta-bottom {
             text-align: center; padding: 1.75rem;
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-hover) 100%);
+            background: var(--green);  /* ✅ Было: линейный градиент с gold */
             border-radius: var(--radius);
+            border: 1px solid var(--green);
         }
-        .cta-bottom h2 { color: #0f172a; font-size: 1.3rem; margin: 0 0 0.5rem; }
-        .cta-bottom p { color: rgba(15,23,42,0.85); margin: 0 0 1rem; font-size: 0.95rem; }
-        .cta-bottom .btn-call { background: #0f172a; color: #fff; max-width: 280px; margin: 0 auto; }
-        .cta-bottom .btn-call:hover { background: #1e293b; box-shadow: 0 6px 20px rgba(15,23,42,0.3); }
-        .cta-note { color: rgba(15,23,42,0.7); font-size: 0.85rem; margin-top: 0.75rem; }
+        .cta-bottom h2 { color: white; font-size: 1.3rem; margin: 0 0 0.5rem; }  /* ✅ Было: #0f172a */
+        .cta-bottom p { color: rgba(255,255,255,0.9); margin: 0 0 1rem; font-size: 0.95rem; }  /* ✅ Было: rgba(15,23,42,0.85) */
+        .cta-bottom .btn-call {
+            background: #fff; color: #0f172a; border-color: #fff; max-width: 280px; margin: 0 auto;
+        }  /* ✅ Инверсия: белая кнопка на зелёном фоне */
+        .cta-bottom .btn-call:hover {
+            background: var(--green); color: #fff; border-color: var(--green);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+        }
+        .cta-note { color: rgba(255,255,255,0.8); font-size: 0.85rem; margin-top: 0.75rem; }  /* ✅ Было: rgba(15,23,42,0.7) */
 
         /* SVG */
         .icon { display: inline-block; vertical-align: middle; }
@@ -178,7 +202,18 @@ while (have_posts()) : the_post();
     <main class="service-page">
         <div class="container">
 
-
+            <!-- Бейджи -->
+            <div class="badges">
+                <?php if ($is_popular): ?>
+                    <span class="badge badge--popular">Популярное</span>
+                <?php endif; ?>
+                <?php if ($is_new): ?>
+                    <span class="badge badge--new">Новинка</span>
+                <?php endif; ?>
+                <span class="badge badge--stock <?php echo $in_stock ? 'in-stock' : ''; ?>">
+                    <?php echo $in_stock ? 'В наличии' : 'Под заказ'; ?>
+                </span>
+            </div>
 
             <h1 class="service-title"><?php the_title(); ?></h1>
             <?php if ($short_desc): ?><p class="service-subtitle"><?php echo esc_html($short_desc); ?></p><?php endif; ?>
@@ -189,8 +224,8 @@ while (have_posts()) : the_post();
                 <!-- Левая: картинка + цена -->
                 <div class="service-image-col">
                     <div class="service-image">
-                        <?php if (true): ?>
-                            <img src="https://avatars.mds.yandex.net/i?id=315ccb20cbb914d4007025bbbb966fc9bd5a4c7b-8972142-images-thumbs&n=13" alt="<?php the_title_attribute(); ?>">
+                        <?php if ($service_image): ?>
+                            <img src="<?php echo esc_url($service_image); ?>" alt="<?php the_title_attribute(); ?>">
                         <?php elseif (has_post_thumbnail()): ?>
                             <?php the_post_thumbnail('large'); ?>
                         <?php else: ?>
@@ -198,7 +233,7 @@ while (have_posts()) : the_post();
                         <?php endif; ?>
                     </div>
 
-<!--                    <div class="price-box">
+                    <!--                    <div class="price-box">
                         <?php /*if ($old_price && $old_price > $price): */?>
                             <span class="price-old"><?php /*echo number_format($old_price, 0, '.', ' '); */?> ₽</span>
                             <span class="price-discount">-<?php /*echo round((($old_price - $price) / $old_price) * 100); */?>%</span>

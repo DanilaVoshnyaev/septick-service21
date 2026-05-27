@@ -386,7 +386,225 @@ function register_reviews_cpt()
     register_post_type('reviews', $args);
 }
 
+/**
+ * Обработчик контактных форм — премиум-шаблоны
+ * Добавь этот код в functions.php твоей темы
+ */
 
+// ===== РЕГИСТРАЦИЯ AJAX-ОБРАБОТЧИКОВ =====
+add_action('wp_ajax_premium_form_submit', 'handle_premium_form_submit');
+add_action('wp_ajax_nopriv_premium_form_submit', 'handle_premium_form_submit');
+
+function handle_premium_form_submit() {
+    // Проверка nonce (безопасность)
+    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'premium_form_nonce')) {
+        wp_send_json_error(['message' => 'Ошибка безопасности'], 403);
+    }
+
+    // Санитизация входных данных
+    $form_type = sanitize_text_field($_POST['form_type'] ?? 'callback');
+    $name = sanitize_text_field($_POST['name'] ?? '');
+    $phone = sanitize_text_field($_POST['phone'] ?? '');
+    $address = sanitize_text_field($_POST['address'] ?? '');
+    $comment = sanitize_textarea_field($_POST['comment'] ?? '');
+    $product_id = isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
+    $product_name = sanitize_text_field($_POST['product_name'] ?? '');
+
+    // Валидация
+    $errors = [];
+    if (empty($name) || mb_strlen($name) < 2) {
+        $errors[] = 'Введите корректное имя';
+    }
+    // Простая валидация телефона РФ
+    $phone_clean = preg_replace('/[^\d+]/', '', $phone);
+    if (empty($phone_clean) || strlen($phone_clean) < 11) {
+        $errors[] = 'Введите корректный телефон';
+    }
+
+    if (!empty($errors)) {
+        wp_send_json_error(['errors' => $errors], 400);
+    }
+
+    // ===== ФОРМИРОВАНИЕ ПИСЬМА =====
+    $site_name = get_bloginfo('name');
+    $admin_email = get_option('admin_email');
+
+    $subject = "📩 Новая заявка: $form_type — $site_name";
+
+    $message = "
+    <h2>📋 Данные заявки</h2>
+    <table style='border-collapse: collapse; width: 100%;'>
+        <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Тип формы:</strong></td><td>$form_type</td></tr>
+        <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Имя:</strong></td><td>$name</td></tr>
+        <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Телефон:</strong></td><td>$phone</td></tr>
+    ";
+
+    if (!empty($address)) {
+        $message .= "<tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Адрес:</strong></td><td>$address</td></tr>";
+    }
+    if (!empty($comment)) {
+        $message .= "<tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Комментарий:</strong></td><td>$comment</td></tr>";
+    }
+    if ($product_id) {
+        $message .= "<tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Товар/Услуга:</strong></td><td>$product_name (ID: $product_id)</td></tr>";
+    }
+
+    $message .= "
+        <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Дата:</strong></td><td>" . date('d.m.Y H:i') . "</td></tr>
+        <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>IP:</strong></td><td>" . $_SERVER['REMOTE_ADDR'] . "</td></tr>
+        <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Страница:</strong></td><td>" . esc_url($_POST['page_url'] ?? '') . "</td></tr>
+    </table>
+    ";
+
+    // Заголовки для HTML-письма
+    $headers = array(
+        'Content-Type: text/html; charset=UTF-8',
+        'From: ' . $site_name . ' <noreply@' . preg_replace('#^www\.#', '', parse_url(home_url(), PHP_URL_HOST)) . '>'
+    );
+
+    // ===== ОТПРАВКА ПИСЬМА =====
+    $sent = wp_mail($admin_email, $subject, $message, $headers);
+
+    // ===== ДОПОЛНИТЕЛЬНО: Отправка в Telegram (опционально) =====
+    // Раскомментируй и настрой, если нужно
+    /*
+    $telegram_token = 'YOUR_BOT_TOKEN';
+    $telegram_chat_id = 'YOUR_CHAT_ID';
+    $telegram_text = "📩 *Новая заявка*\n" .
+                     "👤 *Имя:* $name\n" .
+                     "📱 *Телефон:* $phone\n" .
+                     "📄 *Тип:* $form_type";
+    if (!empty($product_name)) {
+        $telegram_text .= "\n🛒 *Товар:* $product_name";
+    }
+
+    wp_remote_post("https://api.telegram.org/bot$telegram_token/sendMessage", [
+        'body' => [
+            'chat_id' => $telegram_chat_id,
+            'text' => $telegram_text,
+            'parse_mode' => 'Markdown'
+        ]
+    ]);
+    */
+
+    // ===== ЛОГИРОВАНИЕ (опционально) =====
+    // error_log("Premium Form [$form_type]: $name, $phone");
+
+    if ($sent) {
+        wp_send_json_success([
+            'message' => 'Спасибо! Мы свяжемся с вами в течение 15 минут.',
+            'redirect' => get_permalink($product_id) // опционально: редирект после отправки
+        ]);
+    } else {
+        wp_send_json_error(['message' => 'Ошибка отправки. Попробуйте позвонить нам.'], 500);
+    }
+}
+
+// ===== ШОРТКОД ДЛЯ ФОРМЫ (опционально) =====
+add_shortcode('premium_contact_form', 'render_premium_contact_form');
+function render_premium_contact_form($atts) {
+    $atts = shortcode_atts([
+        'type' => 'callback',
+        'title' => 'Заказать звонок',
+        'button' => 'Отправить',
+    ], $atts);
+
+    ob_start();
+    ?>
+    <form class="premium-contact-form" data-form-type="<?php echo esc_attr($atts['type']); ?>">
+        <h4><?php echo esc_html($atts['title']); ?></h4>
+        <div class="form-group">
+            <input type="text" name="name" placeholder="Ваше имя *" required>
+        </div>
+        <div class="form-group">
+            <input type="tel" name="phone" placeholder="+7 (___) ___-__-__ *" required>
+        </div>
+        <button type="submit" class="btn-premium btn-gold"><?php echo esc_html($atts['button']); ?></button>
+        <p class="form-privacy">Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой конфиденциальности</a></p>
+    </form>
+    <?php
+    return ob_get_clean();
+}
+
+// ===== ПОДКЛЮЧЕНИЕ СКРИПТОВ И СТИЛЕЙ =====
+add_action('wp_enqueue_scripts', 'enqueue_premium_form_assets');
+function enqueue_premium_form_assets() {
+    // Стили для уведомлений
+    wp_add_inline_style('wp-block-library', '
+        /* ===== TOAST NOTIFICATIONS ===== */
+        .toast-container {
+            position: fixed; top: 20px; right: 20px; z-index: 9999;
+            display: flex; flex-direction: column; gap: 10px; max-width: 380px;
+        }
+        .toast {
+            background: #fff; border-left: 4px solid #21b224;
+            border-radius: 8px; padding: 14px 18px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+            display: flex; align-items: flex-start; gap: 12px;
+            animation: toastSlideIn 0.3s ease;
+        }
+        .toast.toast-error { border-left-color: #ef4444; }
+        .toast.toast-warning { border-left-color: #f59e0b; }
+        @keyframes toastSlideIn {
+            from { opacity: 0; transform: translateX(100px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .toast-icon { flex-shrink: 0; width: 20px; height: 20px; margin-top: 2px; }
+        .toast-success .toast-icon { color: #21b224; }
+        .toast-error .toast-icon { color: #ef4444; }
+        .toast-content { flex: 1; }
+        .toast-title { font-weight: 600; color: #1e293b; margin-bottom: 4px; }
+        .toast-message { font-size: 14px; color: #64748b; line-height: 1.4; }
+        .toast-close {
+            background: none; border: none; color: #94a3b8;
+            cursor: pointer; padding: 4px; border-radius: 4px;
+        }
+        .toast-close:hover { background: #f1f5f9; color: #1e293b; }
+        
+        /* ===== FORM STATES ===== */
+        .premium-contact-form .form-group input {
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .premium-contact-form .form-group input.error {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+        }
+        .premium-contact-form .form-error {
+            color: #ef4444; font-size: 12px; margin-top: 4px;
+            display: none;
+        }
+        .premium-contact-form .form-error.visible { display: block; }
+        .premium-contact-form button[type="submit"]:disabled {
+            opacity: 0.7; cursor: not-allowed;
+        }
+        .premium-contact-form button[type="submit"] .spinner {
+            display: none; width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff; border-radius: 50%;
+            animation: spin 0.6s linear infinite; margin-right: 8px;
+        }
+        .premium-contact-form button[type="submit"].loading .spinner { display: inline-block; }
+        .premium-contact-form button[type="submit"].loading .btn-text { opacity: 0.7; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    ');
+
+    // JS для форм
+    wp_enqueue_script('premium-forms', get_template_directory_uri() . '/assets/js/premium-forms.js', ['jquery'], '1.0', true);
+
+    // Локализация JS
+    wp_localize_script('premium-forms', 'premiumFormVars', [
+        'ajaxUrl' => admin_url('admin-post.php'),
+        'nonce' => wp_create_nonce('premium_form_nonce'),
+        'messages' => [
+            'success' => 'Спасибо! Мы свяжемся с вами в течение 15 минут.',
+            'error' => 'Ошибка отправки. Попробуйте позвонить нам.',
+            'validation' => [
+                'name' => 'Введите имя (мин. 2 символа)',
+                'phone' => 'Введите корректный телефон',
+            ]
+        ]
+    ]);
+}
 
 // Функция для замены путей к изображениям в статьях
 //function replace_image_paths() {

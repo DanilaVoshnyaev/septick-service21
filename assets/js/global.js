@@ -571,6 +571,207 @@ $(function () {
     //Стилизация таблиц статей - как обычные таблицы чтобы были:
     $('.parent_id_117 table').addClass('standart_table');
 });
+/**
+ * Premium Forms Handler — единая система форм
+ * Версия: 1.0
+ */
+(function($) {
+    'use strict';
 
+    const PremiumForms = {
+        init: function() {
+            this.bindEvents();
+            this.initPhoneMask();
+            this.initToastContainer();
+        },
+
+        bindEvents: function() {
+            // Обработка всех форм с классом .premium-contact-form или .modal-form-premium
+            $(document).on('submit', '.premium-contact-form, .modal-form-premium, #callbackForm, #engineerForm, #footerCallbackForm', function(e) {
+                e.preventDefault();
+                PremiumForms.handleSubmit($(this));
+            });
+
+            // Закрытие тоста по клику
+            $(document).on('click', '.toast-close', function() {
+                $(this).closest('.toast').fadeOut(200, function() { $(this).remove(); });
+            });
+
+            // Авто-закрытие тоста через 5 сек
+            $(document).on('mouseenter', '.toast', function() {
+                const $toast = $(this);
+                if ($toast.data('timeout')) {
+                    clearTimeout($toast.data('timeout'));
+                }
+            }).on('mouseleave', '.toast', function() {
+                const $toast = $(this);
+                const timeout = setTimeout(() => $toast.fadeOut(200, function() { $toast.remove(); }), 3000);
+                $toast.data('timeout', timeout);
+            });
+        },
+
+        initPhoneMask: function() {
+            // Маска телефона для всех полей type="tel"
+            $(document).on('focus', 'input[type="tel"]', function() {
+                const $input = $(this);
+                if ($input.data('masked')) return;
+
+                $input.data('masked', true);
+                $input.on('input', function(e) {
+                    let v = this.value.replace(/\D/g, '');
+                    if (!v) { this.value = ''; return; }
+                    if (v[0] === '7' || v[0] === '8') v = v.slice(1);
+
+                    let f = '+7';
+                    if (v.length > 0) f += ' (' + v.slice(0, 3);
+                    if (v.length >= 3) f += ') ' + v.slice(3, 6);
+                    if (v.length >= 6) f += '-' + v.slice(6, 8);
+                    if (v.length >= 8) f += '-' + v.slice(8, 10);
+                    this.value = f;
+                });
+            });
+        },
+
+        initToastContainer: function() {
+            if (!$('.toast-container').length) {
+                $('body').append('<div class="toast-container"></div>');
+            }
+        },
+
+        handleSubmit: function($form) {
+            const $btn = $form.find('button[type="submit"]');
+            const originalBtnText = $btn.html();
+            const formType = $form.data('form-type') || $form.closest('[data-modal]').data('modal') || 'callback';
+
+            // Сбор данных
+            const data = {
+                action: 'premium_form_submit',
+                nonce: premiumFormVars.nonce,
+                form_type: formType,
+                name: $form.find('[name="name"]').val(),
+                phone: $form.find('[name="phone"]').val(),
+                address: $form.find('[name="address"]').val() || '',
+                comment: $form.find('[name="comment"]').val() || '',
+                product_id: $form.find('[name="product_id"]').val() || 0,
+                product_name: $form.find('[name="product_name"]').val() || '',
+                page_url: window.location.href
+            };
+
+            // Валидация на клиенте
+            const errors = PremiumForms.validate(data);
+            if (errors.length) {
+                PremiumForms.showErrors($form, errors);
+                return;
+            }
+            PremiumForms.clearErrors($form);
+
+            // Блокировка кнопки
+            $btn.prop('disabled', true).addClass('loading');
+            $btn.html('<span class="spinner"></span><span class="btn-text">Отправка...</span>');
+
+            // AJAX-запрос
+            $.ajax({
+                url: premiumFormVars.ajaxUrl,
+                type: 'POST',
+                data: data,
+                dataType: 'json',
+                timeout: 15000,
+                success: function(response) {
+                    if (response.success) {
+                        PremiumForms.showToast('success', '✅ Заявка отправлена', response.data.message || premiumFormVars.messages.success);
+                        $form[0].reset();
+
+                        // Закрытие модального окна если есть
+                        const $modal = $form.closest('.modal-premium');
+                        if ($modal.length) {
+                            $modal.removeClass('active');
+                            document.body.style.overflow = '';
+                        }
+
+                        // Редирект если указан
+                        if (response.data.redirect) {
+                            setTimeout(() => { window.location.href = response.data.redirect; }, 1500);
+                        }
+                    } else {
+                        PremiumForms.showToast('error', '⚠️ Ошибка', response.data.message || premiumFormVars.messages.error);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Form error:', error);
+                    PremiumForms.showToast('error', '⚠️ Ошибка сети', 'Проверьте подключение к интернету');
+                },
+                complete: function() {
+                    $btn.prop('disabled', false).removeClass('loading').html(originalBtnText);
+                }
+            });
+        },
+
+        validate: function(data) {
+            const errors = [];
+            if (!data.name || data.name.trim().length < 2) {
+                errors.push({ field: 'name', message: premiumFormVars.messages.validation.name });
+            }
+            const phoneClean = data.phone.replace(/[^\d+]/g, '');
+            if (!phoneClean || phoneClean.length < 11) {
+                errors.push({ field: 'phone', message: premiumFormVars.messages.validation.phone });
+            }
+            return errors;
+        },
+
+        showErrors: function($form, errors) {
+            PremiumForms.clearErrors($form);
+            errors.forEach(err => {
+                const $field = $form.find(`[name="${err.field}"]`);
+                $field.addClass('error');
+                $field.closest('.form-group').find('.form-error').text(err.message).addClass('visible');
+            });
+            // Фокус на первом ошибочном поле
+            $form.find('.error').first().focus();
+        },
+
+        clearErrors: function($form) {
+            $form.find('.form-group input').removeClass('error');
+            $form.find('.form-error').removeClass('visible').text('');
+        },
+
+        showToast: function(type, title, message) {
+            const icons = {
+                success: '<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>',
+                error: '<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>',
+                warning: '<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>'
+            };
+
+            const toast = $(`
+                <div class="toast toast-${type}">
+                    ${icons[type] || icons.success}
+                    <div class="toast-content">
+                        <div class="toast-title">${title}</div>
+                        <div class="toast-message">${message}</div>
+                    </div>
+                    <button class="toast-close" aria-label="Закрыть">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                    </button>
+                </div>
+            `);
+
+            $('.toast-container').append(toast);
+
+            // Авто-удаление через 8 сек
+            setTimeout(() => {
+                toast.fadeOut(200, function() { $(this).remove(); });
+            }, 8000);
+        }
+    };
+
+    // Инициализация после загрузки DOM
+    $(document).ready(() => PremiumForms.init());
+
+    // Повторная инициализация после AJAX-загрузки контента (если нужно)
+    $(document).ajaxComplete(() => {
+        PremiumForms.initPhoneMask();
+        PremiumForms.initToastContainer();
+    });
+
+})(jQuery);
 
 

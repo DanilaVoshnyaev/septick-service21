@@ -47,7 +47,7 @@ $company = array(
             --header-text: #1e293b;
             --header-text-muted: #64748b;
             --header-border: rgba(0, 0, 0, 0.08);
-            --header-gold: #d4af37;
+            --header-green: #21b224;
             --header-gold-hover: #f4d03f;
             --header-blue: #2563eb;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -121,7 +121,7 @@ $company = array(
             color: var(--header-text-muted);
         }
 
-        .top-icon { color: var(--header-gold); flex-shrink: 0; }
+        .top-icon { color: var(--header-green); flex-shrink: 0; }
         .top-info-divider { width: 1px; height: 12px; background: var(--header-border); }
 
         .top-contact-link {
@@ -140,14 +140,14 @@ $company = array(
             color: var(--header-text); font-weight: 600; font-size: 15px;
             text-decoration: none; transition: color 0.2s ease;
         }
-        .top-phone-primary:hover { color: var(--header-gold); }
+        .top-phone-primary:hover { color: var(--header-green); }
 
         .top-phone-toggle {
             background: none; border: none; color: var(--header-text-muted);
             cursor: pointer; padding: 4px; display: flex; align-items: center;
             transition: transform 0.2s ease, color 0.2s ease;
         }
-        .top-phone-toggle:hover, .top-phone-toggle.active { color: var(--header-gold); }
+        .top-phone-toggle:hover, .top-phone-toggle.active { color: var(--header-green); }
         .top-phone-toggle.active { transform: rotate(180deg); }
 
         .top-phones-dropdown {
@@ -172,7 +172,7 @@ $company = array(
         }
         .top-phones-dropdown a:hover {
             background: rgba(212, 175, 55, 0.1);
-            color: var(--header-gold);
+            color: var(--header-green);
             padding-left: 20px;
         }
 
@@ -203,25 +203,30 @@ $company = array(
         }
         .btn-premium.btn-ghost:hover {
             background: rgba(212, 175, 55, 0.1);
-            border-color: var(--header-gold);
-            color: var(--header-gold);
+            border-color: var(--header-green);
+            color: var(--header-green);
+
         }
 
         .btn-premium.btn-gold {
-            background: linear-gradient(135deg, var(--header-gold) 0%, var(--header-gold-hover) 100%);
-            color: #0f172a; font-weight: 600;
+            background: var(--header-green);
+            color: white;
+            font-weight: 600;
+            border-bottom: 1px solid var(--header-green);
         }
         .btn-premium.btn-gold:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35);
+            color: black;
+            background-color: white;
+
         }
 
         .btn-premium.btn-outline-gold {
-            background: transparent; color: var(--header-gold);
-            border: 1px solid var(--header-gold);
+            background: transparent; color: var(--header-green);
+            border: 1px solid var(--header-green);
         }
         .btn-premium.btn-outline-gold:hover {
-            background: var(--header-gold); color: #0f172a;
+            background: var(--header-green); color: #0f172a;
         }
 
         .btn-arrow { transition: transform 0.2s ease; }
@@ -283,7 +288,7 @@ $company = array(
         .nav-list-premium > li > a::after {
             content: ''; position: absolute; bottom: 6px; left: 50%;
             transform: translateX(-50%) scaleX(0);
-            width: 0; height: 2px; background: var(--header-gold);
+            width: 0; height: 2px; background: var(--header-green);
             border-radius: 2px; transition: all 0.2s ease;
         }
 
@@ -318,7 +323,7 @@ $company = array(
         }
         .nav-list-premium .sub-menu li a:hover {
             background: rgba(212, 175, 55, 0.1);
-            color: var(--header-gold); padding-left: 24px;
+            color: var(--header-green); padding-left: 24px;
         }
 
         /* ===== HEADER ACTIONS ===== */
@@ -391,13 +396,13 @@ $company = array(
         .search-input-wrapper input::placeholder { color: var(--header-text-muted); }
         .search-input-wrapper input:focus {
             outline: none; background: #fff;
-            border-color: var(--header-gold);
+            border-color: var(--header-green);
             box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
         }
 
         .search-input-wrapper button[type="submit"] {
             position: absolute; right: 6px; top: 50%;
-            transform: translateY(-50%); background: var(--header-gold);
+            transform: translateY(-50%); background: var(--header-green);
             border: none; width: 36px; height: 36px; border-radius: 6px;
             color: #0f172a; cursor: pointer; display: flex;
             align-items: center; justify-content: center;
@@ -479,7 +484,7 @@ $company = array(
         .mobile-nav-list-premium li a:hover,
         .mobile-nav-list-premium li a.current-menu-item {
             background: rgba(212, 175, 55, 0.12);
-            color: var(--header-gold); padding-left: 20px;
+            color: var(--header-green); padding-left: 20px;
         }
 
         .mobile-nav-list-premium .sub-menu {
@@ -494,7 +499,7 @@ $company = array(
         }
 
         .mobile-section-title {
-            font-size: 12px; color: var(--header-gold);
+            font-size: 12px; color: var(--header-green);
             text-transform: uppercase; letter-spacing: 1.5px;
             margin-bottom: 12px; font-weight: 600;
         }
@@ -507,7 +512,7 @@ $company = array(
             color: inherit; text-decoration: none;
             font-weight: 500; transition: color 0.2s ease;
         }
-        .mobile-contact-item a:hover { color: var(--header-gold); }
+        .mobile-contact-item a:hover { color: var(--header-green); }
 
         .mobile-menu-cta-premium {
             display: flex; flex-direction: column; gap: 10px;
@@ -531,7 +536,7 @@ $company = array(
             color: var(--header-text); transition: all 0.2s ease;
         }
         .social-link-premium:hover {
-            background: var(--header-gold); color: #0f172a;
+            background: var(--header-green); color: #0f172a;
             transform: translateY(-2px);
         }
 
@@ -571,7 +576,7 @@ $company = array(
             justify-content: center; transition: all 0.2s ease;
         }
         .modal-close-btn:hover {
-            background: var(--header-gold); color: #0f172a;
+            background: var(--header-green); color: #0f172a;
         }
 
         .modal-header { text-align: center; margin-bottom: 24px; }
@@ -594,7 +599,7 @@ $company = array(
         .form-group-premium input::placeholder { color: var(--header-text-muted); }
         .form-group-premium input:focus {
             outline: none; background: #fff;
-            border-color: var(--header-gold);
+            border-color: var(--header-green);
             box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
         }
 
@@ -602,7 +607,7 @@ $company = array(
             font-size: 11px; color: var(--header-text-muted);
             text-align: center; margin-top: 4px;
         }
-        .form-privacy a { color: var(--header-gold); text-decoration: none; }
+        .form-privacy a { color: var(--header-green); text-decoration: none; }
         .form-privacy a:hover { text-decoration: underline; }
 
         /* ===== RESPONSIVE ===== */
@@ -838,41 +843,7 @@ $company = array(
         </div>
     </div>
 
-    <!-- Modals Premium -->
-    <div class="modal-premium" id="modal-callback">
-        <div class="modal-backdrop"></div>
-        <div class="modal-panel">
-            <button class="modal-close-btn" aria-label="Закрыть"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-            <div class="modal-header">
-                <h3 class="modal-title">Заказать звонок</h3>
-                <p class="modal-subtitle">Перезвоним в течение 15 минут</p>
-            </div>
-            <form class="modal-form-premium" id="callbackForm">
-                <div class="form-group-premium"><input type="text" name="name" placeholder="Ваше имя *" required></div>
-                <div class="form-group-premium"><input type="tel" name="phone" placeholder="+7 (___) ___-__-__ *" required></div>
-                <button type="submit" class="btn-premium btn-full btn-gold"><span>Жду звонка</span><svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
-                <p class="form-privacy">Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой конфиденциальности</a></p>
-            </form>
-        </div>
-    </div>
 
-    <div class="modal-premium" id="modal-engineer">
-        <div class="modal-backdrop"></div>
-        <div class="modal-panel">
-            <button class="modal-close-btn" aria-label="Закрыть"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-            <div class="modal-header">
-                <h3 class="modal-title">Вызвать инженера</h3>
-                <p class="modal-subtitle">Бесплатный выезд и консультация</p>
-            </div>
-            <form class="modal-form-premium" id="engineerForm">
-                <div class="form-group-premium"><input type="text" name="name" placeholder="Ваше имя *" required></div>
-                <div class="form-group-premium"><input type="tel" name="phone" placeholder="+7 (___) ___-__-__ *" required></div>
-                <div class="form-group-premium"><input type="text" name="address" placeholder="Адрес участка"></div>
-                <button type="submit" class="btn-premium btn-full btn-gold"><span>Вызвать инженера</span><svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
-                <p class="form-privacy">Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой конфиденциальности</a></p>
-            </form>
-        </div>
-    </div>
 
     <!-- Header JavaScript -->
     <script>
@@ -960,21 +931,7 @@ $company = array(
                 btn.addEventListener('click', e => closeModal(e.target.closest('.modal-premium')));
             });
 
-            // Forms
-            document.querySelectorAll('.modal-form-premium').forEach(form => {
-                form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const btn = this.querySelector('button[type="submit"]');
-                    const original = btn.innerHTML;
-                    btn.disabled = true; btn.innerHTML = '<span>Отправка...</span>';
-                    setTimeout(() => {
-                        alert('Спасибо! Мы перезвоним вам в ближайшее время.');
-                        this.reset();
-                        closeModal(this.closest('.modal-premium'));
-                        btn.disabled = false; btn.innerHTML = original;
-                    }, 500);
-                });
-            });
+
 
             // Phone mask
             document.querySelectorAll('input[type="tel"]').forEach(input => {

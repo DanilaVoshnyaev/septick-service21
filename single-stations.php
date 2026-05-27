@@ -1,6 +1,6 @@
 <?php
 /**
- * Шаблон отдельной станции ТОПАС — премиум-стиль
+ * Шаблон отдельной станции ТОПАС — премиум-стиль (единая схема с хедером)
  * Template Name: Station Single Premium
  */
 
@@ -51,25 +51,29 @@ while (have_posts()) : the_post();
     <!-- 🎨 СТИЛИ (цвета из хедера) -->
     <style>
         :root {
-            --gold: #d4af37;
-            --gold-hover: #f4d03f;
+            /* ===== ЦВЕТОВАЯ СХЕМА ИЗ ХЕДЕРА ===== */
+            --green: #21b224;                    /* ✅ Основной акцент */
+            --green-hover: #f4d03f;              /* ✅ Ховер-эффект */
             --blue: #2563eb;
             --blue-hover: #1d4ed8;
             --text: #1e293b;
             --text-muted: #64748b;
-            --bg: #f8fafc;
+            --bg: rgba(255, 255, 255, 0.95);     /* ✅ Фон с прозрачностью */
             --card-bg: #ffffff;
-            --border: rgba(0, 0, 0, 0.08);
+            --border: rgba(0, 0, 0, 0.08);       /* ✅ Границы как в хедере */
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             --radius: 12px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);  /* ✅ Анимации как в хедере */
         }
 
-        .price-wrapper{
-            display: flex;
-            gap: 12px;
+        .price-wrapper{ display: flex; gap: 12px; }
+
+        .station-single {
+            padding: 2rem 0;
+            background: var(--bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
-        .station-single { padding: 2rem 0; background: var(--bg); }
         .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
 
         /* Бейджи */
@@ -79,7 +83,7 @@ while (have_posts()) : the_post();
             padding: 0.4rem 0.9rem; border-radius: 20px;
             font-size: 0.8rem; font-weight: 600; color: #fff;
         }
-        .badge--hit { background: var(--gold); }
+        .badge--hit { background: var(--green); }  /* ✅ Было: var(--gold) */
         .badge--new { background: var(--blue); }
         .badge--stock { background: var(--text-muted); }
         .badge--stock.in-stock { background: #10b981; }
@@ -91,10 +95,12 @@ while (have_posts()) : the_post();
         }
         .station-subtitle {
             color: var(--text-muted); font-size: 1rem;
-            display: flex; align-items: center; gap: 0.5rem;            margin-bottom: 12px !important;
-
+            display: flex; align-items: center; gap: 0.5rem;
+            margin-bottom: 12px !important;
         }
-        .station-subtitle .icon { width: 18px; height: 18px; color: var(--blue);
+        .station-subtitle .icon {
+            width: 18px; height: 18px;
+            color: var(--green);  /* ✅ Было: var(--blue) */
         }
 
         /* Сетка */
@@ -102,8 +108,12 @@ while (have_posts()) : the_post();
         @media (max-width: 900px) { .station-grid { grid-template-columns: 1fr; } }
 
         /* Галерея */
-        .station-gallery { background: var(--card-bg); border-radius: var(--radius);height: fit-content; overflow: hidden; box-shadow: var(--shadow); margin-bottom: 1.5rem; }
-        .gallery-main { aspect-ratio: 4/3; background: #f1f5f9; display: flex; align-items: center; justify-content: center; }
+        .station-gallery {
+            background: var(--card-bg); border-radius: var(--radius);
+            height: fit-content; overflow: hidden; box-shadow: var(--shadow);
+            margin-bottom: 1.5rem; border: 1px solid var(--border);  /* ✅ Добавлена граница */
+        }
+        .gallery-main { aspect-ratio: 4/3; background: white; display: flex; align-items: center; justify-content: center; }
         .gallery-main img { width: 100%; height: 100%; object-fit: contain; padding: 1rem; transition: transform 0.3s ease; }
         .station-gallery:hover .gallery-main img { transform: scale(1.03); }
         .gallery-placeholder { color: var(--text-muted); }
@@ -111,10 +121,12 @@ while (have_posts()) : the_post();
         .gallery-thumbs { display: flex; gap: 0.5rem; padding: 0.75rem; overflow-x: auto; }
         .gallery-thumb {
             width: 70px; height: 52px; border-radius: 8px; overflow: hidden;
-            border: 2px solid transparent; cursor: pointer; flex-shrink: 0;
+            border: 2px solid var(--border); cursor: pointer; flex-shrink: 0;  /* ✅ Граница как в хедере */
             background: #f1f5f9; transition: var(--transition);
         }
-        .gallery-thumb.active, .gallery-thumb:hover { border-color: var(--gold); }
+        .gallery-thumb.active, .gallery-thumb:hover {
+            border-color: var(--green);  /* ✅ Было: var(--gold) */
+        }
         .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
 
         /* Сайдбар */
@@ -123,7 +135,8 @@ while (have_posts()) : the_post();
         /* Цена */
         .price-card {
             background: var(--card-bg); border-radius: var(--radius); padding: 1.5rem;
-            box-shadow: var(--shadow); border-top: 3px solid var(--gold);
+            box-shadow: var(--shadow); border-top: 3px solid var(--green);  /* ✅ Было: var(--gold) */
+            border: 1px solid var(--border);
         }
         .price-old { display: block; color: var(--text-muted); text-decoration: line-through; font-size: 1rem; margin-bottom: 0.25rem; }
         .price-discount {
@@ -139,17 +152,26 @@ while (have_posts()) : the_post();
             padding: 0.85rem 1.5rem; border-radius: 8px; font-weight: 600; font-size: 0.95rem;
             text-decoration: none; transition: var(--transition); border: none; cursor: pointer; width: 100%;
         }
+        /* ✅ Кнопка зелёная — как в хедере: при ховере белый фон + чёрный текст */
         .btn--gold {
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-hover) 100%); color: #0f172a;
+            background: var(--green); color: white; border: 1px solid var(--green);
         }
-        .btn--gold:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35); }
-        .btn--outline { background: transparent; border: 2px solid var(--blue); color: var(--blue); }
-        .btn--outline:hover { background: var(--blue); color: #fff; }
+        .btn--gold:hover {
+            background: #fff; color: #0f172a;  /* ✅ Логика хедера */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(33, 178, 36, 0.35);
+        }
+        /* ✅ Кнопка с обводкой — зелёная вместо синей */
+        .btn--outline { background: transparent; border: 2px solid var(--green); color: var(--green); }
+        .btn--outline:hover { background: var(--green); color: #fff; }
         .btn--text { background: none; border: none; color: var(--text-muted); font-weight: 500; padding: 0.5rem; }
-        .btn--text:hover { color: var(--blue); text-decoration: underline; }
+        .btn--text:hover { color: var(--green); text-decoration: underline; }  /* ✅ Было: var(--blue) */
 
         /* Характеристики */
-        .specs-card { background: var(--card-bg); border-radius: var(--radius); padding: 1.25rem; box-shadow: var(--shadow); }
+        .specs-card {
+            background: var(--card-bg); border-radius: var(--radius); padding: 1.25rem;
+            box-shadow: var(--shadow); border: 1px solid var(--border);
+        }
         .specs-card__title { font-size: 1.1rem; font-weight: 600; color: var(--text); margin: 0 0 1rem; display: flex; align-items: center; gap: 0.5rem; }
         .specs-list { list-style: none; padding: 0; margin: 0; }
         .spec-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
@@ -158,10 +180,13 @@ while (have_posts()) : the_post();
         .spec-value { color: var(--text); font-weight: 500; }
 
         /* Документация */
-        .docs-card { background: var(--card-bg); border-radius: var(--radius); padding: 1rem 1.25rem; box-shadow: var(--shadow); }
+        .docs-card {
+            background: var(--card-bg); border-radius: var(--radius); padding: 1rem 1.25rem;
+            box-shadow: var(--shadow); border: 1px solid var(--border);
+        }
         .docs-card__title { font-size: 1rem; font-weight: 600; color: var(--text); margin: 0 0 0.75rem; }
         .docs-link {
-            display: flex; align-items: center; gap: 0.5rem; color: var(--blue);
+            display: flex; align-items: center; gap: 0.5rem; color: var(--green);  /* ✅ Было: var(--blue) */
             text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: var(--transition);
         }
         .docs-link:hover { gap: 0.75rem; }
@@ -172,12 +197,15 @@ while (have_posts()) : the_post();
         .guarantee-item {
             background: var(--card-bg); border-radius: var(--radius); padding: 1rem;
             text-align: center; box-shadow: var(--shadow); font-size: 0.85rem; color: var(--text);
-            display: flex;flex-direction: column;align-items: center;
+            display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border);
         }
-        .guarantee-item .icon { width: 24px; height: 24px; color: var(--gold); margin-bottom: 0.4rem; display: block; }
+        .guarantee-item .icon { width: 24px; height: 24px; color: var(--green); margin-bottom: 0.4rem; display: block; }  /* ✅ Было: var(--gold) */
 
         /* Описание */
-        .station-section { background: var(--card-bg); border-radius: var(--radius); padding: 1.75rem; box-shadow: var(--shadow); margin-bottom: 1.5rem; }
+        .station-section {
+            background: var(--card-bg); border-radius: var(--radius); padding: 1.75rem;
+            box-shadow: var(--shadow); margin-bottom: 1.5rem; border: 1px solid var(--border);
+        }
         .section-title { font-size: 1.3rem; font-weight: 600; color: var(--text); margin: 0 0 1rem; display: flex; align-items: center; gap: 0.5rem; }
         .content-block { color: var(--text-muted); line-height: 1.7; }
         .content-block p { margin: 0 0 1rem; }
@@ -187,32 +215,38 @@ while (have_posts()) : the_post();
         .equipment-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.75rem; }
         .equipment-item {
             display: flex; justify-content: space-between; padding: 0.75rem 1rem;
-            background: var(--bg); border-radius: 8px; font-size: 0.9rem;
+            background: var(--bg); border-radius: 8px; font-size: 0.9rem; border: 1px solid var(--border);
         }
         .equipment-item__name { color: var(--text-muted); }
-        .equipment-item__qty { font-weight: 600; color: var(--blue); background: rgba(37,99,235,0.1); padding: 0.2rem 0.6rem; border-radius: 6px; }
+        .equipment-item__qty { font-weight: 600; color: var(--green); background: rgba(33,178,36,0.1); padding: 0.2rem 0.6rem; border-radius: 6px; }  /* ✅ Было: rgba(37,99,235,0.1) */
 
         /* Преимущества */
         .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
         .feature-card {
             background: var(--card-bg); border-radius: var(--radius); padding: 1.25rem;
-            text-align: center; box-shadow: var(--shadow); transition: var(--transition);
+            text-align: center; box-shadow: var(--shadow); transition: var(--transition); border: 1px solid var(--border);
         }
         .feature-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
-        .feature-card .icon { width: 32px; height: 32px; color: var(--gold); margin-bottom: 0.5rem; display: block; margin-left: auto; margin-right: auto; }
+        .feature-card .icon { width: 32px; height: 32px; color: var(--green); margin-bottom: 0.5rem; display: block; margin-left: auto; margin-right: auto; }  /* ✅ Было: var(--gold) */
         .feature-card h4 { font-size: 1rem; font-weight: 600; color: var(--text); margin: 0 0 0.4rem; }
         .feature-card p { font-size: 0.9rem; color: var(--text-muted); margin: 0; line-height: 1.5; }
 
         /* CTA */
         .station-cta {
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-hover) 100%);
+            background: var(--green);  /* ✅ Было: линейный градиент с gold */
             border-radius: var(--radius); padding: 2rem; text-align: center; margin-top: 1rem;
+            border: 1px solid var(--green);
         }
-        .station-cta h2 { color: #0f172a; font-size: 1.4rem; margin: 0 0 0.5rem; }
-        .station-cta p { color: rgba(15,23,42,0.85); margin: 0 0 1.25rem; }
-        .station-cta .btn--gold { background: #0f172a; color: #fff; max-width: 320px; }
-        .station-cta .btn--gold:hover { background: #1e293b; box-shadow: 0 6px 20px rgba(15,23,42,0.3); }
-        .cta-note { color: rgba(15,23,42,0.7); font-size: 0.85rem; margin-top: 0.75rem; }
+        .station-cta h2 { color: white; font-size: 1.4rem; margin: 0 0 0.5rem; }  /* ✅ Было: #0f172a */
+        .station-cta p { color: rgba(255,255,255,0.9); margin: 0 0 1.25rem; }  /* ✅ Было: rgba(15,23,42,0.85) */
+        .station-cta .btn--gold {
+            background: #fff; color: #0f172a; border-color: #fff; max-width: 320px;
+        }  /* ✅ Инверсия: на зелёном фоне кнопка белая */
+        .station-cta .btn--gold:hover {
+            background: var(--green); color: #fff;
+            box-shadow: 0 6px 20px rgba(255,255,255,0.3);
+        }
+        .cta-note { color: rgba(255,255,255,0.8); font-size: 0.85rem; margin-top: 0.75rem; }  /* ✅ Было: rgba(15,23,42,0.7) */
 
         /* Модальное окно */
         .modal {
@@ -224,13 +258,17 @@ while (have_posts()) : the_post();
         .modal__content {
             position: relative; background: var(--card-bg); border-radius: var(--radius);
             padding: 2rem; max-width: 460px; width: 100%; z-index: 1; box-shadow: var(--shadow);
+            border: 1px solid var(--border);
         }
         .modal__close {
-            position: absolute; top: 1rem; right: 1rem; background: none; border: none;
+            position: absolute; top: 1rem; right: 1rem; background: #f1f5f9; border: none;  /* ✅ Фон как в хедере */
             color: var(--text-muted); cursor: pointer; padding: 0.4rem; transition: var(--transition);
+            width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
         }
-        .modal__close:hover { color: var(--text); }
-        .modal__close .icon { width: 24px; height: 24px; }
+        .modal__close:hover {
+            background: var(--green); color: #0f172a;  /* ✅ Логика хедера */
+        }
+        .modal__close .icon { width: 20px; height: 20px; }
         .modal__header { text-align: center; margin-bottom: 1.5rem; }
         .modal__header h3 { font-size: 1.3rem; font-weight: 600; color: var(--text); margin: 0 0 0.4rem; }
         .modal__header p { color: var(--text-muted); font-size: 0.9rem; margin: 0; }
@@ -240,12 +278,12 @@ while (have_posts()) : the_post();
             border-radius: 8px; font-size: 0.95rem; transition: var(--transition);
         }
         .form-group input:focus, .form-group textarea:focus {
-            outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,175,55,0.15);
+            outline: none; border-color: var(--green); box-shadow: 0 0 0 3px rgba(33,178,36,0.15);  /* ✅ Было: rgba(212,175,55,0.15) */
         }
         .form-consent { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted); }
         .form-consent input { margin-top: 0.2rem; }
         .modal__note { font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 1rem; }
-        .modal__note a { color: var(--blue); text-decoration: none; }
+        .modal__note a { color: var(--green); text-decoration: none; }  /* ✅ Было: var(--blue) */
         .modal__note a:hover { text-decoration: underline; }
 
         /* Lightbox */
@@ -266,7 +304,7 @@ while (have_posts()) : the_post();
         .icon { display: inline-block; vertical-align: middle; }
     </style>
 
-    <!-- 🔷 SVG СПРАЙТ -->
+    <!-- 🔷 SVG СПРАЙТ (без изменений) -->
     <svg style="display:none">
         <symbol id="icon-people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
         <symbol id="icon-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
@@ -290,23 +328,7 @@ while (have_posts()) : the_post();
 
             <!-- Бейджи + Заголовок -->
             <header class="station-header">
-                <div class="station-badges">
-                    <?php if ($is_hit): ?>
-                        <span class="badge badge--hit">
-                            <svg class="icon" width="14" height="14"><use href="#icon-check"/></svg>
-                            Хит продаж
-                        </span>
-                    <?php endif; ?>
-                    <?php if ($is_new): ?>
-                        <span class="badge badge--new">
-                            <svg class="icon" width="14" height="14"><use href="#icon-check"/></svg>
-                            Новинка
-                        </span>
-                    <?php endif; ?>
-                    <span class="badge badge--stock <?php echo $in_stock ? 'in-stock' : ''; ?>">
-                        <?php echo $in_stock ? 'В наличии' : 'Под заказ'; ?>
-                    </span>
-                </div>
+
                 <h1 class="station-title"><?php the_title(); ?></h1>
                 <?php if ($people): ?>
                     <p class="station-subtitle">
@@ -323,7 +345,7 @@ while (have_posts()) : the_post();
                 <div class="station-gallery">
                     <div class="gallery-main">
                         <?php if ($main_image['url']): ?>
-                            <img src="https://sankt-peterburg.tstn.ru/upload/iblock/323/nzh6rfor0i7wm2sknknsr4fx6hlf1t4s/4701712_1.jpg" alt="<?php echo esc_attr($main_image['alt']); ?>" id="mainGalleryImage">
+                            <img src="<?php echo esc_url($main_image['url']); ?>" alt="<?php echo esc_attr($main_image['alt']); ?>" id="mainGalleryImage">
                         <?php else: ?>
                             <div class="gallery-placeholder">
                                 <svg class="icon"><use href="#icon-tool"/></svg>
@@ -359,7 +381,7 @@ while (have_posts()) : the_post();
                     </div>
 
                     <!-- Кнопки -->
-                    <a href="tel:<?php echo preg_replace('/[^0-9+]/', '', getCarbonFields('theme_phones')[0]['phone_numbers'][0]['phone_number'] ?? '+74998400555'); ?>" class="btn btn--gold">
+                    <a href="tel:<?php echo preg_replace('/[^0-9+]/', '', getCarbonFields('theme_phones')[0]['phone_numbers'][0]['phone_number'] ?? '+79083033282'); ?>" class="btn btn--gold">
                         <svg class="icon" width="18" height="18"><use href="#icon-phone"/></svg>
                         Позвонить
                     </a>

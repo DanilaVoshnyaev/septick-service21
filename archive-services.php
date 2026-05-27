@@ -1,6 +1,6 @@
 <?php
 /**
- * Шаблон каталога услуг — Список (стиль хедера)
+ * Шаблон каталога услуг — Список (единая схема с хедером)
  * Обновлено: описание из контента + большая картинка
  */
 get_header();
@@ -19,24 +19,31 @@ $args = array(
 $services_query = new WP_Query($args);
 ?>
 
-    <!-- 🎨 СТИЛИ -->
+    <!-- 🎨 СТИЛИ (цвета из хедера) -->
     <style>
         :root {
-            --gold: #d4af37;
-            --gold-hover: #f4d03f;
+            /* ===== ЦВЕТОВАЯ СХЕМА ИЗ ХЕДЕРА ===== */
+            --green: #21b224;                    /* ✅ Основной акцент */
+            --green-hover: #f4d03f;              /* ✅ Ховер-эффект */
             --blue: #2563eb;
             --blue-hover: #1d4ed8;
             --text: #1e293b;
             --text-muted: #64748b;
-            --bg: #f8fafc;
+            --bg: rgba(255, 255, 255, 0.95);     /* ✅ Фон с прозрачностью */
             --card-bg: #ffffff;
-            --border: rgba(0, 0, 0, 0.08);
+            --border: rgba(0, 0, 0, 0.08);       /* ✅ Границы как в хедере */
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             --radius: 12px;
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);  /* ✅ Анимации как в хедере */
         }
 
-        .services-list-page { padding: 2rem 0; background: var(--bg); min-height: 60vh; }
+        .services-list-page {
+            padding: 2rem 0;
+            background: var(--bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            min-height: 60vh;
+        }
         .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
 
         /* Заголовок */
@@ -47,7 +54,7 @@ $services_query = new WP_Query($args);
         }
         .archive-title::after {
             content: ''; display: block; width: 60px; height: 3px;
-            background: var(--gold); margin: 0.5rem auto 0; border-radius: 2px;
+            background: var(--green); margin: 0.5rem auto 0; border-radius: 2px;  /* ✅ Было: var(--gold) */
         }
 
         /* Список */
@@ -59,20 +66,21 @@ $services_query = new WP_Query($args);
             background: var(--card-bg);
             border-radius: var(--radius); padding: 1rem;
             box-shadow: var(--shadow); transition: var(--transition);
-            border: 1px solid transparent;
+            border: 1px solid var(--border);  /* ✅ Добавлена граница */
             align-items: center;
         }
         .service-list-item:hover {
             transform: translateX(4px);
-            border-color: var(--gold);
-            box-shadow: 0 6px 24px rgba(212, 175, 55, 0.15);
+            border-color: var(--green);  /* ✅ Было: var(--gold) */
+            box-shadow: 0 6px 24px rgba(33, 178, 36, 0.15);  /* ✅ Было: rgba(212, 175, 55, 0.15) */
         }
 
         /* Изображение — УВЕЛИЧЕНО */
         .service-list-image {
             width: 180px; height: 135px; border-radius: 8px;
-            overflow: hidden; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden; background: linear-gradient(135deg, var(--green) 0%, var(--blue) 100%);  /* ✅ Обновлено */
             flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--border);
         }
         .service-list-image img {
             width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;
@@ -90,16 +98,16 @@ $services_query = new WP_Query($args);
         .service-list-title a {
             color: inherit; text-decoration: none; transition: color 0.2s;
         }
-        .service-list-title a:hover { color: var(--blue); }
+        .service-list-title a:hover { color: var(--green); }  /* ✅ Было: var(--blue) */
 
         /* Описание — 4 строки через CSS */
         .service-list-excerpt {
             margin: 0; color: var(--text-muted); font-size: 0.95rem; line-height: 1.5;
             display: -webkit-box;
-            -webkit-line-clamp: 4; /* ← 4 строки */
+            -webkit-line-clamp: 4;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            max-height: 6em; /* резерв для браузеров без -webkit-line-clamp */
+            max-height: 6em;
         }
 
         /* Бейджи */
@@ -109,7 +117,7 @@ $services_query = new WP_Query($args);
             padding: 0.25rem 0.6rem; border-radius: 12px;
             font-size: 0.7rem; font-weight: 600; color: #fff; text-transform: uppercase;
         }
-        .badge--popular { background: var(--gold); }
+        .badge--popular { background: var(--green); }  /* ✅ Было: var(--gold) */
         .badge--new { background: var(--blue); }
 
         /* Цена */
@@ -122,7 +130,7 @@ $services_query = new WP_Query($args);
             text-decoration: line-through; font-weight: 400; margin-bottom: 0.1rem;
         }
 
-        /* Кнопка */
+        /* Кнопка — логика хедера */
         .service-list-action { display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem; }
         .btn-list {
             display: inline-flex; align-items: center; justify-content: center;
@@ -130,19 +138,21 @@ $services_query = new WP_Query($args);
             font-weight: 600; font-size: 0.9rem; text-decoration: none;
             transition: var(--transition); border: none; white-space: nowrap;
         }
+        /* ✅ Кнопка зелёная — как в хедере */
         .btn-list.btn-gold {
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-hover) 100%);
-            color: #0f172a;
+            background: var(--green); color: white; border: 1px solid var(--green);
         }
         .btn-list.btn-gold:hover {
+            background: #fff; color: #0f172a;  /* ✅ Логика хедера: инверсия при ховере */
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35);
+            box-shadow: 0 6px 20px rgba(33, 178, 36, 0.35);
         }
+        /* ✅ Кнопка с обводкой — зелёная вместо синей */
         .btn-list.btn-outline {
-            background: transparent; border: 2px solid var(--blue); color: var(--blue);
+            background: transparent; border: 2px solid var(--green); color: var(--green);
         }
         .btn-list.btn-outline:hover {
-            background: var(--blue); color: #fff;
+            background: var(--green); color: #fff;
         }
         .btn-arrow { transition: transform 0.2s ease; }
         .btn-list:hover .btn-arrow { transform: translateX(3px); }
@@ -160,13 +170,14 @@ $services_query = new WP_Query($args);
             text-decoration: none; font-weight: 500; transition: var(--transition);
         }
         .pagination li a:hover, .pagination .current span {
-            background: var(--gold); border-color: var(--gold); color: #0f172a;
+            background: var(--green); border-color: var(--green); color: #fff;  /* ✅ Было: color: #0f172a */
         }
 
         /* Нет результатов */
         .no-results {
             text-align: center; padding: 4rem 2rem; color: var(--text-muted);
             background: var(--card-bg); border-radius: var(--radius); margin: 2rem 0;
+            border: 1px solid var(--border);
         }
 
         /* Адаптив */
@@ -223,73 +234,78 @@ $services_query = new WP_Query($args);
 
             <!-- Список -->
             <?php if ($services_query->have_posts()) : ?>
-                <ul class="services-list">
-                    <?php while ($services_query->have_posts()) : $services_query->the_post();
+            <ul class="services-list">
+                <?php while ($services_query->have_posts()) : $services_query->the_post();
 
-                        $price = carbon_get_post_meta(get_the_ID(), 'crb_service_price');
-                        $old_price = carbon_get_post_meta(get_the_ID(), 'crb_service_old_price');
-                        $is_popular = carbon_get_post_meta(get_the_ID(), 'crb_service_is_popular');
-                        $is_new = carbon_get_post_meta(get_the_ID(), 'crb_service_is_new');
-                        $icon = carbon_get_post_meta(get_the_ID(), 'crb_service_icon');
+                $price = carbon_get_post_meta(get_the_ID(), 'crb_service_price');
+                $old_price = carbon_get_post_meta(get_the_ID(), 'crb_service_old_price');
+                $is_popular = carbon_get_post_meta(get_the_ID(), 'crb_service_is_popular');
+                $is_new = carbon_get_post_meta(get_the_ID(), 'crb_service_is_new');
+                $icon = carbon_get_post_meta(get_the_ID(), 'crb_service_icon');
 
-                        // ✅ Описание из основного контента, обрезанное до ~60 слов (~4 строки)
-                        $excerpt = wp_trim_words(get_the_content(), 60, '…');
+                // ✅ Описание из основного контента, обрезанное до ~60 слов (~4 строки)
+                $excerpt = wp_trim_words(get_the_content(), 60, '…');
 
-                        $image_url = $icon ?: (has_post_thumbnail() ? get_the_post_thumbnail_url(get_the_ID(), 'medium') : '');
-                        ?>
+                $image_url = $icon ?: (has_post_thumbnail() ? get_the_post_thumbnail_url(get_the_ID(), 'medium') : '');
+                ?>
 
-                        <li class="service-list-item">
+                <li class="service-list-item">
 
-                            <!-- Картинка -->
-                            <a href="<?php the_permalink(); ?>" class="service-list-image" tabindex="-1">
-                                <?php if ($image_url): ?>
-                                    <img src="https://avatars.mds.yandex.net/i?id=315ccb20cbb914d4007025bbbb966fc9bd5a4c7b-8972142-images-thumbs&n=13" alt="<?php the_title_attribute(); ?>" loading="lazy">
-                                <?php else: ?>
-                                    <div class="service-list-placeholder">
-                                        <svg class="icon" width="40" height="40"><use href="#icon-tool"/></svg>
-                                    </div>
+                    <!-- Картинка -->
+                    <a href="<?php the_permalink(); ?>" class="service-list-image" tabindex="-1">
+                        <?php if ($image_url): ?>
+                            <img src="<?php echo esc_url($image_url); ?>" alt="<?php the_title_attribute(); ?>" loading="lazy" decoding="async">  /* ✅ Было: хардкод-ссылка Яндекс */
+                        <?php else: ?>
+                            <div class="service-list-placeholder">
+                                <svg class="icon" width="40" height="40"><use href="#icon-tool"/></svg>
+                            </div>
+                        <?php endif; ?>
+                    </a>
+
+                    <!-- Контент -->
+                    <div class="service-list-content">
+                        <?php if ($is_popular || $is_new): ?>
+                            <div class="service-list-badges">
+                                <?php if ($is_popular): ?>
+                                    <span class="badge badge--popular">Популярное</span>
                                 <?php endif; ?>
-                            </a>
-
-                            <!-- Контент -->
-                            <div class="service-list-content">
-                                <?php if ($is_popular || $is_new): ?>
-                                    <div class="service-list-badges">
-                                        <?php if ($is_popular): ?>
-                                            <span class="badge badge--popular">Популярное</span>
-                                        <?php endif; ?>
-                                        <?php if ($is_new): ?>
-                                            <span class="badge badge--new">Новинка</span>
-                                        <?php endif; ?>
-                                    </div>
-                                <?php endif; ?>
-
-                                <h2 class="service-list-title">
-                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                                </h2>
-
-                                <!-- ✅ Описание из контента (4 строки) -->
-                                <?php if ($excerpt): ?>
-                                    <p class="service-list-excerpt"><?php echo esc_html($excerpt); ?></p>
-                                <?php endif; ?>
-
-                                <!-- Цена (опционально) -->
-                                <?php if ($price || $old_price): ?>
-                                    <div class="service-list-price">
-                                        <?php if ($old_price && $old_price > $price): ?>
-                                            <span class="price-old"><?php echo number_format($old_price, 0, '.', ' '); ?> ₽</span>
-                                        <?php endif; ?>
-                                        <?php echo $price ? number_format($price, 0, '.', ' ') . ' ₽' : ''; ?>
-                                    </div>
+                                <?php if ($is_new): ?>
+                                    <span class="badge badge--new">Новинка</span>
                                 <?php endif; ?>
                             </div>
+                        <?php endif; ?>
 
-                            <!-- Кнопка -->
+                        <h2 class="service-list-title">
+                            <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                        </h2>
+
+                        <!-- ✅ Описание из контента (4 строки) -->
+                        <?php if ($excerpt): ?>
+                            <p class="service-list-excerpt"><?php echo esc_html($excerpt); ?></p>
+                        <?php endif; ?>
+
+                        <!-- Цена (опционально) -->
+                        <?php if ($price || $old_price): ?>
+                            <div class="service-list-price">
+                                <?php if ($old_price && $old_price > $price): ?>
+                                    <span class="price-old"><?php echo number_format($old_price, 0, '.', ' '); ?> ₽</span>
+                                <?php endif; ?>
+                                <?php echo $price ? number_format($price, 0, '.', ' ') . ' ₽' : ''; ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Кнопка */
                             <div class="service-list-action">
                                 <a href="<?php the_permalink(); ?>" class="btn-list btn-gold">
                                     Подробнее
                                     <svg class="btn-arrow" width="16" height="16"><use href="#icon-arrow"/></svg>
                                 </a>
+                                <?php if (current_user_can('edit_posts')): ?>
+                                    <a href="<?php echo get_edit_post_link(); ?>" class="btn-list btn-outline">
+                                        Редактировать
+                                    </a>
+                                <?php endif; ?>
                             </div>
 
                         </li>
@@ -298,35 +314,35 @@ $services_query = new WP_Query($args);
                 </ul>
 
                 <!-- Пагинация -->
-                <?php if ($services_query->max_num_pages > 1) : ?>
-                    <nav class="pagination" aria-label="Навигация">
-                        <?php
-                        echo paginate_links(array(
-                            'base' => str_replace(999999999, '%#%', esc_url(get_pagenum_link(999999999))),
-                            'format' => '?paged=%#%',
-                            'current' => $paged,
-                            'total' => $services_query->max_num_pages,
-                            'prev_text' => '←',
-                            'next_text' => '→',
-                            'type' => 'list',
-                            'mid_size' => 2
-                        ));
-                        ?>
-                    </nav>
-                <?php endif; ?>
-
-            <?php else : ?>
-                <div class="no-results">
-                    <p>Услуги пока не добавлены.</p>
-                    <?php if (current_user_can('edit_posts')) : ?>
-                        <a href="<?php echo admin_url('post-new.php?post_type=services'); ?>" class="btn-list btn-outline">
-                            + Добавить услугу
-                        </a>
+                    <?php if ($services_query->max_num_pages > 1) : ?>
+                        <nav class="pagination" aria-label="Навигация">
+                            <?php
+                            echo paginate_links(array(
+                                'base' => str_replace(999999999, '%#%', esc_url(get_pagenum_link(999999999))),
+                                'format' => '?paged=%#%',
+                                'current' => $paged,
+                                'total' => $services_query->max_num_pages,
+                                'prev_text' => '←',
+                                'next_text' => '→',
+                                'type' => 'list',
+                                'mid_size' => 2
+                            ));
+                            ?>
+                        </nav>
                     <?php endif; ?>
-                </div>
-            <?php endif; ?>
 
-            <?php wp_reset_postdata(); ?>
+                    <?php else : ?>
+                        <div class="no-results">
+                            <p>Услуги пока не добавлены.</p>
+                            <?php if (current_user_can('edit_posts')) : ?>
+                                <a href="<?php echo admin_url('post-new.php?post_type=services'); ?>" class="btn-list btn-outline">
+                                    + Добавить услугу
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php wp_reset_postdata(); ?>
         </div>
     </main>
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * Шаблон архива станций ТОПАС — премиум
+ * Шаблон архива станций ТОПАС — премиум (единая схема с хедером)
  */
 get_header();
 ?>
@@ -8,13 +8,14 @@ get_header();
     <!-- 🎨 СТИЛИ (цвета из хедера) -->
     <style>
         :root {
-            --gold: #d4af37;
-            --gold-hover: #f4d03f;
-            --blue: #2563eb;
+            /* ===== ЦВЕТОВАЯ СХЕМА ИЗ ХЕДЕРА ===== */
+            --green: #21b224;                    /* ✅ Основной акцент */
+            --green-hover: #f4d03f;              /* ✅ Ховер-эффект (жёлтый) */
+            --blue: #2563eb;                     /* Вторичный акцент */
             --blue-hover: #1d4ed8;
-            --text: #1e293b;
-            --text-muted: #64748b;
-            --bg: #f8fafc;
+            --text: #1e293b;                     /* Основной текст */
+            --text-muted: #64748b;               /* Второстепенный текст */
+            --bg: rgba(255, 255, 255, 0.95);     /* Фон с прозрачностью */
             --card-bg: #ffffff;
             --border: rgba(0, 0, 0, 0.08);
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -22,14 +23,20 @@ get_header();
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .stations-archive { padding: 2rem 0; background: var(--bg); }
+        .stations-archive {
+            padding: 2rem 0;
+            background: var(--bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
 
         /* ===== HERO БЛОК ===== */
         .stations-hero {
             background: var(--card-bg); border-radius: var(--radius);
             padding: 2rem; margin-bottom: 2.5rem; box-shadow: var(--shadow);
-            border-top: 4px solid var(--gold);
+            border-top: 4px solid var(--green);  /* ✅ Было: var(--gold) */
+            border: 1px solid var(--border);
         }
 
         .stations-hero__title {
@@ -38,22 +45,23 @@ get_header();
         }
 
         .stations-hero__promo {
-            background: linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(37,99,235,0.08) 100%);
-            border-left: 4px solid var(--gold);
+            background: linear-gradient(135deg, rgba(33,178,36,0.12) 0%, rgba(37,99,235,0.08) 100%);
+            border-left: 4px solid var(--green);  /* ✅ Было: var(--gold) */
             padding: 1rem 1.25rem; border-radius: 0 8px 8px 0;
             margin: 1rem 0; font-weight: 500; color: var(--text);
         }
 
         .stations-hero__phone {
             display: inline-flex; align-items: center; gap: 0.5rem;
-            padding: 0.75rem 1.5rem; background: var(--gold);
-            color: #0f172a; border-radius: 8px; text-decoration: none;
+            padding: 0.75rem 1.5rem; background: var(--green);  /* ✅ Было: var(--gold) */
+            color: white; border-radius: 8px; text-decoration: none;
             font-weight: 700; font-size: 1.1rem; transition: var(--transition);
-            margin: 0.5rem 0 1.5rem;
+            margin: 0.5rem 0 1.5rem; border: 1px solid var(--green);
         }
         .stations-hero__phone:hover {
-            background: var(--gold-hover); transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35);
+            background: #fff; color: #0f172a;  /* ✅ Логика хедера: зелёный → белый с чёрным текстом */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(33, 178, 36, 0.35);
         }
         .stations-hero__phone .icon { width: 20px; height: 20px; }
 
@@ -76,18 +84,18 @@ get_header();
             background: var(--card-bg); border-radius: var(--radius);
             overflow: hidden; box-shadow: var(--shadow);
             transition: var(--transition); display: flex; flex-direction: column;
-            position: relative; border: 1px solid transparent;
+            position: relative; border: 1px solid var(--border);
         }
         .station-card:hover {
             transform: translateY(-4px);
-            border-color: var(--gold);
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
+            border-color: var(--green);  /* ✅ Было: var(--gold) */
+            box-shadow: 0 10px 30px rgba(33, 178, 36, 0.15);  /* ✅ Было: rgba(212, 175, 55, 0.15) */
         }
 
         /* Бейдж */
         .station-badge {
             position: absolute; top: 1rem; left: 1rem; z-index: 2;
-            background: var(--gold); color: #0f172a;
+            background: var(--green); color: white;  /* ✅ Было: color: #0f172a */
             padding: 0.35rem 0.85rem; border-radius: 20px;
             font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
             display: inline-flex; align-items: center; gap: 0.3rem;
@@ -95,11 +103,11 @@ get_header();
 
         /* Изображение */
         .station-card__image {
-            aspect-ratio: 4/3; overflow: hidden; background: #f1f5f9;
+            aspect-ratio: 4/3; overflow: hidden; background: white;
         }
-        .station-card__image a { display: block; height: 100%; }
+        .station-card__image a { display: block; height: 100%;padding: 20px }
         .station-card__image img {
-            width: 100%; height: 100%; object-fit: cover;
+            width: 100%; height: 100%; object-fit: contain;
             transition: transform 0.3s ease;
         }
         .station-card:hover .station-card__image img { transform: scale(1.05); }
@@ -119,13 +127,13 @@ get_header();
         .station-card__title a {
             color: inherit; text-decoration: none; transition: color 0.2s;
         }
-        .station-card__title a:hover { color: var(--blue); }
+        .station-card__title a:hover { color: var(--green); }  /* ✅ Было: var(--blue) */
 
         .station-card__people {
             margin: 0 0 1rem; color: var(--text-muted); font-size: 0.9rem;
             display: flex; align-items: center; gap: 0.4rem;
         }
-        .station-card__people .icon { width: 16px; height: 16px; color: var(--blue); }
+        .station-card__people .icon { width: 16px; height: 16px; color: var(--green); }  /* ✅ Было: var(--blue) */
 
         /* Цена */
         .station-card__price { margin-top: auto; margin-bottom: 1rem; }
@@ -148,18 +156,19 @@ get_header();
             transition: var(--transition); text-align: center;
         }
         .btn-card.btn-outline {
-            background: transparent; border: 2px solid var(--blue); color: var(--blue);
+            background: transparent; border: 2px solid var(--green); color: var(--green);  /* ✅ Было: var(--blue) */
         }
         .btn-card.btn-outline:hover {
-            background: var(--blue); color: #fff;
+            background: var(--green); color: #fff;  /* ✅ Было: background: var(--blue) */
         }
         .btn-card.btn-gold {
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-hover) 100%);
-            color: #0f172a; border: none;
+            background: var(--green);  /* ✅ Было: линейный градиент с gold */
+            color: white; border: 1px solid var(--green);
         }
         .btn-card.btn-gold:hover {
+            background: #fff; color: #0f172a;  /* ✅ Логика хедера: зелёный → белый с чёрным текстом */
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.35);
+            box-shadow: 0 6px 20px rgba(33, 178, 36, 0.35);
         }
 
         /* Пагинация */
@@ -176,13 +185,14 @@ get_header();
             text-decoration: none; font-weight: 500; transition: var(--transition);
         }
         .pagination li a:hover, .pagination .current span {
-            background: var(--gold); border-color: var(--gold); color: #0f172a;
+            background: var(--green); border-color: var(--green); color: #fff;  /* ✅ Было: color: #0f172a */
         }
 
         /* Нет результатов */
         .no-results {
             text-align: center; padding: 4rem 2rem; color: var(--text-muted);
             background: var(--card-bg); border-radius: var(--radius);
+            border: 1px solid var(--border);
         }
 
         /* Адаптив */
@@ -217,7 +227,7 @@ get_header();
                     ⚡ Ставим сейчас или храним до даты монтажа с заморозкой текущей цены!
                 </div>
 
-                <a href="tel:+74998400555" class="stations-hero__phone">
+                <a href="tel:+79083033282" class="stations-hero__phone">
                     <svg class="icon"><use href="#icon-phone"/></svg>
                     Получите персональное предложение: 8908 303 32 82
                 </a>
@@ -279,11 +289,11 @@ get_header();
                             <div class="station-card__image">
                                 <a href="<?php the_permalink(); ?>">
                                     <?php if (has_post_thumbnail()) : ?>
-                                        <img  src="	https://sankt-peterburg.tstn.ru/upload/iblock/323/nzh6rfor0i7wm2sknknsr4fx6hlf1t4s/4701712_1.jpg"  loading="lazy" decoding="async" srcset="" >
-                                        <?php /*the_post_thumbnail('medium_large', array('loading' => 'lazy')); */?>
+                                        <?php the_post_thumbnail('medium_large', array('loading' => 'lazy', 'decoding' => 'async')); ?>
                                     <?php else : ?>
-                                        <img  src="	https://sankt-peterburg.tstn.ru/upload/iblock/323/nzh6rfor0i7wm2sknknsr4fx6hlf1t4s/4701712_1.jpg"  loading="lazy" decoding="async" srcset="" >
-
+                                        <div class="station-placeholder">
+                                            <svg class="icon"><use href="#icon-tool"/></svg>
+                                        </div>
                                     <?php endif; ?>
                                 </a>
                             </div>

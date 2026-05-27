@@ -20,27 +20,32 @@ $company = array(
 </main><!-- #main -->
 
 <!-- ===== FOOTER STYLES ===== -->
+<!-- ===== FOOTER STYLES ===== -->
 <style>
-    /* Footer Variables - Светлая тема */
+    /* Footer Variables - Единая схема с хедером */
     :root {
-        --footer-bg: #f8fafc;
-        --footer-bg-dark: #f1f5f9;
+        --footer-bg: rgba(255, 255, 255, 0.95);
+        --footer-bg-scrolled: rgba(255, 255, 255, 0.98);
+        --footer-bg-dark: rgba(255, 255, 255, 0.98);
         --footer-text: #1e293b;
         --footer-text-muted: #64748b;
-        --footer-border: #e2e8f0;
-        --footer-gold: #d4af37;
-        --footer-gold-hover: #f4d03f;
+        --footer-border: rgba(0, 0, 0, 0.08);
+        --footer-green: #21b224;           /* ✅ Основной акцентный цвет */
+        --footer-green-hover: #f4d03f;     /* ✅ Ховер-эффект */
         --footer-blue: #2563eb;
-        --transition: all 0.3s ease;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     /* ===== FOOTER BASE ===== */
     .site-footer {
         background: var(--footer-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
         color: var(--footer-text);
         font-size: 14px;
         line-height: 1.6;
         margin-top: auto;
+        border-top: 1px solid var(--footer-border);
     }
 
     /* Container */
@@ -60,12 +65,8 @@ $company = array(
         grid-template-columns: 1.4fr 1fr 1.2fr;
         gap: 40px;
     }
-    @media (max-width: 1024px) {
-        .footer-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 640px) {
-        .footer-grid { grid-template-columns: 1fr; gap: 32px; }
-    }
+    @media (max-width: 1024px) { .footer-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .footer-grid { grid-template-columns: 1fr; gap: 32px; } }
 
     .footer-col { display: flex; flex-direction: column; gap: 20px; }
 
@@ -84,7 +85,7 @@ $company = array(
 
     /* Social Links */
     .footer-social .social-label {
-        display: block; font-size: 12px; color: var(--footer-gold);
+        display: block; font-size: 12px; color: var(--footer-green);
         text-transform: uppercase; letter-spacing: 1px;
         margin-bottom: 12px; font-weight: 600;
     }
@@ -96,7 +97,7 @@ $company = array(
         color: var(--footer-text); transition: var(--transition);
     }
     .social-link:hover {
-        background: var(--footer-gold); border-color: var(--footer-gold);
+        background: var(--footer-green); border-color: var(--footer-green);
         color: #0f172a; transform: translateY(-3px);
     }
 
@@ -104,7 +105,7 @@ $company = array(
     .footer-heading {
         font-size: 15px; font-weight: 600; color: var(--footer-text);
         margin: 0 0 16px 0; padding-bottom: 12px;
-        border-bottom: 2px solid var(--footer-gold);
+        border-bottom: 2px solid var(--footer-green);
         display: inline-block;
     }
 
@@ -121,11 +122,11 @@ $company = array(
     .footer-menu li a::before, .footer-list li a::before {
         content: ''; position: absolute; left: 0; top: 50%;
         transform: translateY(-50%); width: 4px; height: 4px;
-        background: var(--footer-gold); border-radius: 50%;
+        background: var(--footer-green); border-radius: 50%;
         opacity: 0; transition: opacity 0.2s ease;
     }
     .footer-menu li a:hover, .footer-list li a:hover {
-        color: var(--footer-gold); padding-left: 18px;
+        color: var(--footer-green); padding-left: 18px;
     }
     .footer-menu li a:hover::before, .footer-list li a:hover::before {
         opacity: 1;
@@ -137,33 +138,35 @@ $company = array(
         padding: 8px 0; color: var(--footer-text);
     }
     .contact-icon {
-        color: var(--footer-gold); flex-shrink: 0; margin-top: 2px;
+        color: var(--footer-green); flex-shrink: 0; margin-top: 2px;
     }
     .contact-link {
         color: var(--footer-text); font-weight: 500;
         text-decoration: none; transition: color 0.2s ease;
     }
-    .contact-link:hover { color: var(--footer-gold); }
+    .contact-link:hover { color: var(--footer-green); }
     .contact-text { color: var(--footer-text-muted); }
 
     /* Footer Button */
     .btn-footer {
         margin-top: 8px; padding: 12px 24px;
-        background: var(--footer-gold); color: #0f172a;
-        border: none; border-radius: 8px; font-weight: 600;
+        background: var(--footer-green); color: white;
+        border: 1px solid var(--footer-green);
+        border-radius: 8px; font-weight: 600;
         font-size: 14px; cursor: pointer; transition: var(--transition);
         display: inline-flex; align-items: center; gap: 8px;
     }
     .btn-footer:hover {
-        background: var(--footer-gold-hover);
+        background: #fff; color: #0f172a;
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
+        box-shadow: 0 6px 20px rgba(33, 178, 36, 0.2);
     }
 
     /* ===== FOOTER BOTTOM ===== */
     .footer-bottom {
         padding: 20px 0;
         background: var(--footer-bg-dark);
+        border-top: 1px solid var(--footer-border);
         font-size: 13px;
     }
     .footer-bottom-inner {
@@ -180,7 +183,7 @@ $company = array(
         margin: 0; color: var(--footer-text-muted);
     }
     .footer-copyright a {
-        color: var(--footer-gold); text-decoration: none;
+        color: var(--footer-green); text-decoration: none;
     }
     .footer-copyright a:hover { text-decoration: underline; }
 
@@ -191,7 +194,7 @@ $company = array(
         color: var(--footer-text-muted); text-decoration: none;
         transition: color 0.2s ease;
     }
-    .footer-legal a:hover { color: var(--footer-gold); }
+    .footer-legal a:hover { color: var(--footer-green); }
     @media (max-width: 768px) {
         .footer-legal { order: 3; justify-content: center; }
     }
@@ -201,7 +204,7 @@ $company = array(
         color: var(--footer-text-muted);
     }
     .footer-developer a {
-        color: var(--footer-gold); text-decoration: none;
+        color: var(--footer-green); text-decoration: none;
         font-weight: 500;
     }
     .footer-developer a:hover { text-decoration: underline; }
@@ -213,19 +216,21 @@ $company = array(
     .back-to-top {
         position: fixed; bottom: 24px; right: 24px;
         width: 48px; height: 48px; border-radius: 50%;
-        background: var(--footer-gold); color: #0f172a;
-        border: none; cursor: pointer; display: flex;
+        background: var(--footer-green); color: white;
+        border: 1px solid var(--footer-green);
+        cursor: pointer; display: flex;
         align-items: center; justify-content: center;
         transition: var(--transition); opacity: 0;
         visibility: hidden; transform: translateY(20px);
-        z-index: 100; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        z-index: 100; box-shadow: 0 4px 15px rgba(33, 178, 36, 0.3);
     }
     .back-to-top.visible {
         opacity: 1; visibility: visible; transform: translateY(0);
     }
     .back-to-top:hover {
+        background: #fff; color: #0f172a;
         transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
+        box-shadow: 0 10px 30px rgba(33, 178, 36, 0.4);
     }
 
     /* ===== MODAL (shared with header) ===== */
@@ -261,7 +266,7 @@ $company = array(
         transition: var(--transition); font-size: 20px;
     }
     .modal-close:hover, .modal-close-btn:hover {
-        background: var(--footer-gold); color: #0f172a;
+        background: var(--footer-green); color: #0f172a;
     }
     .modal-title {
         font-size: 22px; font-weight: 600; color: var(--footer-text);
@@ -285,8 +290,8 @@ $company = array(
     }
     .modal-form input:focus, .form-group-premium input:focus {
         outline: none; background: #fff;
-        border-color: var(--footer-gold);
-        box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+        border-color: var(--footer-green);
+        box-shadow: 0 0 0 3px rgba(33, 178, 36, 0.15);
     }
     .modal-form .btn-full, .form-privacy {
         margin-top: 4px;
@@ -296,7 +301,7 @@ $company = array(
         text-align: center;
     }
     .form-note a, .form-privacy a {
-        color: var(--footer-gold); text-decoration: none;
+        color: var(--footer-green); text-decoration: none;
     }
     .form-note a:hover, .form-privacy a:hover {
         text-decoration: underline;
@@ -446,10 +451,10 @@ $company = array(
                 </div>
 
                 <!-- Developer Credit -->
-                <div class="footer-developer">
+<!--                <div class="footer-developer">
                     <span>Разработка:</span>
                     <a href="https://izex.org/" target="_blank" rel="noopener">IZEX</a>
-                </div>
+                </div>-->
 
             </div>
         </div>
@@ -465,25 +470,84 @@ $company = array(
 </footer>
 
 <!-- Callback Modal -->
+<!-- Modals Premium -->
 <div class="modal-premium" id="modal-callback">
     <div class="modal-backdrop"></div>
     <div class="modal-panel">
-        <button class="modal-close-btn" aria-label="Закрыть">&times;</button>
-        <h3 class="modal-title">Заказать звонок</h3>
-        <p class="modal-subtitle">Оставьте номер телефона, и мы перезвоним вам в течение 15 минут</p>
-        <form class="modal-form-premium" id="footerCallbackForm">
+        <button class="modal-close-btn" aria-label="Закрыть">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+        </button>
+        <div class="modal-header">
+            <h3 class="modal-title">Заказать звонок</h3>
+            <p class="modal-subtitle">Перезвоним в течение 15 минут</p>
+        </div>
+
+        <form class="modal-form-premium" id="callbackForm" data-form-type="callback">
+            <!-- Hidden поля для AJAX-обработчика -->
+            <input type="hidden" name="action" value="premium_form_submit">
+            <input type="hidden" name="page_url" value="<?php echo esc_url($_SERVER['REQUEST_URI'] ?? ''); ?>">
+
             <div class="form-group-premium">
                 <input type="text" name="name" placeholder="Ваше имя *" required>
+                <span class="form-error"></span>
             </div>
             <div class="form-group-premium">
                 <input type="tel" name="phone" placeholder="+7 (___) ___-__-__ *" required>
+                <span class="form-error"></span>
             </div>
-            <button type="submit" class="btn-footer btn-full">
-                <span>Жду звонка</span>
+
+            <button type="submit" class="btn-premium btn-full btn-gold">
+                <span class="spinner"></span>
+                <span class="btn-text">Жду звонка</span>
+                <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
             </button>
-            <p class="form-privacy">
-                Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой конфиденциальности</a>
-            </p>
+            <p class="form-privacy">Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой конфиденциальности</a></p>
+        </form>
+    </div>
+</div>
+
+<div class="modal-premium" id="modal-engineer">
+    <div class="modal-backdrop"></div>
+    <div class="modal-panel">
+        <button class="modal-close-btn" aria-label="Закрыть">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+        </button>
+        <div class="modal-header">
+            <h3 class="modal-title">Вызвать инженера</h3>
+            <p class="modal-subtitle">Бесплатный выезд и консультация</p>
+        </div>
+
+        <form class="modal-form-premium" id="engineerForm" data-form-type="engineer">
+            <!-- Hidden поля для AJAX-обработчика -->
+            <input type="hidden" name="action" value="premium_form_submit">
+            <input type="hidden" name="page_url" value="<?php echo esc_url($_SERVER['REQUEST_URI'] ?? ''); ?>">
+
+            <div class="form-group-premium">
+                <input type="text" name="name" placeholder="Ваше имя *" required>
+                <span class="form-error"></span>
+            </div>
+            <div class="form-group-premium">
+                <input type="tel" name="phone" placeholder="+7 (___) ___-__-__ *" required>
+                <span class="form-error"></span>
+            </div>
+            <div class="form-group-premium">
+                <input type="text" name="address" placeholder="Адрес участка">
+            </div>
+
+            <button type="submit" class="btn-premium btn-full btn-gold">
+                <span class="spinner"></span>
+                <span class="btn-text">Вызвать инженера</span>
+                <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </button>
+            <p class="form-privacy">Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой конфиденциальности</a></p>
         </form>
     </div>
 </div>
@@ -550,7 +614,7 @@ $company = array(
         });
 
         // ===== Form Submission =====
-        const callbackForm = document.getElementById('footerCallbackForm');
+/*        const callbackForm = document.getElementById('footerCallbackForm');
         if (callbackForm) {
             callbackForm.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -571,7 +635,7 @@ $company = array(
                     btn.innerHTML = originalText;
                 }, 600);
             });
-        }
+        }*/
 
         // ===== Phone Mask =====
         document.querySelectorAll('input[type="tel"]').forEach(input => {
