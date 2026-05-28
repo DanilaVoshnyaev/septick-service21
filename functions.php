@@ -158,6 +158,7 @@ function izex_scripts()
     wp_enqueue_style('mobile-style', get_template_directory_uri() . '/assets/styles/mobile.css');
     wp_enqueue_style('sidebar-style', get_template_directory_uri() . '/assets/styles/sidebar.css');
     wp_enqueue_style('catalog-style', get_template_directory_uri() . '/assets/styles/catalog.css', array('global-style'), filemtime(get_template_directory() . '/assets/styles/catalog.css'));
+    wp_enqueue_style('premium-components', get_template_directory_uri() . '/assets/styles/premium-components.css', array('global-style'), filemtime(get_template_directory() . '/assets/styles/premium-components.css'));
 
     wp_deregister_script('jquery');
     wp_register_script('jquery', get_template_directory_uri() . '/assets/js/jquery-3.7.0.min.js');
@@ -166,9 +167,11 @@ function izex_scripts()
     wp_enqueue_script('ya-map', 'https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=b14c454d-b28c-418a-8f62-e7f2244905fc&amp;ver=6.2.2', array('jquery'), '', true);
     //wp_enqueue_script('global',get_template_direcory_uri(). '/assets(/js/globaljs)',array('jquery'),'',true);
     //enqueue_versioned_script('global-scripts', '/assets/js/scripts.js');
-    wp_enqueue_script('global-scripts', get_template_directory_uri() . '/assets/js/global.js', array('jquery'), '', true);
-    wp_enqueue_script('global-scripts', get_template_directory_uri() . '/assets/js/1-id.js', array('jquery'), '', true);
-    wp_enqueue_script('global-scripts', get_template_directory_uri() . '/assets/js/112-id.js', array('jquery'), '', true);
+    wp_enqueue_script('global-scripts', get_template_directory_uri() . '/assets/js/global.js', array('jquery'), filemtime(get_template_directory() . '/assets/js/global.js'), true);
+    wp_enqueue_script('premium-ui', get_template_directory_uri() . '/assets/js/premium-ui.js', array('jquery'), filemtime(get_template_directory() . '/assets/js/premium-ui.js'), true);
+    wp_enqueue_script('station-single', get_template_directory_uri() . '/assets/js/station-single.js', array(), filemtime(get_template_directory() . '/assets/js/station-single.js'), true);
+    wp_enqueue_script('station-1-data', get_template_directory_uri() . '/assets/js/1-id.js', array('jquery'), '', true);
+    wp_enqueue_script('station-112-data', get_template_directory_uri() . '/assets/js/112-id.js', array('jquery'), '', true);
     //wp_enqueue_script('izex-navigation', get_template_directory_uri() . '/js/navigation.js', array(), _S_VERSION, true);
 
 //    if (is_singular() && comments_open() && get_option('thread_comments')) {
@@ -529,71 +532,8 @@ function render_premium_contact_form($atts) {
 // ===== ПОДКЛЮЧЕНИЕ СКРИПТОВ И СТИЛЕЙ =====
 add_action('wp_enqueue_scripts', 'enqueue_premium_form_assets');
 function enqueue_premium_form_assets() {
-    // Стили для уведомлений
-    wp_add_inline_style('wp-block-library', '
-        /* ===== TOAST NOTIFICATIONS ===== */
-        .toast-container {
-            position: fixed; top: 20px; right: 20px; z-index: 9999;
-            display: flex; flex-direction: column; gap: 10px; max-width: 380px;
-        }
-        .toast {
-            background: #fff; border-left: 4px solid #21b224;
-            border-radius: 8px; padding: 14px 18px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-            display: flex; align-items: flex-start; gap: 12px;
-            animation: toastSlideIn 0.3s ease;
-        }
-        .toast.toast-error { border-left-color: #ef4444; }
-        .toast.toast-warning { border-left-color: #f59e0b; }
-        @keyframes toastSlideIn {
-            from { opacity: 0; transform: translateX(100px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        .toast-icon { flex-shrink: 0; width: 20px; height: 20px; margin-top: 2px; }
-        .toast-success .toast-icon { color: #21b224; }
-        .toast-error .toast-icon { color: #ef4444; }
-        .toast-content { flex: 1; }
-        .toast-title { font-weight: 600; color: #1e293b; margin-bottom: 4px; }
-        .toast-message { font-size: 14px; color: #64748b; line-height: 1.4; }
-        .toast-close {
-            background: none; border: none; color: #94a3b8;
-            cursor: pointer; padding: 4px; border-radius: 4px;
-        }
-        .toast-close:hover { background: #f1f5f9; color: #1e293b; }
-        
-        /* ===== FORM STATES ===== */
-        .premium-contact-form .form-group input {
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .premium-contact-form .form-group input.error {
-            border-color: #ef4444 !important;
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
-        }
-        .premium-contact-form .form-error {
-            color: #ef4444; font-size: 12px; margin-top: 4px;
-            display: none;
-        }
-        .premium-contact-form .form-error.visible { display: block; }
-        .premium-contact-form button[type="submit"]:disabled {
-            opacity: 0.7; cursor: not-allowed;
-        }
-        .premium-contact-form button[type="submit"] .spinner {
-            display: none; width: 16px; height: 16px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top-color: #fff; border-radius: 50%;
-            animation: spin 0.6s linear infinite; margin-right: 8px;
-        }
-        .premium-contact-form button[type="submit"].loading .spinner { display: inline-block; }
-        .premium-contact-form button[type="submit"].loading .btn-text { opacity: 0.7; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-    ');
-
-    // JS для форм
-    wp_enqueue_script('premium-forms', get_template_directory_uri() . '/assets/js/premium-forms.js', ['jquery'], '1.0', true);
-
-    // Локализация JS
-    wp_localize_script('premium-forms', 'premiumFormVars', [
-        'ajaxUrl' => admin_url('admin-post.php'),
+    wp_localize_script('global-scripts', 'premiumFormVars', [
+        'ajaxUrl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('premium_form_nonce'),
         'messages' => [
             'success' => 'Спасибо! Мы свяжемся с вами в течение 15 минут.',
@@ -662,7 +602,4 @@ add_action('after_setup_theme', 'replace_image_path_on_page_1971');*/
     }
 }
 add_action('template_redirect', 'custom_category_template_redirect');*/
-
-
-
 

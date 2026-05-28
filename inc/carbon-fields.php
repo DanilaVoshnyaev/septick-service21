@@ -82,7 +82,9 @@ function crb_attach_theme_options()
     Container::make('post_meta', 'Характеристики станции')
         ->where('post_type', '=', 'stations')
         ->add_tab('📊 Параметры', array(
-            Field::make('text', 'crb_price', 'Цена, ₽')
+            Field::make('text', 'crb_price_topas_s', 'Цена ТОПАС-С, ₽')
+                ->set_width(50),
+            Field::make('text', 'crb_price', 'Цена ТОПАС, ₽')
                 ->set_width(50),
             Field::make('text', 'crb_old_price', 'Старая цена, ₽')
                 ->set_width(50),
@@ -96,9 +98,12 @@ function crb_attach_theme_options()
                 ->set_width(33),
 
             Field::make('text', 'crb_power_consumption', 'Потребление, кВт/сутки')
-                ->set_width(50),
-            Field::make('text', 'crb_dimensions', 'Габариты (Д×Ш×В), см')
-                ->set_width(50),
+                ->set_width(33),
+            Field::make('text', 'crb_water_disposal', 'Способ водоотведения')
+                ->set_help_text('Например: самотёк или принудительное')
+                ->set_width(33),
+            Field::make('text', 'crb_mounting_dimensions', 'Габариты для информации по монтажу')
+                ->set_width(33),
         ))
         ->add_tab('🏷️ Статусы', array(
             Field::make('checkbox', 'crb_is_hit', 'Хит продаж'),
@@ -359,4 +364,3 @@ function printCarbonRequisites()
     }
     return $text;
 }
-
