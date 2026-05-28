@@ -73,11 +73,6 @@ while (have_posts()) : the_post();
             <!-- Бейджи + Заголовок -->
             <header class="station-header">
 
-                <div class="station-badges">
-                    <?php if ($is_hit): ?><span class="badge badge--hit">Хит</span><?php endif; ?>
-                    <?php if ($is_new): ?><span class="badge badge--new">Новинка</span><?php endif; ?>
-                    <span class="badge badge--stock <?php echo $in_stock ? 'in-stock' : ''; ?>"><?php echo $in_stock ? 'В наличии' : 'Под заказ'; ?></span>
-                </div>
                 <h1 class="station-title"><?php the_title(); ?></h1>
                 <?php if ($people): ?>
                     <p class="station-subtitle">
@@ -121,6 +116,10 @@ while (have_posts()) : the_post();
                             <div class="price-wrapper">
                                 <span class="price-old"><?php echo number_format($old_price, 0, '.', ' '); ?> ₽</span>
                                 <span class="price-discount">-<?php echo round((($old_price - $price) / $old_price) * 100); ?>%</span>
+                                <div class="station-badges">
+
+                                    <span class="badge badge--stock in-stock">В наличии</span>
+                                </div>
                             </div>
                         <?php endif; ?>
                         <div class="station-price-columns">
@@ -152,13 +151,13 @@ while (have_posts()) : the_post();
                         </h3>
                         <ul class="specs-list">
                             <?php if ($daily_volume): ?>
-                                <li class="spec-row"><span class="spec-label">Производительность</span><span class="spec-value"><?php echo esc_html($daily_volume); ?> м³/сутки</span></li>
+                                <li class="spec-row"><span class="spec-label">Производительность</span><span class="spec-value"><?php echo esc_html($daily_volume); ?></span></li>
                             <?php endif; ?>
                             <?php if ($peak_discharge): ?>
-                                <li class="spec-row"><span class="spec-label">Залповый сброс</span><span class="spec-value"><?php echo esc_html($peak_discharge); ?> л</span></li>
+                                <li class="spec-row"><span class="spec-label">Залповый сброс</span><span class="spec-value"><?php echo esc_html($peak_discharge); ?> </span></li>
                             <?php endif; ?>
                             <?php if ($power_consumption): ?>
-                                <li class="spec-row"><span class="spec-label">Потребление</span><span class="spec-value"><?php echo esc_html($power_consumption); ?> кВт/сутки</span></li>
+                                <li class="spec-row"><span class="spec-label">Потребление</span><span class="spec-value"><?php echo esc_html($power_consumption); ?></span></li>
                             <?php endif; ?>
                             <?php if ($water_disposal): ?>
                                 <li class="spec-row"><span class="spec-label">Способ водоотведения</span><span class="spec-value"><?php echo esc_html($water_disposal); ?></span></li>
@@ -182,10 +181,6 @@ while (have_posts()) : the_post();
 
                     <!-- Гарантии -->
                     <div class="guarantees">
-                        <div class="guarantee-item">
-                            <svg class="icon"><use href="#icon-shield"/></svg>
-                            Гарантия 2 года
-                        </div>
                         <div class="guarantee-item">
                             <svg class="icon"><use href="#icon-wrench"/></svg>
                             Сервисное обслуживание

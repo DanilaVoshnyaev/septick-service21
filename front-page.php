@@ -7,16 +7,15 @@
  */
 
 get_header();
-
-// Контакты компании
 $company = array(
-    'phone' => '+7 (8352) 44-65-34',
-    'phone_clean' => '78352446534',
-    'phone_alt' => '+7 (8352) 44-36-22',
-    'email' => 'prodtorgservis21@mail.ru',
-    'address' => 'г. Чебоксары, проезд Ишлейский, 13',
-    'region' => 'Чувашской Республике',
+    'phone' => '8908 303 32 82',
+    'phone_clean' => '+79083033282',
+    'phone_alt' => '89373737 700',
+    'email' => 'servis.septik.pro@yandex.ru',
+    'address' => '',
+    'work_time' => 'Пн-Вс: 9:00 - 20:00',
 );
+
 ?>
 
     <!-- ===== STYLES ===== -->
@@ -424,6 +423,7 @@ $company = array(
         .testimonials-slider-premium {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 24px;
+            margin-bottom: 40px;
         }
         .testimonial-card-premium {
             background: rgba(255,255,255,0.06); backdrop-filter: blur(10px);
@@ -489,11 +489,7 @@ $company = array(
         .cta-contacts-premium a{
             color: white;
         }
-        .contact-link {
-            display: flex; align-items: center; gap: 10px; color: #fff;
-            font-size: 15px; font-weight: 500; transition: var(--transition);
-        }
-        .contact-link:hover { color: var(--premium-gold); }
+
 
         /* ===== MODALS PREMIUM ===== */
         .modal-premium {
@@ -638,6 +634,11 @@ $company = array(
             .station-card-home__actions { grid-template-columns: 1fr; }
         }
         .icon { display: inline-block; vertical-align: middle; }
+        .contact-link{
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
     </style>
 
     <main class="main-content">
@@ -977,32 +978,107 @@ $company = array(
                     <span class="section-label">Отзывы</span>
                     <h2 class="section-title">Что говорят наши клиенты</h2>
                 </div>
-                <div class="testimonials-slider-premium">
-                    <div class="testimonial-card-premium">
-                        <div class="testimonial-rating">★★★★★</div>
-                        <p class="testimonial-text">"Установили ТОПАС 8 на даче в Чебоксарском районе. Очень довольны! Монтаж занял всего один день, все сделали аккуратно. Станция работает тихо, запаха нет совсем. Рекомендую!"</p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">АП</div>
-                            <div class="author-info"><h5>Александр Петров</h5><span>ТОПАС 8, Чебоксарский район</span></div>
-                        </div>
+
+                <?php
+                // 🔷 ПРОСТОЙ ЗАПРОС БЕЗ META_QUERY
+                $testimonials_args = array(
+                    'post_type'      => 'reviews',
+                    'posts_per_page' => 6,
+                    'post_status'    => 'publish',
+                    'orderby'        => 'date',
+                    'order'          => 'DESC',
+                );
+
+                $testimonials_query = new WP_Query($testimonials_args);
+
+                // 🔍 ОТЛАДКА (раскомментируйте для проверки)
+                // echo '<!-- Запросов найдено: ' . $testimonials_query->found_posts . ' -->';
+                // echo '<!-- SQL: ' . $testimonials_query->request . ' -->';
+
+                if ($testimonials_query->have_posts()) :
+                    ?>
+
+                    <div class="testimonials-slider-premium">
+                        <?php while ($testimonials_query->have_posts()) : $testimonials_query->the_post();
+
+                            // 🔷 ПОЛУЧЕНИЕ ПОЛЕЙ - ПРОБУЕМ НЕСКОЛЬКО ВАРИАНТОВ
+                            $author = get_post_meta(get_the_ID(), 'crb_review_author', true);
+                            $position = get_post_meta(get_the_ID(), 'crb_review_position', true);
+                            $rating = get_post_meta(get_the_ID(), 'crb_review_rating', true);
+                            $avatar = get_post_meta(get_the_ID(), 'crb_review_avatar', true);
+                            $service = get_post_meta(get_the_ID(), 'crb_review_service', true);
+                            $content = wp_trim_words(get_the_content(), 40, '...');
+
+                            // Если Carbon Fields возвращает массив
+                            if (is_array($rating) && !empty($rating[0]['rating_value'])) {
+                                $rating = intval($rating[0]['rating_value']);
+                            } else {
+                                $rating = intval($rating) ?: 5;
+                            }
+
+                            // Инициалы для аватара
+                            $initials = 'К';
+                            if ($author) {
+                                $name_parts = explode(' ', trim($author));
+                                $first_initial = mb_strtoupper(mb_substr($name_parts[0], 0, 1));
+                                $second_initial = isset($name_parts[1]) ? mb_strtoupper(mb_substr($name_parts[1], 0, 1)) : '';
+                                $initials = $first_initial . $second_initial;
+                            }
+
+                            // 🔍 ОТЛАДКА КОНКРЕТНОГО ОТЗЫВА
+                            // echo '<!-- Отзыв ID: ' . get_the_ID() . ', Автор: ' . $author . ' -->';
+                            ?>
+
+                            <div class="testimonial-card-premium">
+                                <div class="testimonial-rating">
+                                    <?php for ($i = 1; $i <= 5; $i++): ?>
+                                        <span class="star <?php echo $i > $rating ? 'empty' : ''; ?>">★</span>
+                                    <?php endfor; ?>
+                                </div>
+
+                                <p class="testimonial-text">
+                                    "<?php echo esc_html($content); ?>"
+                                </p>
+
+                                <div class="testimonial-author">
+                                    <div class="author-avatar">
+                                        <?php if ($avatar): ?>
+                                            <img src="<?php echo esc_url($avatar); ?>" alt="<?php echo esc_attr($author); ?>">
+                                        <?php else: ?>
+                                            <?php echo esc_html($initials); ?>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="author-info">
+                                        <h5><?php echo esc_html($author ?: 'Анонимный клиент'); ?></h5>
+                                        <span><?php echo esc_html($service ?: $position ?: ''); ?></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        <?php endwhile; ?>
                     </div>
-                    <div class="testimonial-card-premium">
-                        <div class="testimonial-rating">★★★★★</div>
-                        <p class="testimonial-text">"Заказывали ТОПАС 10 для постоянного проживания. Менеджер помог выбрать модель, инженер приехал на следующий день. Цена оказалась честной, без накруток. Спасибо!"</p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">ЕС</div>
-                            <div class="author-info"><h5>Елена Смирнова</h5><span>ТОПАС 10, г. Чебоксары</span></div>
-                        </div>
+
+                    <div class="testimonials-footer">
+                        <a href="<?php echo esc_url(get_post_type_archive_link('reviews')); ?>" class="btn btn--outline">
+                            Все отзывы →
+                        </a>
                     </div>
-                    <div class="testimonial-card-premium">
-                        <div class="testimonial-rating">★★★★★</div>
-                        <p class="testimonial-text">"Отличная компания! Устанавливали септик 2 года назад, до сих пор обслуживаемся у них. Всегда оперативно, качественно и по честной цене. Всем рекомендую!"</p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">МК</div>
-                            <div class="author-info"><h5>Михаил Козлов</h5><span>ТОПАС 15, г. Новочебоксарск</span></div>
-                        </div>
+
+                <?php
+                else :
+                    ?>
+
+                    <div class="testimonials-empty">
+                        <p>Отзывов пока нет. Будьте первым!</p>
+                        <?php
+                        // 🔍 ОТЛАДКА - покажем сколько всего отзывов
+                        $total_reviews = wp_count_posts('reviews');
+                        echo '<!-- Всего отзывов: ' . $total_reviews->publish . ' -->';
+                        ?>
                     </div>
-                </div>
+
+                <?php endif; wp_reset_postdata(); ?>
+
             </div>
         </section>
 
@@ -1031,10 +1107,7 @@ $company = array(
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22,6 -10,7L2,6"/></svg>
                             <span><?php echo $company['email']; ?></span>
                         </a>
-                        <a href="#" class="contact-link">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                            <span><?php echo $company['address']; ?></span>
-                        </a>
+
                     </div>
                 </div>
             </div>

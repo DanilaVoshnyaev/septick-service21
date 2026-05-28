@@ -139,6 +139,7 @@
     box-shadow: 0 8px 24px rgba(0,0,0,0.12);
 }
 
+/*
 .station-badges {
     position: absolute;
     top: 12px;
@@ -148,6 +149,7 @@
     flex-direction: column;
     gap: 6px;
 }
+*/
 
 .badge {
     padding: 4px 10px;

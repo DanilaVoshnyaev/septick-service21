@@ -156,12 +156,7 @@ $selected_sort = isset($_GET['sort']) ? sanitize_text_field(wp_unslash($_GET['so
 
                         <article class="station-card">
 
-                            <?php if ($is_hit) : ?>
-                                <span class="station-badge">
-                                <svg class="icon" width="12" height="12"><use href="#icon-check"/></svg>
-                                Хит
-                            </span>
-                            <?php endif; ?>
+
 
                             <!-- Изображение -->
                             <div class="station-card__image">
@@ -189,31 +184,20 @@ $selected_sort = isset($_GET['sort']) ? sanitize_text_field(wp_unslash($_GET['so
                                     </p>
                                 <?php endif; ?>
 
-                                <?php if ($in_stock) : ?>
-                                    <span class="station-stock-badge">В наличии</span>
-                                <?php endif; ?>
-
                                 <!-- Цена -->
                                 <div class="station-card__price">
-                                    <?php if ($old_price && $old_price > $price) : ?>
-                                        <span class="price-old"><?php echo number_format($old_price, 0, '.', ' '); ?> ₽</span>
-                                    <?php endif; ?>
-                                    <div class="station-card__price-columns">
-                                        <div class="station-card__price-column">
-                                            <span class="station-card__price-label">ТОПАС-С</span>
-                                            <span class="price-current"><?php echo $price_topas_s ? number_format($price_topas_s, 0, '.', ' ') . ' ₽' : 'По запросу'; ?></span>
-                                        </div>
-                                        <div class="station-card__price-column">
-                                            <span class="station-card__price-label">ТОПАС</span>
-                                            <span class="price-current"><?php echo $price ? number_format($price, 0, '.', ' ') . ' ₽' : 'По запросу'; ?></span>
-                                        </div>
+                                    <div class="station-card-home__price">
+                                        <?php if ($old_price && $old_price > $price) : ?>
+                                            <span class="price-old"><?php echo number_format($old_price, 0, '.', ' '); ?> ₽</span>
+                                        <?php endif; ?>
+                                        <span class="price-current">
+                                    <?php echo $price ? number_format($price, 0, '.', ' ') . ' ₽' : 'По запросу'; ?>
                                     </div>
-                                </div>
 
                                 <!-- Кнопки -->
                                 <div class="station-card__actions">
                                     <a href="<?php the_permalink(); ?>" class="btn-card btn-outline">Подробнее</a>
-                                    <a href="<?php the_permalink(); ?>#order" class="btn-card btn-gold">Заказать</a>
+                                    <button class="btn-card btn-gold  js-open-modal">Заказать</button>
                                 </div>
                             </div>
                         </article>

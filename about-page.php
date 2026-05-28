@@ -91,10 +91,12 @@ get_header();
         }
         .stat-label { font-size: 0.9rem; color: var(--text-muted); }
 
-        /* География */
+        
         .geo-list {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 0.75rem; list-style: none; padding: 0; margin: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            list-style: none; padding: 0;
+            margin: 20px 0;
         }
         .geo-list li {
             display: flex; align-items: center; gap: 0.5rem;
@@ -265,26 +267,39 @@ get_header();
                     <svg class="icon"><use href="#icon-map"/></svg>
                     Работаем по Чувашской Республике
                 </h2>
-                <div class="section-content">
-                    <p>Мы обслуживаем частные дома, коттеджные посёлки и небольшие предприятия по всей республике. Выезд инженера и монтаж возможен в любой населённый пункт.</p>
-                </div>
-                <ul class="geo-list">
-                    <li><svg class="icon"><use href="#icon-check"/></svg> Чебоксары</li>
-                    <li><svg class="icon"><use href="#icon-check"/></svg> Новочебоксарск</li>
-                    <li><svg class="icon"><use href="#icon-check"/></svg> Канаш</li>
-                    <li><svg class="icon"><use href="#icon-check"/></svg> Алатырь</li>
-                    <li><svg class="icon"><use href="#icon-check"/></svg> Шумерля</li>
-                    <li><svg class="icon"><use href="#icon-check"/></svg> Цивильск</li>
-                    <li><svg class="icon"><use href="#icon-check"/></svg> Мариинский Посад</li>
-                    <li><svg class="icon"><use href="#icon-check"/></svg> Козловка</li>
-                    <li><svg class="icon"><use href="#icon-check"/></svg> Ядрин</li>
-                    <li><svg class="icon"><use href="#icon-check"/></svg> Вурнары</li>
-                    <li><svg class="icon"><use href="#icon-check"/></svg> Ибреси</li>
-                    <li><svg class="icon"><use href="#icon-check"/></svg> Урмары</li>
-                    <li><svg class="icon"><use href="#icon-check"/></svg> Комсомольское</li>
-                    <li><svg class="icon"><use href="#icon-check"/></svg> Красные Четаи</li>
-                    <li><svg class="icon"><use href="#icon-check"/></svg> Аликово</li>
-                </ul>
+                <!-- География -->
+
+                <section class="about-section">
+                    <h2 class="section-title">
+                        <svg class="icon"><use href="#icon-map"/></svg>
+                        Где мы работаем
+                    </h2>
+
+                    <div class="section-content">
+                        <p>
+                            Мы выполняем монтаж и обслуживание автономных канализаций ТОПАС
+                            по всей Чувашии и регионам Поволжья.
+                        </p>
+                        <p>
+                            Работаем как в крупных городах, так и в небольших населённых пунктах,
+                            коттеджных посёлках и частном секторе.
+                        </p>
+                    </div>
+                    <ul class="geo-list">
+                        <li><svg class="icon"><use href="#icon-check"/></svg> Чувашия</li>
+                        <li><svg class="icon"><use href="#icon-check"/></svg> Казань</li>
+                        <li><svg class="icon"><use href="#icon-check"/></svg> Нижний Новгород</li>
+                        <li><svg class="icon"><use href="#icon-check"/></svg> Ульяновск</li>
+                        <li><svg class="icon"><use href="#icon-check"/></svg> Йошкар-Ола</li>
+                        <li><svg class="icon"><use href="#icon-check"/></svg> Самара</li>
+                        <li><svg class="icon"><use href="#icon-check"/></svg> Саратов</li>
+                        <li><svg class="icon"><use href="#icon-check"/></svg> Пенза</li>
+                        <li><svg class="icon"><use href="#icon-check"/></svg> Мордовия</li>
+                        <li><svg class="icon"><use href="#icon-check"/></svg> Кировская область</li>
+                    </ul>
+
+                </section>
+
             </section>
 
             <!-- Как мы работаем -->
@@ -364,13 +379,23 @@ get_header();
 
             <!-- CTA -->
             <section class="about-cta">
-                <h2>Готовы обсудить ваш проект?</h2>
-                <p>Оставьте заявку — инженер бесплатно проконсультирует и подберёт оптимальное решение для вашего участка в Чувашии</p>
-                <a href="tel:+79083033282" class="btn">
-                    <svg class="icon"><use href="#icon-phone"/></svg>
-                    Позвонить сейчас
-                </a>
-                <p class="about-cta__note">Или напишите в мессенджер — ответим в течение 15 минут</p>
+                <div class="about-cta__overlay"></div>
+                <div class="about-cta__content"><h2>Готовы обсудить ваш проект?</h2>
+                    <p> Оставьте заявку — инженер бесплатно проконсультирует, подберёт оптимальную станцию и рассчитает
+                        стоимость монтажа для вашего участка </p>
+                    <form class="about-cta__form" id="consultationForm">
+                        <div class="form-group"><input type="text" name="name" placeholder="Ваше имя" required></div>
+                        <div class="form-group"><input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required></div>
+                        <button type="submit" class="btn">
+                            <svg class="icon">
+                                <use href="#icon-phone"/>
+                            </svg>
+                            Получить консультацию
+                        </button>
+                        <p class="about-cta__note"> Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой
+                                конфиденциальности</a></p>
+                    </form>
+                </div>
             </section>
 
         </div>

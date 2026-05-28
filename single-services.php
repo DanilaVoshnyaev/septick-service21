@@ -42,18 +42,18 @@ while (have_posts()) : the_post();
         <div class="container">
 
             <!-- Бейджи -->
-            <div class="badges">
-                <?php if ($is_popular): ?>
+<!--            <div class="badges">
+                <?php /*if ($is_popular): */?>
                     <span class="badge badge--popular">Популярное</span>
-                <?php endif; ?>
-                <?php if ($is_new): ?>
+                <?php /*endif; */?>
+                <?php /*if ($is_new): */?>
                     <span class="badge badge--new">Новинка</span>
-                <?php endif; ?>
-                <span class="badge badge--stock <?php echo $in_stock ? 'in-stock' : ''; ?>">
-                    <?php echo $in_stock ? 'В наличии' : 'Под заказ'; ?>
+                <?php /*endif; */?>
+                <span class="badge badge--stock <?php /*echo $in_stock ? 'in-stock' : ''; */?>">
+                    <?php /*echo $in_stock ? 'В наличии' : 'Под заказ'; */?>
                 </span>
             </div>
-
+-->
             <h1 class="service-title"><?php the_title(); ?></h1>
             <?php if ($short_desc): ?><p class="service-subtitle"><?php echo esc_html($short_desc); ?></p><?php endif; ?>
 

