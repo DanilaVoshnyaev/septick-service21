@@ -6,15 +6,8 @@
  * @subpackage Topas_Template
  */
 
-// Контакты компании
-$company = array(
-    'phone' => '8908 303 32 82',
-    'phone_clean' => '+79083033282',
-    'phone_alt' => '89373737 700',
-    'email' => 'servis.septik.pro@yandex.ru',
-    'address' => '',
-    'work_time' => 'Пн-Вс: 9:00 - 20:00',
-);
+// Контакты компании (из Carbon Fields, с запасными значениями)
+$company = getCompanyContacts();
 ?>
     <!doctype html>
 <html <?php language_attributes(); ?>>

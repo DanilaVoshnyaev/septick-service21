@@ -143,6 +143,31 @@ function izex_widgets_init()
 add_action('widgets_init', 'izex_widgets_init');
 
 /**
+ * Запоминаем имя выбранного шаблона страницы, чтобы подключать
+ * постраничные стили в izex_scripts() (template_include срабатывает
+ * до get_header()/wp_head(), где запускается wp_enqueue_scripts).
+ */
+function izex_capture_template($template)
+{
+    $GLOBALS['izex_current_template'] = basename($template);
+    return $template;
+}
+
+add_filter('template_include', 'izex_capture_template', 99);
+
+/**
+ * Подключение стиля темы с автоматической версией по mtime.
+ */
+function izex_enqueue_theme_style($handle, $rel_path, $deps = array('global-style'))
+{
+    $abs = get_template_directory() . $rel_path;
+    if (!file_exists($abs)) {
+        return;
+    }
+    wp_enqueue_style($handle, get_template_directory_uri() . $rel_path, $deps, filemtime($abs));
+}
+
+/**
  * Enqueue scripts and styles.
  */
 function izex_scripts()
@@ -173,6 +198,28 @@ function izex_scripts()
     wp_enqueue_script('station-1-data', get_template_directory_uri() . '/assets/js/1-id.js', array('jquery'), '', true);
     wp_enqueue_script('station-112-data', get_template_directory_uri() . '/assets/js/112-id.js', array('jquery'), '', true);
     //wp_enqueue_script('izex-navigation', get_template_directory_uri() . '/js/navigation.js', array(), _S_VERSION, true);
+
+    // ===== Постраничные стили (вынесены из <style> в шаблонах) =====
+    $template = $GLOBALS['izex_current_template'] ?? '';
+
+    if (is_front_page()) {
+        izex_enqueue_theme_style('page-front', '/assets/styles/front-page.css');
+    }
+    if ($template === 'about-page.php') {
+        izex_enqueue_theme_style('page-about', '/assets/styles/about-page.css');
+    }
+    if (is_post_type_archive('reviews') || $template === 'archive-reviews.php') {
+        izex_enqueue_theme_style('page-reviews', '/assets/styles/archive-reviews.css');
+    }
+    if ($template === 'page-contacts.php') {
+        izex_enqueue_theme_style('page-contacts', '/assets/styles/contacts.css');
+    }
+    if ($template === 'single-s1.php' || $template === 'content-search.php') {
+        izex_enqueue_theme_style('articles-list', '/assets/styles/articles-list.css');
+    }
+    if (is_single(4108)) {
+        izex_enqueue_theme_style('legacy-product', '/assets/styles/legacy-product.css');
+    }
 
 //    if (is_singular() && comments_open() && get_option('thread_comments')) {
 //        wp_enqueue_script('comment-reply');

@@ -1,0 +1,181 @@
+        :root {
+            /* ===== ЦВЕТОВАЯ СХЕМА ИЗ ХЕДЕРА ===== */
+            --green: #21b224;                    /* ✅ Основной акцент */
+            --green-hover: #f4d03f;              /* ✅ Ховер-эффект */
+            --blue: #2563eb;
+            --blue-hover: #1d4ed8;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --bg: rgba(255, 255, 255, 0.95);     /* ✅ Фон с прозрачностью */
+            --card-bg: #ffffff;
+            --border: rgba(0, 0, 0, 0.08);       /* ✅ Границы как в хедере */
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);  /* ✅ Анимации как в хедере */
+        }
+
+        .about-page {
+            padding: 2rem 0;
+            background: var(--bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+
+        /* Hero */
+        .about-hero {
+            background: linear-gradient(135deg, var(--card-bg) 0%, rgba(248,250,252,0.5) 100%);
+            border-radius: var(--radius); padding: 3rem 2rem; text-align: center;
+            margin-bottom: 3rem; box-shadow: var(--shadow);
+            border-top: 4px solid var(--green);  /* ✅ Было: var(--gold) */
+            border: 1px solid var(--border);
+        }
+        .about-hero__title {
+            font-size: 2rem; font-weight: 700; color: var(--text); margin: 0 0 1rem;
+        }
+        .about-hero__subtitle {
+            font-size: 1.1rem; color: var(--text-muted); max-width: 700px; margin: 0 auto 1.5rem;
+        }
+        .about-hero__cta {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.85rem 1.75rem; background: var(--green); color: white;  /* ✅ Было: var(--gold), color: #0f172a */
+            border-radius: 8px; text-decoration: none; font-weight: 600;
+            transition: var(--transition); border: 1px solid var(--green);
+        }
+        .about-hero__cta:hover {
+            background: #fff; color: #0f172a;  /* ✅ Логика хедера: инверсия при ховере */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(33, 178, 36, 0.35);
+        }
+        .about-hero__cta .icon { width: 18px; height: 18px; }
+
+        /* Секции */
+        .about-section {
+            background: var(--card-bg); border-radius: var(--radius);
+            padding: 2rem; margin-bottom: 1.5rem; box-shadow: var(--shadow);
+            border: 1px solid var(--border);  /* ✅ Добавлена граница */
+        }
+        .section-title {
+            font-size: 1.4rem; font-weight: 600; color: var(--text);
+            margin: 0 0 1.25rem; display: flex; align-items: center; gap: 0.6rem;
+        }
+        .section-title .icon { width: 24px; height: 24px; color: var(--green); }  /* ✅ Было: var(--gold) */
+        .section-content { color: var(--text-muted); line-height: 1.7; font-size: 1rem; }
+        .section-content p { margin: 0 0 1rem; }
+        .section-content p:last-child { margin-bottom: 0; }
+        .section-content strong { color: var(--text); font-weight: 600; }
+
+        /* Статистика */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem; margin-top: 1.5rem;
+        }
+        .stat-item {
+            text-align: center; padding: 1.25rem; background: var(--bg);
+            border-radius: var(--radius); border: 1px solid var(--border);
+        }
+        .stat-number {
+            font-size: 2rem; font-weight: 700; color: var(--green);  /* ✅ Было: var(--gold) */
+            display: block; margin-bottom: 0.25rem;
+        }
+        .stat-label { font-size: 0.9rem; color: var(--text-muted); }
+
+        
+        .geo-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            list-style: none; padding: 0;
+            margin: 20px 0;
+        }
+        .geo-list li {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.5rem 0; color: var(--text); font-size: 0.95rem;
+        }
+        .geo-list .icon { width: 16px; height: 16px; color: var(--green); flex-shrink: 0; }  /* ✅ Было: var(--blue) */
+
+        /* Процесс */
+        .process-steps {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem; margin-top: 1rem;
+        }
+        .process-step {
+            position: relative; padding-left: 3rem;
+        }
+        .process-step__number {
+            position: absolute; left: 0; top: 0;
+            width: 32px; height: 32px; border-radius: 50%;
+            background: var(--green); color: white;  /* ✅ Было: color: #0f172a */
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 1rem; border: 1px solid var(--green);
+        }
+        .process-step__title {
+            font-weight: 600; color: var(--text); margin: 0 0 0.4rem;
+        }
+        .process-step__desc {
+            font-size: 0.9rem; color: var(--text-muted); margin: 0; line-height: 1.5;
+        }
+
+        /* Преимущества */
+        .benefits-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem; margin-top: 1rem;
+        }
+        .benefit-item {
+            display: flex; gap: 0.75rem; padding: 1rem;
+            background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border);
+        }
+        .benefit-item .icon {
+            width: 24px; height: 24px; color: var(--green); flex-shrink: 0; margin-top: 2px;  /* ✅ Было: var(--gold) */
+        }
+        .benefit-item__title {
+            font-weight: 600; color: var(--text); margin: 0 0 0.3rem; font-size: 1rem;
+        }
+        .benefit-item__desc {
+            font-size: 0.9rem; color: var(--text-muted); margin: 0; line-height: 1.5;
+        }
+
+        /* CTA блок */
+        .about-cta {
+            background: var(--green);  /* ✅ Было: линейный градиент с gold */
+            border-radius: var(--radius); padding: 2.5rem 2rem; text-align: center;
+            margin-top: 2rem; border: 1px solid var(--green);
+        }
+        .about-cta h2 {
+            color: white; font-size: 1.5rem; margin: 0 0 0.75rem;  /* ✅ Было: #0f172a */
+        }
+        .about-cta p {
+            color: rgba(255, 255, 255, 0.9); margin: 0 0 1.5rem; max-width: 600px; margin-left: auto; margin-right: auto;  /* ✅ Было: rgba(15,23,42,0.85) */
+        }
+        .about-cta .btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.85rem 1.75rem; background: #fff; color: #0f172a;  /* ✅ Инверсия: белая кнопка на зелёном фоне */
+            border-radius: 8px; text-decoration: none; font-weight: 600;
+            transition: var(--transition); border: 1px solid #fff; cursor: pointer;
+        }
+        .about-cta .btn:hover {
+            background: var(--green); color: #fff; border-color: var(--green);  /* ✅ При ховере: зелёная кнопка */
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+        }
+        .about-cta .btn .icon { width: 18px; height: 18px; }
+        .about-cta__note {
+            color: rgba(255, 255, 255, 0.8); font-size: 0.85rem; margin-top: 1rem;  /* ✅ Было: rgba(15,23,42,0.7) */
+        }
+
+        /* Адаптив */
+        @media (max-width: 768px) {
+            .about-hero { padding: 2rem 1.5rem; }
+            .about-hero__title { font-size: 1.5rem; }
+            .about-section { padding: 1.5rem; }
+            .section-title { font-size: 1.2rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .geo-list { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .process-steps { grid-template-columns: 1fr; }
+        }
+
+        /* SVG */
+        .icon { display: inline-block; vertical-align: middle; }
+    

@@ -905,6 +905,21 @@
     color: var(--header-text-muted);
 }
 
+.modal-product {
+    margin-top: 12px;
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(33, 178, 36, 0.1);
+    color: var(--header-green, #21b224);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.modal-product[hidden] {
+    display: none;
+}
+
 .modal-form-premium {
     display: flex;
     flex-direction: column;
@@ -3709,19 +3724,41 @@ body {
 }
 
 .breadcrumbs-wrapper {
-    background: rgba(255, 255, 255, 0.95);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-    padding: 0.75rem 0;
+    background: linear-gradient(180deg, rgba(248, 250, 252, 0.95), rgba(255, 255, 255, 0.95));
+    border-bottom: 1px solid rgba(33, 178, 36, 0.12);
+    padding: 0.85rem 0;
 }
 
-.breadcrumbs-wrapper .yoast-breadcrumbs,
+.breadcrumbs-wrapper .yoast-breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.15rem 0.35rem;
+    color: #cbd5e1; /* цвет разделителей «»/› (текстовые узлы) */
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
 .breadcrumbs-wrapper .yoast-breadcrumbs a {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
     color: #64748b;
-    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .breadcrumbs-wrapper .yoast-breadcrumbs a:hover {
-    color: #21b224;
+    color: var(--header-green, #21b224);
+    background: rgba(33, 178, 36, 0.1);
+}
+
+/* Текущая страница (последний элемент Yoast) */
+.breadcrumbs-wrapper .yoast-breadcrumbs .breadcrumb_last,
+.breadcrumbs-wrapper .yoast-breadcrumbs [aria-current="page"] {
+    color: #1e293b;
+    font-weight: 600;
 }
 
 @media (max-width: 900px) {

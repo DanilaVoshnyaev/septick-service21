@@ -1,0 +1,138 @@
+        :root {
+            --gold: #d4af37;
+            --gold-hover: #f4d03f;
+            --blue: #2563eb;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border: rgba(0,0,0,0.08);
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --radius: 12px;
+        }
+
+        .reviews-page { padding: 2rem 0; background: var(--bg); min-height: 60vh; }
+        .container { max-width: 900px; margin: 0 auto; padding: 0 1.5rem; }
+
+        /* Заголовок */
+        .reviews-header { text-align: center; margin-bottom: 2.5rem; }
+        .reviews-title {
+            font-size: 1.8rem; font-weight: 700; color: var(--text);
+            margin: 0 0 0.5rem; position: relative; display: inline-block;
+        }
+        .reviews-title::after {
+            content: ''; display: block; width: 60px; height: 3px;
+            background: var(--gold); margin: 0.5rem auto 0; border-radius: 2px;
+        }
+        .reviews-subtitle { color: var(--text-muted); font-size: 1rem; margin: 0; }
+
+        /* Список отзывов */
+        .reviews-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1.25rem; }
+
+        /* Карточка отзыва */
+        .review-item {
+            background: var(--card-bg); border-radius: var(--radius);
+            padding: 1.5rem; box-shadow: var(--shadow);
+            border-left: 4px solid var(--gold);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .review-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 6px 24px rgba(212, 175, 55, 0.15);
+        }
+
+        /* Шапка отзыва */
+        .review-header {
+            display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Аватар */
+        .review-avatar {
+            width: 56px; height: 56px; border-radius: 50%;
+            overflow: hidden; background: #f1f5f9; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .review-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .review-avatar .placeholder {
+            width: 32px; height: 32px; color: var(--text-muted);
+        }
+
+        /* Инфо */
+        .review-info { flex: 1; min-width: 0; }
+        .review-author {
+            font-size: 1.1rem; font-weight: 600; color: var(--text);
+            margin: 0 0 0.2rem; display: flex; align-items: center; gap: 0.4rem;
+        }
+        .review-verified {
+            color: #10b981; font-size: 0.9rem;
+        }
+        .review-position {
+            color: var(--text-muted); font-size: 0.9rem; margin: 0;
+        }
+        .review-meta {
+            display: flex; gap: 1rem; margin-top: 0.3rem; font-size: 0.85rem;
+            color: var(--text-muted); flex-wrap: wrap;
+        }
+
+        /* Звёзды */
+        .review-rating {
+            display: flex; gap: 0.15rem; margin-left: auto;
+        }
+        .star {
+            width: 18px; height: 18px; color: var(--gold);
+        }
+        .star.empty { color: #e2e8f0; }
+
+        /* Текст отзыва */
+        .review-text {
+            color: var(--text); line-height: 1.7; font-size: 0.98rem;
+            margin: 0; padding-top: 0.75rem;
+            border-top: 1px dashed var(--border);
+        }
+        .review-text p { margin: 0 0 0.75rem; }
+        .review-text p:last-child { margin-bottom: 0; }
+
+        /* Услуга */
+        .review-service {
+            display: inline-block; background: rgba(212,175,55,0.12);
+            color: var(--text); padding: 0.25rem 0.75rem;
+            border-radius: 20px; font-size: 0.85rem; font-weight: 500;
+            margin-top: 0.75rem;
+        }
+
+        /* Пагинация */
+        .pagination { margin: 2.5rem 0 1rem; }
+        .pagination ul {
+            display: flex; justify-content: center; gap: 0.25rem;
+            list-style: none; padding: 0; margin: 0; flex-wrap: wrap;
+        }
+        .pagination li span, .pagination li a {
+            display: flex; align-items: center; justify-content: center;
+            min-width: 40px; height: 40px; padding: 0 0.5rem;
+            border-radius: 8px; background: var(--card-bg);
+            border: 1px solid var(--border); color: var(--text);
+            text-decoration: none; font-weight: 500;
+            transition: all 0.2s;
+        }
+        .pagination li a:hover, .pagination .current span {
+            background: var(--gold); border-color: var(--gold); color: #0f172a;
+        }
+
+        /* Нет отзывов */
+        .no-reviews {
+            text-align: center; padding: 4rem 2rem;
+            background: var(--card-bg); border-radius: var(--radius);
+            color: var(--text-muted);
+        }
+
+        /* Адаптив */
+        @media (max-width: 600px) {
+            .review-header { flex-direction: column; }
+            .review-rating { margin-left: 0; margin-top: 0.5rem; }
+            .review-item { padding: 1.25rem; }
+            .reviews-title { font-size: 1.4rem; }
+        }
+
+        .icon { display: inline-block; vertical-align: middle; }
+    

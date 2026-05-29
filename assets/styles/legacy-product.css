@@ -1,0 +1,193 @@
+/* ===== Бэспок-стили карточки товара (single post ID 4108) =====
+   Подключается только на этой записи через is_single(4108) в functions.php */
+
+h1{
+                order: 0;
+                }
+                #bread_crumbs{
+                /*    order: 1;*/
+                }
+                .products{
+                order: 2;
+                }
+                table{
+                height: 260px !important;
+                }
+                table td p{
+                /*color: #333 !important;*/
+                }
+                table thead th{
+                height: 10px;
+                background: #eee;
+                padding: 10px !important;
+                }
+                table tbody tr{
+                height: 30px;
+                }
+                table tbody td{
+                color: #333 !important;
+                padding: 0 !important;
+                line-height: 20px;
+                }
+
+
+                table tbody tr:nth-child(even){
+                background: #eee;
+                }
+                .text_left{
+                width: 70%;
+                float: left;
+                }
+
+                .articles_block{
+                position: relative;
+                width: 27%;
+                float: right;
+                padding-top: -40px;
+                }
+                .articles_block p:first-of-type{
+                //position: absolute;
+                top: 0px;
+                left: 0;
+                font-size: 16px;
+                border-bottom: 1px solid #999;
+                }
+                .articles_block p img{
+                margin-left: 0 !important;
+                }
+
+
+
+                .product-pop-up {
+                width: 100%;
+                height: 100%;
+                position: fixed;
+                top: 0;
+                left: 0;
+                background-color: rgba(70, 67, 67, 0.88);
+                overflow: hidden;
+                z-index: 10000;
+                }
+
+                .pop-up-mess {
+                display: flex;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 60%;
+                height: auto;
+                transform: translate(-50%,-50%);
+                }
+
+
+                .quantity-block{
+                display: flex;
+                flex-direction: column;
+                }
+                .quantity-text{
+                font-weight: 300;
+                font-size: 15px;
+                line-height: 1.5;
+                color: #000000;
+                }
+                .quantity-control{
+                width: 43.41px;
+                height: 38.89px;
+                background: #FFFFFF;
+                border: 1px solid #CCCCCC;
+                box-sizing: border-box;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-weight: 300;
+                font-size: 18px;
+                line-height: 1.5;
+                color: #262626;
+                cursor: pointer;
+                }
+                #quantity-num{
+                width: 55px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                border: 1px solid #CCCCCC;
+                }
+                .count{
+                border: 1px solid #ccc;
+                width: 151px;
+                }
+                #basket_table .count_choose{
+                margin-right: 0;
+                }
+                .count_choose{
+                width: 340px;
+                justify-content: space-between;
+                display: flex;
+                font-size: 18px;
+                margin-bottom: 45px;
+                }
+                .count_choose .count{
+                width: 140px;
+                height: 40px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                background: #fff;
+                }
+                .count_gallery_choose{
+                position: absolute;
+                bottom: 10%;
+                left: 38%;
+                }
+                .count_minus, .count_plus{
+                cursor: pointer;
+                width: 40px;
+                height: 38px;
+                line-height: 40px;
+                background-color: #fff;
+                text-align: center;
+                transition: background-color 0.15s ease;
+                }
+                .count_minus:hover, .count_plus:hover{
+                background-color: #f9f9f9;
+                }
+                .count_minus{
+                float: left;
+                border-radius: 4px 0 0 4px;
+                }
+                .count_plus{
+                float: right;
+                font-size: 24px;
+                border-radius: 0 4px 4px 0;
+                }
+                .qty {
+                height: 38px;
+                width: 58px;
+                text-align: center;
+                padding: 0 10px;
+                border: none;
+                border-left: 1px solid #ccc;
+                border-right: 1px solid #ccc;
+                }
+                .order-btn{
+                width: 167px;
+                height: 41px;
+                background: #FF6600;
+                color: #fff;
+                font-weight: 600;
+                font-size: 15px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+                transition: .3s all;
+                margin: 0 auto;
+                margin-top: 10px;
+                }
+                .order-btn:hover{
+                background: #d25401;
+                }
+
+                .text_left div{
+                max-width: 100%;
+                }

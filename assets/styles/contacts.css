@@ -1,162 +1,157 @@
-/*
-.page-contacts {
-  h2 {
-    margin-bottom: 32px;
-  }
-
-  &__contacts {
-    gap: 32px 24px;
-    margin-bottom: 64px;
-  }
-
-  .contact {
-    gap: 8px;
-    flex: 1 1 25%;
-    max-width: calc(25% - 24px);
-    min-width: 240px;
-
-    &_size {
-      &_big {
-        flex: 1 1 50%;
-        max-width: calc(50% - 24px);
-      }
-    }
-
-    &__title {
-      margin-bottom: 0;
-    }
-
-    &__value {
-      font-size: 24px;
-      font-weight: 700;
-      line-height: 29px;
-    }
-
-    @media screen and (max-width: 1120px) {
-      flex: 1 1 33%;
-      max-width: calc(33% - 24px);
-    }
-    @media screen and (max-width: 992px) {
-      flex: 1 1 50%;
-      max-width: calc(50% - 24px);
-      &__value {
-        font-size: 20px;
-      }
-    }
-    @media screen and (max-width: 560px) {
-      flex: 1 1 100%;
-      max-width: 100%;
-      &__value {
-        font-size: 18px;
-      }
-    }
-  }
-
-  &__leaders {
-
-    gap: 24px;
-    margin-bottom: 64px;
-  }
-
-  .leader {
-    @include flexColumn;
-    flex: 1 1 33.33%;
-    max-width: calc(33.33% - 24px);
-    padding: 24px 32px;
-    background: $lightBlue;
-
-    &__name {
-      font-weight: 700;
-      font-size: 24px;
-      line-height: 29px;
-      margin-bottom: 8px;
-    }
-
-    &__position {
-      font-size: 14px;
-      line-height: 17px;
-      color: $gray;
-      margin-bottom: 24px;
-    }
-
-    &__phone {
-      font-weight: 700;
-      font-size: 24px;
-      line-height: 29px;
-      margin-bottom: 8px;
-      text-decoration: none;
-    }
-
-    @media screen and (max-width: 1100px) {
-      flex: 1 1 50%;
-      max-width: calc(50% - 24px);
-    }
-    @media screen and (max-width: 768px) {
-      flex: 1 1 100%;
-      max-width: 100%;
-      &__name {
-        font-size: 20px;
-      }
-      &__phone {
-        font-size: 20px;
-      }
-    }
-    @media screen and (max-width: 560px) {
-      flex: 1 1 100%;
-      max-width: 100%;
-      &__name {
-        font-size: 18px;
-      }
-      &__phone {
-        font-size: 18px;
-      }
-    }
-  }
-
-  &__requisites {
-    @include flexColumn;
-    gap: 16px;
-  }
-
-  .requisite {
-    &__name {
-      font-size: 14px;
-      line-height: 17px;
-      margin-right: 16px;
-      color: $gray;
-    }
-
-    &__value {
-      font-weight: 700;
-      font-size: 16px;
-      line-height: 20px;
-    }
-
-    @media screen and (max-width: 680px) {
-      @include flexColumn;
-      gap: 8px;
-
-    }
-  }
-
-
+/* ===== Страница «Контакты» ===== */
+.contacts-page {
+    padding: 2.5rem 0 4rem;
 }
 
-.page-id-57 {
-  .company-info {
-    &__contacts, &__requisites {
-      display: none;
-    }
-
-    &__address-block {
-      margin-bottom: 0;
-    }
-
-    &__block {
-      margin-bottom: 30%;
-    }
-  }
+.contacts-page__header {
+    text-align: center;
+    margin-bottom: 2.5rem;
 }
-*/
 
-/*# sourceMappingURL=contacts.css.map */
+.contacts-page__title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: var(--header-text, #1e293b);
+    margin: 0 0 0.5rem;
+}
+
+.contacts-page__subtitle {
+    max-width: 640px;
+    margin: 0 auto;
+    color: var(--header-text-muted, #64748b);
+    font-size: 1.05rem;
+    line-height: 1.6;
+}
+
+.contacts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.contact-card {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 18px;
+    padding: 1.75rem;
+    box-shadow: 0 6px 24px rgba(15, 23, 42, 0.05);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.contact-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.1);
+}
+
+.contact-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: rgba(33, 178, 36, 0.1);
+    color: var(--header-green, #21b224);
+    margin-bottom: 1rem;
+}
+
+.contact-card__title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--header-text, #1e293b);
+    margin: 0 0 0.85rem;
+}
+
+.contact-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.contact-card__link {
+    color: var(--header-green, #21b224);
+    font-weight: 600;
+    text-decoration: none;
+    word-break: break-word;
+    transition: color 0.2s ease;
+}
+
+.contact-card__link:hover {
+    color: #16a34a;
+    text-decoration: underline;
+}
+
+.contact-card__text {
+    margin: 0;
+    color: var(--header-text, #1e293b);
+    line-height: 1.55;
+}
+
+.contact-card__text--muted {
+    color: var(--header-text-muted, #64748b);
+    font-size: 0.95rem;
+}
+
+.contact-phone-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.contact-phone-group + .contact-phone-group {
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1px dashed rgba(0, 0, 0, 0.08);
+}
+
+.contact-phone-group__caption {
+    font-size: 0.85rem;
+    color: var(--header-text-muted, #64748b);
+}
+
+.contact-phone-group__number {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--header-text, #1e293b);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.contact-phone-group__number:hover {
+    color: var(--header-green, #21b224);
+}
+
+.contacts-page__content {
+    max-width: 820px;
+    margin: 0 auto 3rem;
+    line-height: 1.7;
+    color: var(--header-text, #1e293b);
+}
+
+.contacts-page__content ul {
+    padding-left: 1.25rem;
+}
+
+.contacts-map {
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+    line-height: 0;
+}
+
+.contacts-map iframe {
+    display: block;
+    width: 100%;
+    border: 0;
+}
+
+@media (max-width: 640px) {
+    .contacts-page {
+        padding: 1.5rem 0 3rem;
+    }
+
+    .contact-card {
+        padding: 1.35rem;
+    }
+}

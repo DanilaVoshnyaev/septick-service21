@@ -6,15 +6,8 @@
  * @subpackage Topas_Template
  */
 
-// Контакты компании
-$company = array(
-    'phone' => '8908 303 32 82',
-    'phone_clean' => '+79083033282',
-    'phone_alt' => '89373737 700',
-    'email' => 'servis.septik.pro@yandex.ru',
-    'address' => '',
-    'work_time' => 'Пн-Вс: 9:00 - 20:00',
-);
+// Контакты компании (из Carbon Fields, с запасными значениями)
+$company = getCompanyContacts();
 ?>
 
 </main><!-- #main --><!-- Premium Footer -->
@@ -214,6 +207,50 @@ $company = array(
             <button type="submit" class="btn-premium btn-full btn-gold">
                 <span class="spinner"></span>
                 <span class="btn-text">Вызвать инженера</span>
+                <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </button>
+            <p class="form-privacy">Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой конфиденциальности</a></p>
+        </form>
+    </div>
+</div>
+
+<!-- Order Modal (каталог: «Заказать») -->
+<div class="modal-premium" id="modal-order">
+    <div class="modal-backdrop"></div>
+    <div class="modal-panel">
+        <button class="modal-close-btn" aria-label="Закрыть">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+        </button>
+        <div class="modal-header">
+            <h3 class="modal-title">Оставить заявку</h3>
+            <p class="modal-subtitle">Перезвоним в течение 15 минут и ответим на вопросы</p>
+            <p class="modal-product js-order-product" hidden></p>
+        </div>
+
+        <form class="modal-form-premium" id="orderForm" data-form-type="catalog_order">
+            <input type="hidden" name="action" value="premium_form_submit">
+            <input type="hidden" name="product_name" class="js-order-product-field" value="">
+            <input type="hidden" name="page_url" value="<?php echo esc_url($_SERVER['REQUEST_URI'] ?? ''); ?>">
+
+            <div class="form-group form-group-premium">
+                <input type="text" name="name" placeholder="Ваше имя *" required>
+                <span class="form-error"></span>
+            </div>
+            <div class="form-group form-group-premium">
+                <input type="tel" name="phone" placeholder="+7 (___) ___-__-__ *" required>
+                <span class="form-error"></span>
+            </div>
+            <div class="form-group form-group-premium">
+                <textarea name="comment" rows="3" placeholder="Комментарий (необязательно)"></textarea>
+            </div>
+
+            <button type="submit" class="btn-premium btn-full btn-gold">
+                <span class="spinner"></span>
+                <span class="btn-text">Отправить заявку</span>
                 <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>

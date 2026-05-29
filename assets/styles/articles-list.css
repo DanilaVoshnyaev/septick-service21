@@ -1,0 +1,52 @@
+/* ===== Список статей рубрики «staty» (single-s1.php, content-search.php) =====
+   Подключается только на этих шаблонах через functions.php */
+article {
+    box-shadow: 0 4px 25px rgba(114, 115, 119, 0.1);
+    margin-bottom: 30px;
+    padding: 25px;
+    transition: 0.2s all;
+    border: 2px solid transparent;
+    position: relative;
+}
+
+article:hover {
+    border-color: #ff6600;
+    transition: 0.2s all;
+}
+
+.articles__title {
+    font-weight: bold;
+    text-decoration: none;
+    color: inherit;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-wrap: wrap;
+}
+
+.pagination_number {
+    padding: 5px 14px;
+    background: #e6e7e9;
+    margin-right: 11px;
+    display: flex;
+    border-radius: 4px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 11px;
+}
+
+.pagination_number:hover {
+    background-color: #ff6600;
+    color: #fff;
+}
+
+.pagination .current {
+    background-color: #ff6600;
+    border-radius: 4px;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}

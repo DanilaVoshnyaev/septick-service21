@@ -172,6 +172,27 @@
             });
         });
 
+        // Подстановка названия товара в модалку заказа (каталог)
+        document.addEventListener('click', function(e) {
+            const trigger = e.target.closest('.open-modal[data-product]');
+            if (!trigger) return;
+            const product = trigger.getAttribute('data-product') || '';
+            const orderModal = document.getElementById('modal-order');
+            if (!orderModal) return;
+            const field = orderModal.querySelector('.js-order-product-field');
+            const label = orderModal.querySelector('.js-order-product');
+            if (field) field.value = product;
+            if (label) {
+                if (product) {
+                    label.textContent = 'Товар: ' + product;
+                    label.hidden = false;
+                } else {
+                    label.textContent = '';
+                    label.hidden = true;
+                }
+            }
+        });
+
         // Close modal on ESC
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {

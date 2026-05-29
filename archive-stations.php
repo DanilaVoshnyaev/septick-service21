@@ -7,6 +7,7 @@ $selected_capacity = isset($_GET['capacity']) ? absint($_GET['capacity']) : 0;
 $selected_drainage = isset($_GET['drainage']) ? sanitize_text_field(wp_unslash($_GET['drainage'])) : '';
 $selected_stock = isset($_GET['stock']) ? sanitize_text_field(wp_unslash($_GET['stock'])) : '';
 $selected_sort = isset($_GET['sort']) ? sanitize_text_field(wp_unslash($_GET['sort'])) : '';
+$company = getCompanyContacts();
 ?><!-- 🔷 SVG СПРАЙТ -->
     <svg class="svg-sprite" aria-hidden="true">
         <symbol id="icon-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
@@ -26,9 +27,9 @@ $selected_sort = isset($_GET['sort']) ? sanitize_text_field(wp_unslash($_GET['so
                     ⚡ Ставим сейчас или храним до даты монтажа с заморозкой текущей цены!
                 </div>
 
-                <a href="tel:+79083033282" class="stations-hero__phone">
+                <a href="tel:<?php echo esc_attr($company['phone_clean']); ?>" class="stations-hero__phone">
                     <svg class="icon"><use href="#icon-phone"/></svg>
-                    Получите персональное предложение: 8908 303 32 82
+                    Получите персональное предложение: <?php echo esc_html($company['phone']); ?>
                 </a>
 
                 <div class="stations-hero__desc">
@@ -190,14 +191,13 @@ $selected_sort = isset($_GET['sort']) ? sanitize_text_field(wp_unslash($_GET['so
                                         <?php if ($old_price && $old_price > $price) : ?>
                                             <span class="price-old"><?php echo number_format($old_price, 0, '.', ' '); ?> ₽</span>
                                         <?php endif; ?>
-                                        <span class="price-current">
-                                    <?php echo $price ? number_format($price, 0, '.', ' ') . ' ₽' : 'По запросу'; ?>
+                                        <span class="price-current"><?php echo $price ? number_format($price, 0, '.', ' ') . ' ₽' : 'По запросу'; ?></span>
                                     </div>
 
                                 <!-- Кнопки -->
                                 <div class="station-card__actions">
                                     <a href="<?php the_permalink(); ?>" class="btn-card btn-outline">Подробнее</a>
-                                    <button class="btn-card btn-gold  js-open-modal">Заказать</button>
+                                    <button type="button" class="btn-card btn-gold open-modal" data-modal="order" data-product="<?php the_title_attribute(); ?>">Заказать</button>
                                 </div>
                             </div>
                         </article>

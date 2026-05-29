@@ -56,25 +56,6 @@ get_header();
         ?>
     </div>
 </main>
-<style>
-    article {
-        box-shadow: 0px 4px 25px rgba(114, 115, 119, 0.1);
-        margin-bottom: 30px;
-        padding: 25px;
-        transition: .2s all;
-        border: 2px solid transparent;
-        position: relative;
-    }
-    article:hover {
-        border-color: #ff6600;
-        transition: .2s all;
-    }
-    .articles__title {
-        font-width: bold;
-        text-decoration: none;
-        color: inherit;
-    }
-</style>
 
 <?php
 get_footer();

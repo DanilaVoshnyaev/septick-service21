@@ -277,6 +277,74 @@ function printCarbonPhones(array $phoneIndexes = [], $type = 'single')
     return $text;
 }
 
+/**
+ * Контакты компании из Carbon Fields с запасными значениями.
+ * Используется в header.php, footer.php, front-page.php, page-contacts.php
+ * вместо захардкоженного массива $company.
+ *
+ * @return array{phone:string,phone_clean:string,phone_alt:string,email:string,address:string,work_time:string,map_link:string}
+ */
+function getCompanyContacts()
+{
+    $defaults = array(
+        'phone'       => '8908 303 32 82',
+        'phone_clean' => '+79083033282',
+        'phone_alt'   => '89373737 700',
+        'email'       => 'servis.septik.pro@yandex.ru',
+        'address'     => '',
+        'work_time'   => 'Пн-Вс: 9:00 - 20:00',
+        'map_link'    => '',
+        'region'      => 'Чувашии',
+    );
+
+    // Собираем плоский список всех номеров из Carbon Fields
+    $numbers = array();
+    foreach (getCarbonPhones() as $group) {
+        if (empty($group['phone_numbers'])) {
+            continue;
+        }
+        foreach ($group['phone_numbers'] as $num) {
+            if (!empty($num['phone_number'])) {
+                $numbers[] = $num;
+            }
+        }
+    }
+
+    $company = $defaults;
+
+    if (!empty($numbers[0]['phone_number'])) {
+        $company['phone'] = $numbers[0]['phone_number'];
+        $company['phone_clean'] = !empty($numbers[0]['clear_number'])
+            ? $numbers[0]['clear_number']
+            : '+' . preg_replace('/[^0-9]/', '', $numbers[0]['phone_number']);
+    }
+    if (!empty($numbers[1]['phone_number'])) {
+        $company['phone_alt'] = $numbers[1]['phone_number'];
+    }
+
+    $email = getCarbonEmail();
+    if (!empty($email)) {
+        $company['email'] = $email;
+    }
+
+    $work_time = getCarbonFields('work_time');
+    if (!empty($work_time)) {
+        $company['work_time'] = $work_time;
+    }
+
+    $address = getCarbonAddress();
+    if (!empty($address)) {
+        $company['address'] = $address;
+    }
+
+    $map_link = getCarbonAddressLink();
+    if (!empty($map_link)) {
+        $company['map_link'] = $map_link;
+    }
+
+    return $company;
+}
+
 function getCarbonEmail()
 {
     $name = 'main_email';
