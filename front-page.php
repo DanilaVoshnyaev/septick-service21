@@ -18,9 +18,8 @@ $company = array(
 
 ?>
 
-    <!-- ===== STYLES ===== -->
+    <!-- ===== CSS ПЕРЕМЕННЫЕ (runtime, не дублировать в SCSS) ===== -->
     <style>
-        /* Premium Variables */
         :root {
             --premium-dark: #0f172a;
             --premium-darker: #020617;
@@ -770,28 +769,22 @@ $company = array(
             <div class="container">
 
                 <!-- Заголовок -->
-                <div class="section-header" style="text-align: center; margin-bottom: 48px;">
-            <span class="section-label" style="display: inline-block; font-size: 12px; font-weight: 600; color: var(--color-primary); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; padding: 6px 16px; background: var(--color-primary-soft); border-radius: 20px;">
-                Каталог
-            </span>
-                    <h2 class="section-title" style="font-size: clamp(28px, 4vw, 40px); font-weight: 600; color: var(--text-primary); margin-bottom: 12px;">
-                        Выберите идеальную станцию
-                    </h2>
-                    <p class="section-subtitle" style="font-size: 16px; color: var(--text-secondary); max-width: 600px; margin: 0 auto; line-height: 1.6;">
-                        Индивидуальный подбор под количество проживающих и особенности участка
-                    </p>
+                <div class="section-header">
+                    <span class="section-label">Каталог</span>
+                    <h2 class="section-title">Выберите идеальную станцию</h2>
+                    <p class="section-subtitle">Индивидуальный подбор под количество проживающих и особенности участка</p>
                 </div>
 
                 <!-- Табы -->
-                <div class="catalog-tabs" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 40px; flex-wrap: wrap;">
-                    <button class="tab-btn active" data-tab="all" style="padding: 10px 22px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 30px; cursor: pointer; transition: var(--transition); font-size: 14px; font-weight: 500; color: var(--text-secondary);">Все модели</button>
-                    <button class="tab-btn" data-tab="small" style="padding: 10px 22px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 30px; cursor: pointer; transition: var(--transition); font-size: 14px; font-weight: 500; color: var(--text-secondary);">До 5 человек</button>
-                    <button class="tab-btn" data-tab="medium" style="padding: 10px 22px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 30px; cursor: pointer; transition: var(--transition); font-size: 14px; font-weight: 500; color: var(--text-secondary);">5-10 человек</button>
-                    <button class="tab-btn" data-tab="large" style="padding: 10px 22px; background: var(--bg-primary); border: 2px solid var(--border-color); border-radius: 30px; cursor: pointer; transition: var(--transition); font-size: 14px; font-weight: 500; color: var(--text-secondary);">10+ человек</button>
+                <div class="catalog-tabs">
+                    <button class="tab-btn active" data-tab="all">Все модели</button>
+                    <button class="tab-btn" data-tab="small">До 5 человек</button>
+                    <button class="tab-btn" data-tab="medium">5-10 человек</button>
+                    <button class="tab-btn" data-tab="large">10+ человек</button>
                 </div>
 
                 <!-- Сетка карточек -->
-                <div class="catalog-grid-premium" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; margin-bottom: 48px;">
+                <div class="catalog-grid-premium">
                     <?php if ($stations_query->have_posts()) : ?>
                         <?php while ($stations_query->have_posts()) : $stations_query->the_post();
                             $price = carbon_get_post_meta(get_the_ID(), 'crb_price');

@@ -1,197 +1,15 @@
 // =============================================================================
 // GLOBAL STYLES — Light Premium Theme
 // =============================================================================
-// Компилить: sass global.scss:global.css --style=compressed --watch
+// Компилировать: sass global.scss:global.css --style=compressed --watch
 // =============================================================================
 
-
-// =============================================================================
-// 1. ПЕРЕМЕННЫЕ
-// =============================================================================
-
-// Цветовая палитра
-$color-primary: #2563eb !default;
-$color-primary-dark: #1d4ed8 !default;
-$color-primary-light: #3b82f6 !default;
-$color-secondary: #0ea5e9 !default;
-$color-accent: #f59e0b !default;
-$color-accent-light: #fbbf24 !default;
-
-$color-success: #10b981 !default;
-$color-warning: #f59e0b !default;
-$color-error: #ef4444 !default;
-$color-info: #3b82f6 !default;
-
-// Фоны
-$bg-primary: #ffffff !default;
-$bg-secondary: #f8fafc !default;
-$bg-tertiary: #f1f5f9 !default;
-$bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !default;
-
-// Текст
-$text-primary: #1e293b !default;
-$text-secondary: #475569 !default;
-$text-muted: #94a3b8 !default;
-$text-inverse: #ffffff !default;
-
-// Границы
-$border-color: #e2e8f0 !default;
-$border-light: #f1f5f9 !default;
-
-// Тени
-$shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.03) !default;
-$shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05) !default;
-$shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.06) !default;
-$shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.06) !default;
-$shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.06) !default;
-$shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.12) !default;
-
-// Радиусы
-$radius-sm: 0.375rem !default;   // 6px
-$radius: 0.5rem !default;         // 8px
-$radius-md: 0.75rem !default;     // 12px
-$radius-lg: 1rem !default;        // 16px
-$radius-xl: 1.5rem !default;      // 24px
-$radius-full: 9999px !default;
-
-// Отступы
-$spacer: 1rem !default;
-$spacers: (
-        0: 0,
-        1: $spacer * 0.25,  // 4px
-        2: $spacer * 0.5,   // 8px
-        3: $spacer * 0.75,  // 12px
-        4: $spacer,         // 16px
-        5: $spacer * 1.25,  // 20px
-        6: $spacer * 1.5,   // 24px
-        7: $spacer * 2,     // 32px
-        8: $spacer * 2.5,   // 40px
-        9: $spacer * 3,     // 48px
-        10: $spacer * 4     // 64px
-) !default;
-
-// Типографика
-$font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif !default;
-$font-family-heading: $font-family-base !default;
-$font-family-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace !default;
-
-$font-size-base: 1rem !default;           // 16px
-$font-size-sm: 0.875rem !default;         // 14px
-$font-size-lg: 1.125rem !default;         // 18px
-$font-size-xl: 1.25rem !default;          // 20px
-$font-size-2xl: 1.5rem !default;          // 24px
-$font-size-3xl: 1.875rem !default;        // 30px
-$font-size-4xl: 2.25rem !default;         // 36px
-$font-size-5xl: 3rem !default;            // 48px
-
-$font-weight-light: 300 !default;
-$font-weight-normal: 400 !default;
-$font-weight-medium: 500 !default;
-$font-weight-semibold: 600 !default;
-$font-weight-bold: 700 !default;
-
-$line-height-base: 1.6 !default;
-$line-height-tight: 1.25 !default;
-$line-height-relaxed: 1.75 !default;
-
-// Breakpoints
-$breakpoint-sm: 640px !default;
-$breakpoint-md: 768px !default;
-$breakpoint-lg: 1024px !default;
-$breakpoint-xl: 1280px !default;
-$breakpoint-2xl: 1536px !default;
-
-$breakpoints: (
-        sm: $breakpoint-sm,
-        md: $breakpoint-md,
-        lg: $breakpoint-lg,
-        xl: $breakpoint-xl,
-        2xl: $breakpoint-2xl
-) !default;
-
-// Анимации
-$transition-base: all 0.2s ease-in-out !default;
-$transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !default;
-$transition-slow: all 0.5s ease !default;
-
-// Z-index
-$z-dropdown: 100 !default;
-$z-sticky: 200 !default;
-$z-modal-overlay: 1000 !default;
-$z-modal: 1001 !default;
-$z-tooltip: 1100 !default;
-$z-max: 9999 !default;
+@import 'variables';
+@import 'mixin';
 
 
 // =============================================================================
-// 2. MIXINS
-// =============================================================================
-@mixin respond-to($breakpoint) {
-  @if map-has-key($breakpoints, $breakpoint) {
-    @media (min-width: map-get($breakpoints, $breakpoint)) {
-      @content;
-    }
-  } @else {
-    @warn "Breakpoint #{$breakpoint} not found";
-  }
-}
-
-@mixin flex-center {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@mixin flex-between {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-@mixin text-truncate {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-@mixin gradient-text($from, $to) {
-  background: linear-gradient(135deg, $from, $to);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-@mixin hover-lift {
-  transition: $transition-smooth;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: $shadow-lg;
-  }
-}
-
-@mixin focus-ring($color: $color-primary) {
-  &:focus-visible {
-    outline: 2px solid $color;
-    outline-offset: 2px;
-  }
-}
-
-@mixin sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-
-// =============================================================================
-// 3. RESET & BASE
+// 1. RESET & BASE
 // =============================================================================
 
 *,
@@ -231,7 +49,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-// Ссылки
 a {
   color: $color-primary;
   text-decoration: none;
@@ -247,7 +64,6 @@ a {
   }
 }
 
-// Изображения
 img,
 picture,
 video,
@@ -258,7 +74,6 @@ svg {
   height: auto;
 }
 
-// Формы
 input,
 button,
 textarea,
@@ -274,13 +89,11 @@ button {
   padding: 0;
 }
 
-// Списки
 ul,
 ol {
   list-style: none;
 }
 
-// Таблицы
 table {
   border-collapse: collapse;
   width: 100%;
@@ -298,14 +111,12 @@ th {
   background: $bg-tertiary;
 }
 
-// Горизонтальная линия
 hr {
   border: none;
   border-top: 1px solid $border-color;
   margin: $spacer * 2 0;
 }
 
-// Выделение
 ::selection {
   background: rgba($color-primary, 0.15);
   color: $text-primary;
@@ -313,7 +124,7 @@ hr {
 
 
 // =============================================================================
-// 4. TYPOGRAPHY
+// 2. TYPOGRAPHY
 // =============================================================================
 
 h1, h2, h3, h4, h5, h6,
@@ -333,21 +144,10 @@ h1, .h1 {
   }
 }
 
-h2, .h2 {
-  font-size: $font-size-3xl;
-}
-
-h3, .h3 {
-  font-size: $font-size-2xl;
-}
-
-h4, .h4 {
-  font-size: $font-size-xl;
-}
-
-h5, .h5 {
-  font-size: $font-size-lg;
-}
+h2, .h2 { font-size: $font-size-3xl; }
+h3, .h3 { font-size: $font-size-2xl; }
+h4, .h4 { font-size: $font-size-xl; }
+h5, .h5 { font-size: $font-size-lg; }
 
 h6, .h6 {
   font-size: $font-size-base;
@@ -365,28 +165,32 @@ p {
   }
 }
 
+// Утилиты текста
 .text {
-  &-primary { color: $text-primary; }
+  &-primary   { color: $text-primary; }
   &-secondary { color: $text-secondary; }
-  &-muted { color: $text-muted; }
-  &-inverse { color: $text-inverse; }
+  &-muted     { color: $text-muted; }
+  &-inverse   { color: $text-inverse; }
 
   &-center { text-align: center; }
-  &-right { text-align: right; }
+  &-right  { text-align: right; }
 
-  &-truncate { @include text-truncate; }
-
+  &-truncate  { @include text-truncate; }
   &-uppercase { text-transform: uppercase; letter-spacing: 0.05em; }
   &-capitalize { text-transform: capitalize; }
 
-  &-bold { font-weight: $font-weight-bold; }
+  &-bold     { font-weight: $font-weight-bold; }
   &-semibold { font-weight: $font-weight-semibold; }
-  &-medium { font-weight: $font-weight-medium; }
-  &-normal { font-weight: $font-weight-normal; }
+  &-medium   { font-weight: $font-weight-medium; }
+  &-normal   { font-weight: $font-weight-normal; }
 
   &-sm { font-size: $font-size-sm; }
   &-lg { font-size: $font-size-lg; }
   &-xl { font-size: $font-size-xl; }
+}
+
+.text-gradient {
+  @include gradient-text($color-primary, $color-secondary);
 }
 
 // Блок контента (для the_content())
@@ -397,17 +201,11 @@ p {
   > * {
     margin-bottom: $spacer;
 
-    &:last-child {
-      margin-bottom: 0;
-    }
+    &:last-child { margin-bottom: 0; }
   }
 
   h2, h3, h4 {
     margin-top: $spacer * 2;
-    margin-bottom: $spacer;
-  }
-
-  p {
     margin-bottom: $spacer;
   }
 
@@ -433,9 +231,7 @@ p {
     color: $color-primary;
     font-weight: $font-weight-medium;
 
-    &:hover {
-      text-decoration: underline;
-    }
+    &:hover { text-decoration: underline; }
   }
 
   img {
@@ -445,12 +241,11 @@ p {
 
   blockquote {
     border-left: 4px solid $color-primary;
-    padding-left: $spacer;
+    padding: $spacer;
     margin: $spacer 0;
     font-style: italic;
     color: $text-secondary;
     background: $bg-tertiary;
-    padding: $spacer;
     border-radius: 0 $radius-sm $radius-sm 0;
   }
 
@@ -479,7 +274,6 @@ p {
   }
 
   table {
-    @extend table;
     margin: $spacer 0;
     border-radius: $radius-sm;
     overflow: hidden;
@@ -488,10 +282,9 @@ p {
 
 
 // =============================================================================
-// 5. LAYOUT & UTILITIES
+// 3. LAYOUT & UTILITIES
 // =============================================================================
 
-// Контейнер
 .container {
   width: 100%;
   max-width: 1280px;
@@ -503,7 +296,6 @@ p {
   }
 }
 
-// Сетка
 .grid {
   display: grid;
   gap: $spacer * 2;
@@ -512,39 +304,41 @@ p {
   &-cols-3 { grid-template-columns: repeat(3, 1fr); }
   &-cols-4 { grid-template-columns: repeat(4, 1fr); }
 
-  @include respond-to(md) {
-    &-cols-2, &-cols-3, &-cols-4 {
+  @media (max-width: #{$breakpoint-md}) {
+    &-cols-2,
+    &-cols-3,
+    &-cols-4 {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  @include respond-to(sm) {
-    &-cols-2, &-cols-3, &-cols-4 {
+  @media (max-width: #{$breakpoint-sm}) {
+    &-cols-2,
+    &-cols-3,
+    &-cols-4 {
       grid-template-columns: 1fr;
     }
   }
 }
 
-// Flex utilities
 .flex {
   display: flex;
 
-  &-col { flex-direction: column; }
-  &-wrap { flex-wrap: wrap; }
-  &-nowrap { flex-wrap: nowrap; }
-
-  &-center { @include flex-center; }
+  &-col     { flex-direction: column; }
+  &-wrap    { flex-wrap: wrap; }
+  &-nowrap  { flex-wrap: nowrap; }
+  &-center  { @include flex-center; }
   &-between { @include flex-between; }
 
-  &-items-start { align-items: flex-start; }
+  &-items-start  { align-items: flex-start; }
   &-items-center { align-items: center; }
-  &-items-end { align-items: flex-end; }
+  &-items-end    { align-items: flex-end; }
 
-  &-justify-start { justify-content: flex-start; }
-  &-justify-center { justify-content: center; }
-  &-justify-end { justify-content: flex-end; }
+  &-justify-start   { justify-content: flex-start; }
+  &-justify-center  { justify-content: center; }
+  &-justify-end     { justify-content: flex-end; }
   &-justify-between { justify-content: space-between; }
-  &-justify-around { justify-content: space-around; }
+  &-justify-around  { justify-content: space-around; }
 
   &-gap-1 { gap: $spacer * 0.25; }
   &-gap-2 { gap: $spacer * 0.5; }
@@ -554,9 +348,9 @@ p {
   &-gap-8 { gap: $spacer * 2; }
 }
 
-// Отступы
+// Отступы (margin/padding)
 @each $name, $value in $spacers {
-  .m-#{$name} { margin: $value; }
+  .m-#{$name}  { margin: $value; }
   .mt-#{$name} { margin-top: $value; }
   .mb-#{$name} { margin-bottom: $value; }
   .ml-#{$name} { margin-left: $value; }
@@ -564,7 +358,7 @@ p {
   .mx-#{$name} { margin-left: $value; margin-right: $value; }
   .my-#{$name} { margin-top: $value; margin-bottom: $value; }
 
-  .p-#{$name} { padding: $value; }
+  .p-#{$name}  { padding: $value; }
   .pt-#{$name} { padding-top: $value; }
   .pb-#{$name} { padding-bottom: $value; }
   .pl-#{$name} { padding-left: $value; }
@@ -573,144 +367,116 @@ p {
   .py-#{$name} { padding-top: $value; padding-bottom: $value; }
 }
 
-// Ширина
-.w-full { width: 100%; }
-.w-auto { width: auto; }
-.max-w-sm { max-width: 24rem; }
-.max-w-md { max-width: 28rem; }
-.max-w-lg { max-width: 32rem; }
-.max-w-xl { max-width: 36rem; }
+// Размеры
+.w-full  { width: 100%; }
+.w-auto  { width: auto; }
+.h-full  { height: 100%; }
+.min-h-screen { min-height: 100vh; }
+
+.max-w-sm  { max-width: 24rem; }
+.max-w-md  { max-width: 28rem; }
+.max-w-lg  { max-width: 32rem; }
+.max-w-xl  { max-width: 36rem; }
 .max-w-2xl { max-width: 42rem; }
 .max-w-3xl { max-width: 48rem; }
 .max-w-4xl { max-width: 56rem; }
 .max-w-5xl { max-width: 64rem; }
 .max-w-full { max-width: 100%; }
 
-// Высота
-.h-full { height: 100%; }
-.min-h-screen { min-height: 100vh; }
-
 // Позиционирование
 .relative { position: relative; }
 .absolute { position: absolute; }
-.fixed { position: fixed; }
-.sticky { position: sticky; }
+.fixed    { position: fixed; }
+.sticky   { position: sticky; }
 
 .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
-.top-0 { top: 0; }
+.top-0   { top: 0; }
 .right-0 { right: 0; }
 .bottom-0 { bottom: 0; }
-.left-0 { left: 0; }
+.left-0  { left: 0; }
 
 // Z-index
-.z-0 { z-index: 0; }
+.z-0  { z-index: 0; }
 .z-10 { z-index: 10; }
 .z-20 { z-index: 20; }
 .z-30 { z-index: 30; }
 .z-40 { z-index: 40; }
 .z-50 { z-index: 50; }
 
-// Оверфлоу
-.overflow-hidden { overflow: hidden; }
-.overflow-auto { overflow: auto; }
-.overflow-x-auto { overflow-x: auto; }
-.overflow-y-auto { overflow-y: auto; }
+// Overflow
+.overflow-hidden  { overflow: hidden; }
+.overflow-auto    { overflow: auto; }
+.overflow-x-auto  { overflow-x: auto; }
+.overflow-y-auto  { overflow-y: auto; }
 
 // Видимость
-.visible { visibility: visible; }
-.invisible { visibility: hidden; }
-.hidden { display: none !important; }
-
-// Прозрачность
-.opacity-0 { opacity: 0; }
+.visible    { visibility: visible; }
+.invisible  { visibility: hidden; }
+.hidden     { display: none !important; }
+.opacity-0  { opacity: 0; }
 .opacity-50 { opacity: 0.5; }
 .opacity-100 { opacity: 1; }
 
 // Границы
-.border { border: 1px solid $border-color; }
+.border   { border: 1px solid $border-color; }
 .border-0 { border: 0; }
 .border-t { border-top: 1px solid $border-color; }
 .border-b { border-bottom: 1px solid $border-color; }
 .border-l { border-left: 1px solid $border-color; }
 .border-r { border-right: 1px solid $border-color; }
 
-.rounded { border-radius: $radius; }
-.rounded-sm { border-radius: $radius-sm; }
-.rounded-md { border-radius: $radius-md; }
-.rounded-lg { border-radius: $radius-lg; }
-.rounded-xl { border-radius: $radius-xl; }
+.rounded      { border-radius: $radius; }
+.rounded-sm   { border-radius: $radius-sm; }
+.rounded-md   { border-radius: $radius-md; }
+.rounded-lg   { border-radius: $radius-lg; }
+.rounded-xl   { border-radius: $radius-xl; }
 .rounded-full { border-radius: $radius-full; }
 
 // Тени
-.shadow { box-shadow: $shadow; }
-.shadow-sm { box-shadow: $shadow-sm; }
-.shadow-md { box-shadow: $shadow-md; }
-.shadow-lg { box-shadow: $shadow-lg; }
-.shadow-xl { box-shadow: $shadow-xl; }
+.shadow      { box-shadow: $shadow; }
+.shadow-sm   { box-shadow: $shadow-sm; }
+.shadow-md   { box-shadow: $shadow-md; }
+.shadow-lg   { box-shadow: $shadow-lg; }
+.shadow-xl   { box-shadow: $shadow-xl; }
 .shadow-none { box-shadow: none; }
 
-// Фон
-.bg-primary { background-color: $bg-primary; }
+// Фоны
+.bg-primary   { background-color: $bg-primary; }
 .bg-secondary { background-color: $bg-secondary; }
-.bg-tertiary { background-color: $bg-tertiary; }
-.bg-gradient { background: $bg-gradient; }
-
-// Градиенты текста
-.text-gradient {
-  @include gradient-text($color-primary, $color-secondary);
-}
+.bg-tertiary  { background-color: $bg-tertiary; }
+.bg-gradient  { background: $bg-gradient; }
 
 // Анимации
-.animate {
-  &-fade-in {
-    animation: fadeIn 0.3s ease forwards;
-  }
-
-  &-slide-up {
-    animation: slideUp 0.4s ease forwards;
-  }
-
-  &-pulse {
-    animation: pulse 2s infinite;
-  }
-}
+.animate-fade-in  { animation: fadeIn 0.3s ease forwards; }
+.animate-slide-up { animation: slideUp 0.4s ease forwards; }
+.animate-pulse    { animation: pulse 2s infinite; }
 
 @keyframes fadeIn {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  50%       { opacity: 0.7; }
 }
 
 // Доступность
-.sr-only { @include sr-only; }
+.sr-only    { @include sr-only; }
+.focus-ring { @include focus-ring; }
 
-.focus-ring {
-  @include focus-ring;
-}
-
-// Пропускаем для скринридеров
 [tabindex="-1"]:focus:not(:focus-visible) {
   outline: none !important;
 }
 
 
 // =============================================================================
-// 6. КОМПОНЕНТЫ: КНОПКИ
+// 4. КНОПКИ
 // =============================================================================
 
 .btn {
@@ -740,28 +506,11 @@ p {
     transform: none !important;
   }
 
-  // Размеры
-  &-sm {
-    padding: 0.5rem 1rem;
-    font-size: $font-size-sm;
-  }
+  &-sm  { padding: 0.5rem 1rem; font-size: $font-size-sm; }
+  &-lg  { padding: 1rem 2rem; font-size: $font-size-lg; }
+  &-xl  { padding: 1.25rem 2.5rem; font-size: $font-size-xl; }
+  &-full { width: 100%; }
 
-  &-lg {
-    padding: 1rem 2rem;
-    font-size: $font-size-lg;
-  }
-
-  &-xl {
-    padding: 1.25rem 2.5rem;
-    font-size: $font-size-xl;
-  }
-
-  // Полная ширина
-  &-full {
-    width: 100%;
-  }
-
-  // С иконкой
   &-icon {
     padding: 0.75rem;
 
@@ -772,7 +521,6 @@ p {
   }
 }
 
-// Стили кнопок
 .btn-primary {
   background: linear-gradient(135deg, $color-primary, $color-primary-dark);
   color: $text-inverse;
@@ -783,9 +531,7 @@ p {
     box-shadow: 0 6px 24px rgba($color-primary, 0.5);
   }
 
-  &:active:not(:disabled) {
-    transform: translateY(0);
-  }
+  &:active:not(:disabled) { transform: translateY(0); }
 }
 
 .btn-secondary {
@@ -850,7 +596,7 @@ p {
 
 
 // =============================================================================
-// 7. КОМПОНЕНТЫ: КАРТОЧКИ
+// 5. КАРТОЧКИ
 // =============================================================================
 
 .card {
@@ -869,10 +615,6 @@ p {
     margin-bottom: $spacer;
   }
 
-  &-body {
-    // padding: $spacer 0;
-  }
-
   &-footer {
     padding-top: $spacer;
     border-top: 1px solid $border-color;
@@ -882,13 +624,10 @@ p {
   &-hover {
     cursor: pointer;
 
-    &:hover {
-      border-color: $color-primary;
-    }
+    &:hover { border-color: $color-primary; }
   }
 }
 
-// Карточка с изображением
 .card-image {
   position: relative;
   border-radius: $radius-lg;
@@ -903,12 +642,9 @@ p {
     transition: transform 0.4s ease;
   }
 
-  &:hover img {
-    transform: scale(1.05);
-  }
+  &:hover img { transform: scale(1.05); }
 }
 
-// Карточка-бейдж
 .badge {
   display: inline-flex;
   align-items: center;
@@ -919,26 +655,10 @@ p {
   line-height: 1;
   border-radius: $radius-full;
 
-  &-primary {
-    background: rgba($color-primary, 0.1);
-    color: $color-primary;
-  }
-
-  &-success {
-    background: rgba($color-success, 0.1);
-    color: $color-success;
-  }
-
-  &-warning {
-    background: rgba($color-warning, 0.1);
-    color: $color-warning;
-  }
-
-  &-error {
-    background: rgba($color-error, 0.1);
-    color: $color-error;
-  }
-
+  &-primary { background: rgba($color-primary, 0.1); color: $color-primary; }
+  &-success { background: rgba($color-success, 0.1); color: $color-success; }
+  &-warning { background: rgba($color-warning, 0.1); color: $color-warning; }
+  &-error   { background: rgba($color-error, 0.1);   color: $color-error; }
   &-gradient {
     background: linear-gradient(135deg, $color-primary, $color-secondary);
     color: $text-inverse;
@@ -947,16 +667,14 @@ p {
 
 
 // =============================================================================
-// 8. КОМПОНЕНТЫ: ФОРМЫ
+// 6. ФОРМЫ
 // =============================================================================
 
 .form {
   &-group {
     margin-bottom: $spacer * 1.5;
 
-    &:last-child {
-      margin-bottom: 0;
-    }
+    &:last-child { margin-bottom: 0; }
   }
 
   &-label {
@@ -984,9 +702,7 @@ p {
     border-radius: $radius-md;
     transition: $transition-base;
 
-    &:hover {
-      border-color: $text-muted;
-    }
+    &:hover  { border-color: $text-muted; }
 
     &:focus {
       outline: none;
@@ -1044,24 +760,15 @@ p {
     }
   }
 
-  &-error {
-    margin-top: 0.375rem;
-    font-size: $font-size-sm;
-    color: $color-error;
-  }
-
-  &-hint {
-    margin-top: 0.375rem;
-    font-size: $font-size-sm;
-    color: $text-muted;
-  }
+  &-error { margin-top: 0.375rem; font-size: $font-size-sm; color: $color-error; }
+  &-hint  { margin-top: 0.375rem; font-size: $font-size-sm; color: $text-muted; }
 
   &-row {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: $spacer;
 
-    @include respond-to(sm) {
+    @media (max-width: #{$breakpoint-sm}) {
       grid-template-columns: 1fr;
     }
   }
@@ -1069,7 +776,7 @@ p {
 
 
 // =============================================================================
-// 9. HEADER (LIGHT)
+// 7. ШАПКА
 // =============================================================================
 
 .site-header {
@@ -1093,25 +800,15 @@ p {
   min-height: 72px;
 }
 
-// Логотип
 .header-logo {
   display: flex;
   align-items: center;
   gap: 0.75rem;
 
-  img {
-    height: 40px;
-    width: auto;
-  }
-
-  span {
-    font-size: $font-size-xl;
-    font-weight: $font-weight-bold;
-    color: $text-primary;
-  }
+  img  { height: 40px; width: auto; }
+  span { font-size: $font-size-xl; font-weight: $font-weight-bold; color: $text-primary; }
 }
 
-// Навигация
 .main-navigation {
   display: flex;
   align-items: center;
@@ -1142,48 +839,34 @@ p {
   }
 }
 
-// Кнопки в хедере
 .header-actions {
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
 
-// Мобильное меню
 .mobile-toggle {
   display: none;
   padding: 0.5rem;
   color: $text-primary;
 
-  @include respond-to(lg) {
-    display: none;
-  }
-
-  @include respond-to(md) {
+  @media (max-width: #{$breakpoint-md}) {
     display: flex;
   }
 
-  svg {
-    width: 1.5rem;
-    height: 1.5rem;
-  }
+  svg { width: 1.5rem; height: 1.5rem; }
 }
 
 .mobile-menu {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: $bg-primary;
   z-index: $z-modal;
   padding: $spacer * 2;
   transform: translateX(-100%);
   transition: transform 0.3s ease;
 
-  &.open {
-    transform: translateX(0);
-  }
+  &.open { transform: translateX(0); }
 
   .main-navigation {
     flex-direction: column;
@@ -1201,7 +884,7 @@ p {
 
 
 // =============================================================================
-// 10. FOOTER (LIGHT)
+// 8. ПОДВАЛ
 // =============================================================================
 
 .site-footer {
@@ -1212,9 +895,7 @@ p {
   border-top: 1px solid $border-color;
 }
 
-.footer-top {
-  padding: $spacer * 5 0 $spacer * 4;
-}
+.footer-top  { padding: $spacer * 5 0 $spacer * 4; }
 
 .footer-grid {
   display: grid;
@@ -1225,7 +906,7 @@ p {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @include respond-to(md) {
+  @media (max-width: #{$breakpoint-md}) {
     grid-template-columns: 1fr;
     gap: $spacer * 2.5;
   }
@@ -1237,26 +918,15 @@ p {
   gap: $spacer * 1.5;
 }
 
-// Логотип в футере
 .footer-logo {
   margin-bottom: $spacer * 0.5;
 
-  img {
-    max-width: 180px;
-    height: auto;
-  }
+  img { max-width: 180px; height: auto; }
 }
 
-.footer-description {
-  color: $text-muted;
-  font-size: $font-size-sm;
-}
+.footer-description { color: $text-muted; font-size: $font-size-sm; }
 
-// Соцсети
-.social-links {
-  display: flex;
-  gap: 0.75rem;
-}
+.social-links { display: flex; gap: 0.75rem; }
 
 .social-link {
   width: 40px;
@@ -1276,7 +946,6 @@ p {
   }
 }
 
-// Заголовки колонок
 .footer-heading {
   font-size: $font-size-base;
   font-weight: $font-weight-semibold;
@@ -1296,7 +965,6 @@ p {
   }
 }
 
-// Меню футера
 .footer-menu,
 .footer-list {
   list-style: none;
@@ -1331,14 +999,11 @@ p {
       color: $color-primary;
       padding-left: 1.25rem;
 
-      &::before {
-        opacity: 1;
-      }
+      &::before { opacity: 1; }
     }
   }
 }
 
-// Контакты
 .contact-item {
   display: flex;
   align-items: flex-start;
@@ -1346,27 +1011,17 @@ p {
   padding: 0.5rem 0;
 }
 
-.contact-icon {
-  color: $color-primary;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
+.contact-icon  { color: $color-primary; flex-shrink: 0; margin-top: 2px; }
+.contact-text  { color: $text-muted; }
 
 .contact-link {
   color: $text-primary;
   font-weight: $font-weight-medium;
   transition: color 0.2s ease;
 
-  &:hover {
-    color: $color-primary;
-  }
+  &:hover { color: $color-primary; }
 }
 
-.contact-text {
-  color: $text-muted;
-}
-
-// Кнопка в футере
 .btn-footer {
   margin-top: 0.5rem;
   padding: 0.875rem 1.75rem;
@@ -1385,7 +1040,6 @@ p {
   }
 }
 
-// Нижняя часть футера
 .footer-bottom {
   padding: $spacer * 1.5 0;
   background: rgba(0, 0, 0, 0.02);
@@ -1397,7 +1051,7 @@ p {
   gap: $spacer * 1.5;
   flex-wrap: wrap;
 
-  @include respond-to(md) {
+  @media (max-width: #{$breakpoint-md}) {
     flex-direction: column;
     text-align: center;
   }
@@ -1409,9 +1063,7 @@ p {
   a {
     color: $color-primary;
 
-    &:hover {
-      text-decoration: underline;
-    }
+    &:hover { text-decoration: underline; }
   }
 }
 
@@ -1419,7 +1071,7 @@ p {
   display: flex;
   gap: $spacer * 1.5;
 
-  @include respond-to(md) {
+  @media (max-width: #{$breakpoint-md}) {
     order: 3;
     gap: $spacer;
   }
@@ -1427,9 +1079,7 @@ p {
   a {
     color: $text-muted;
 
-    &:hover {
-      color: $color-primary;
-    }
+    &:hover { color: $color-primary; }
   }
 }
 
@@ -1439,13 +1089,9 @@ p {
   gap: 0.5rem;
   color: $text-muted;
 
-  a {
-    color: $color-primary;
-    font-weight: $font-weight-medium;
-  }
+  a { color: $color-primary; font-weight: $font-weight-medium; }
 }
 
-// Кнопка "Наверх"
 .back-to-top {
   position: fixed;
   bottom: 2rem;
@@ -1477,15 +1123,12 @@ p {
     box-shadow: $shadow-lg;
   }
 
-  svg {
-    width: 1.25rem;
-    height: 1.25rem;
-  }
+  svg { width: 1.25rem; height: 1.25rem; }
 }
 
 
 // =============================================================================
-// 11. МОДАЛЬНОЕ ОКНО
+// 9. МОДАЛЬНОЕ ОКНО
 // =============================================================================
 
 .modal {
@@ -1497,9 +1140,7 @@ p {
   justify-content: center;
   padding: $spacer * 1.5;
 
-  &[style*="flex"] {
-    display: flex !important;
-  }
+  &[style*="flex"] { display: flex !important; }
 }
 
 .modal__overlay {
@@ -1548,21 +1189,11 @@ p {
   text-align: center;
   margin-bottom: $spacer * 1.5;
 
-  h3 {
-    margin-bottom: 0.5rem;
-    font-size: $font-size-xl;
-  }
-
-  p {
-    color: $text-muted;
-    margin: 0;
-  }
+  h3 { margin-bottom: 0.5rem; font-size: $font-size-xl; }
+  p  { color: $text-muted; margin: 0; }
 }
 
-.modal__form {
-  display: grid;
-  gap: $spacer;
-}
+.modal__form { display: grid; gap: $spacer; }
 
 .modal__note {
   margin-top: $spacer * 1.5;
@@ -1571,14 +1202,12 @@ p {
   text-align: center;
   line-height: 1.5;
 
-  a {
-    color: $color-primary;
-  }
+  a { color: $color-primary; }
 }
 
 
 // =============================================================================
-// 12. LIGHTBOX ДЛЯ ГАЛЕРЕИ
+// 10. LIGHTBOX
 // =============================================================================
 
 .lightbox {
@@ -1591,9 +1220,7 @@ p {
   justify-content: center;
   padding: $spacer * 1.5;
 
-  &[style*="flex"] {
-    display: flex !important;
-  }
+  &[style*="flex"] { display: flex !important; }
 }
 
 .lightbox__img {
@@ -1605,44 +1232,36 @@ p {
   animation: fadeIn 0.2s ease;
 }
 
+%lightbox-btn-base {
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  transition: $transition-base;
+  @include flex-center;
+
+  &:hover { background: rgba(255, 255, 255, 0.25); }
+}
+
 .lightbox__close {
+  @extend %lightbox-btn-base;
   position: absolute;
   top: 1.5rem;
   right: 1.5rem;
   width: 44px;
   height: 44px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  border: none;
-  color: #fff;
   font-size: 1.75rem;
-  cursor: pointer;
-  transition: $transition-base;
-  @include flex-center;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.25);
-  }
 }
 
 .lightbox__nav {
+  @extend %lightbox-btn-base;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   width: 50px;
   height: 50px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.15);
-  border: none;
-  color: #fff;
   font-size: 1.5rem;
-  cursor: pointer;
-  transition: $transition-base;
-  @include flex-center;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.25);
-  }
 
   &.prev { left: 1.5rem; }
   &.next { right: 1.5rem; }
@@ -1650,36 +1269,24 @@ p {
 
 
 // =============================================================================
-// 13. WP SPECIFIC
+// 11. WORDPRESS SPECIFIC
 // =============================================================================
 
-// Admin bar fix
 #wpadminbar {
   position: fixed !important;
   top: 0 !important;
   bottom: auto !important;
 }
 
-// WordPress content classes
-.alignnone { margin: 0; }
-.aligncenter {
-  display: block;
-  margin: $spacer auto;
-}
-.alignright {
-  float: right;
-  margin: 0 0 $spacer $spacer;
-}
-.alignleft {
-  float: left;
-  margin: 0 $spacer $spacer 0;
-}
+.alignnone  { margin: 0; }
+.aligncenter { display: block; margin: $spacer auto; }
+.alignright  { float: right; margin: 0 0 $spacer $spacer; }
+.alignleft   { float: left; margin: 0 $spacer $spacer 0; }
+
 .wp-caption {
   max-width: 100%;
 
-  img {
-    border-radius: $radius-sm;
-  }
+  img { border-radius: $radius-sm; }
 
   &-text {
     text-align: center;
@@ -1689,7 +1296,6 @@ p {
   }
 }
 
-// Gutenberg blocks
 .wp-block-image,
 .wp-block-gallery {
   margin: $spacer 0;
@@ -1704,41 +1310,35 @@ p {
 
 
 // =============================================================================
-// 14. RESPONSIVE UTILITIES
+// 12. АДАПТИВНЫЕ УТИЛИТЫ
 // =============================================================================
 
-@each $breakpoint, $value in $breakpoints {
-  @media (min-width: $value) {
-    // Display
-    .#{$breakpoint}\:hidden { display: none; }
-    .#{$breakpoint}\:block { display: block; }
-    .#{$breakpoint}\:flex { display: flex; }
-    .#{$breakpoint}\:grid { display: grid; }
+@each $bp-name, $bp-value in $breakpoints {
+  @media (min-width: $bp-value) {
+    .#{$bp-name}\:hidden  { display: none; }
+    .#{$bp-name}\:block   { display: block; }
+    .#{$bp-name}\:flex    { display: flex; }
+    .#{$bp-name}\:grid    { display: grid; }
 
-    // Text align
-    .#{$breakpoint}\:text-left { text-align: left; }
-    .#{$breakpoint}\:text-center { text-align: center; }
-    .#{$breakpoint}\:text-right { text-align: right; }
+    .#{$bp-name}\:text-left   { text-align: left; }
+    .#{$bp-name}\:text-center { text-align: center; }
+    .#{$bp-name}\:text-right  { text-align: right; }
 
-    // Flex direction
-    .#{$breakpoint}\:flex-row { flex-direction: row; }
-    .#{$breakpoint}\:flex-col { flex-direction: column; }
+    .#{$bp-name}\:flex-row { flex-direction: row; }
+    .#{$bp-name}\:flex-col { flex-direction: column; }
 
-    // Grid columns
-    .#{$breakpoint}\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-    .#{$breakpoint}\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
-    .#{$breakpoint}\:grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+    .#{$bp-name}\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .#{$bp-name}\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .#{$bp-name}\:grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
 
-    // Gap
-    .#{$breakpoint}\:gap-4 { gap: $spacer; }
-    .#{$breakpoint}\:gap-6 { gap: $spacer * 1.5; }
-    .#{$breakpoint}\:gap-8 { gap: $spacer * 2; }
+    .#{$bp-name}\:gap-4 { gap: $spacer; }
+    .#{$bp-name}\:gap-6 { gap: $spacer * 1.5; }
+    .#{$bp-name}\:gap-8 { gap: $spacer * 2; }
   }
 }
 
-// Mobile first hide/show
 .hidden-sm {
-  @include respond-to(md) {
+  @media (max-width: #{$breakpoint-md}) {
     display: none !important;
   }
 }
@@ -1746,14 +1346,209 @@ p {
 .visible-sm {
   display: none !important;
 
-  @include respond-to(md) {
+  @media (max-width: #{$breakpoint-md}) {
     display: block !important;
   }
 }
 
 
 // =============================================================================
-// 15. PRINT STYLES
+// 13. АРХИВ/КАРТОЧКИ УСЛУГ
+// =============================================================================
+
+.services-archive { padding: 40px 0 80px; }
+
+.archive-header {
+  background: $bg-gradient;
+  padding: 40px 0;
+  margin-bottom: 40px;
+  text-align: center;
+
+  .archive-title       { font-size: clamp(24px, 4vw, 36px); margin-bottom: 12px; }
+  .archive-description { color: $text-secondary; max-width: 600px; margin: 0 auto; }
+}
+
+.services-filters {
+  margin-bottom: 32px;
+
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    label  { font-weight: $font-weight-medium; color: $text-secondary; }
+
+    select {
+      padding: 8px 16px;
+      border: 1px solid $border-color;
+      border-radius: $radius-md;
+      background: $bg-primary;
+      color: $text-primary;
+      cursor: pointer;
+
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+      }
+    }
+  }
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.service-card {
+  background: $bg-primary;
+  border: 1px solid $border-color;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: $transition-smooth;
+
+  @include hover-lift;
+
+  &__badges {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__image {
+    display: block;
+    background: $bg-tertiary;
+    padding: 20px;
+    text-align: center;
+    aspect-ratio: 4/3;
+
+    .service-card__icon,
+    .service-card__img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      transition: transform 0.4s ease;
+    }
+
+    .service-card__placeholder {
+      @include flex-center;
+      height: 100%;
+      font-size: 48px;
+      color: $text-muted;
+    }
+  }
+
+  &:hover .service-card__icon,
+  &:hover .service-card__img {
+    transform: scale(1.05);
+  }
+
+  &__body {
+    padding: 20px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    flex-grow: 1;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+
+    a {
+      color: inherit;
+      transition: color 0.2s ease;
+
+      &:hover { color: $color-primary; }
+    }
+  }
+
+  &__excerpt {
+    margin: 0;
+    color: $text-secondary;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  &__features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: $text-secondary;
+
+    .feature-icon { font-size: 14px; }
+  }
+
+  &__details {
+    display: flex;
+    gap: 16px;
+    padding-top: 8px;
+    border-top: 1px dashed $border-color;
+  }
+
+  .detail-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    color: $text-muted;
+
+    .detail-icon { font-size: 14px; }
+  }
+
+  &__price {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 12px;
+  }
+
+  .price-old {
+    font-size: 14px;
+    color: $text-muted;
+    text-decoration: line-through;
+  }
+
+  .price-discount {
+    background: #ffe3e3;
+    color: $color-error;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+
+  .price-current {
+    margin-left: auto;
+    font-size: 20px;
+    font-weight: 700;
+    color: $text-primary;
+  }
+}
+
+
+// =============================================================================
+// 14. PRINT
 // =============================================================================
 
 @media print {
@@ -1766,55 +1561,18 @@ p {
     text-shadow: none !important;
   }
 
-  a,
-  a:visited {
-    text-decoration: underline;
-  }
-
-  a[href]::after {
-    content: " (" attr(href) ")";
-    font-size: 0.875em;
-  }
-
-  abbr[title]::after {
-    content: " (" attr(title) ")";
-  }
-
+  a, a:visited { text-decoration: underline; }
+  a[href]::after { content: " (" attr(href) ")"; font-size: 0.875em; }
+  abbr[title]::after { content: " (" attr(title) ")"; }
   a[href^="#"]::after,
-  a[href^="javascript:"]::after {
-    content: "";
-  }
+  a[href^="javascript:"]::after { content: ""; }
 
-  pre {
-    white-space: pre-wrap !important;
-  }
-
-  pre,
-  blockquote {
-    border: 1px solid #999;
-    page-break-inside: avoid;
-  }
-
-  thead {
-    display: table-header-group;
-  }
-
-  tr,
-  img {
-    page-break-inside: avoid;
-  }
-
-  p,
-  h2,
-  h3 {
-    orphans: 3;
-    widows: 3;
-  }
-
-  h2,
-  h3 {
-    page-break-after: avoid;
-  }
+  pre { white-space: pre-wrap !important; }
+  pre, blockquote { border: 1px solid #999; page-break-inside: avoid; }
+  thead { display: table-header-group; }
+  tr, img { page-break-inside: avoid; }
+  p, h2, h3 { orphans: 3; widows: 3; }
+  h2, h3 { page-break-after: avoid; }
 
   .no-print,
   .btn,
