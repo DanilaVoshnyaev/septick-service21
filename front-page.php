@@ -167,7 +167,15 @@ $company = getCompanyContacts();
                             $people = carbon_get_post_meta(get_the_ID(), 'crb_people_count_text');
                             $is_hit = carbon_get_post_meta(get_the_ID(), 'crb_is_hit');
 
-                            $people_num = (int) preg_replace('/[^0-9]/', '', $people);
+                            // Берём ПЕРВОЕ число из текста («до 5 человек» → 5),
+                            // при отсутствии — из названия модели («ТОПАС-8» → 8).
+                            $people_num = 0;
+                            if (preg_match('/\d+/', (string) $people, $m)) {
+                                $people_num = (int) $m[0];
+                            }
+                            if (!$people_num && preg_match('/\d+/', get_the_title(), $mt)) {
+                                $people_num = (int) $mt[0];
+                            }
                             $category = $people_num <= 5 ? 'small' : ($people_num <= 10 ? 'medium' : 'large');
                             ?>
                             <article class="station-card-home" data-category="<?php echo esc_attr($category); ?>">
@@ -560,7 +568,7 @@ $company = getCompanyContacts();
                     const filter = this.dataset.tab;
                     document.querySelectorAll('.station-card-home').forEach(card => {
                         const cat = card.dataset.category;
-                        const show = filter === 'all' || (cat && cat.includes(filter));
+                        const show = filter === 'all' || cat === filter;
                         card.style.display = show ? 'flex' : 'none';
                         if (show) setTimeout(() => { card.style.opacity='1'; card.style.transform='translateY(0)'; }, 10);
                         else { card.style.opacity='0'; card.style.transform='translateY(20px)'; }
@@ -568,78 +576,8 @@ $company = getCompanyContacts();
                 });
             });
 
-            // Smooth scroll
-            document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(a => {
-                a.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        const headerH = document.querySelector('.site-header-premium')?.offsetHeight || 0;
-                        window.scrollTo({ top: target.getBoundingClientRect().top + window.pageYOffset - headerH - 20, behavior: 'smooth' });
-                    }
-                });
-            });
-
-            // Modals
-            const modals = document.querySelectorAll('.modal-premium');
-            const openBtns = document.querySelectorAll('.open-modal');
-            const closeBtns = document.querySelectorAll('.modal-close, .modal-backdrop');
-
-            function openModal(id) {
-                const modal = document.getElementById(`modal-${id}`);
-                if (modal) { modal.classList.add('active'); document.body.style.overflow = 'hidden'; }
-            }
-            function closeModal(modal) { modal?.classList.remove('active'); document.body.style.overflow = ''; }
-
-            openBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const modalId = this.dataset.modal, product = this.dataset.product;
-                    if (modalId === 'order' && product) {
-                        const el = document.getElementById('orderProductModalName');
-                        if (el) el.textContent = `Вы выбрали: ${product}`;
-                    }
-                    if (modalId === 'callback' && product) {
-                        const el = document.getElementById('callbackModalText');
-                        if (el) el.innerHTML = `Оставьте заявку на <strong>${product}</strong>, и мы перезвоним в течение 15 минут`;
-                    }
-                    openModal(modalId);
-                });
-            });
-            closeBtns.forEach(btn => btn.addEventListener('click', e => closeModal(e.target.closest('.modal-premium'))));
-            document.addEventListener('keydown', e => { if (e.key === 'Escape') modals.forEach(m => closeModal(m)); });
-
-            // Forms
-            document.querySelectorAll('form').forEach(form => {
-                form.addEventListener('submit', async function(e) {
-                    e.preventDefault();
-                    const btn = this.querySelector('button[type="submit"]');
-                    const original = btn.innerHTML;
-                    btn.disabled = true; btn.innerHTML = '<span>Отправка...</span>';
-                    try {
-                        // Здесь ваша логика отправки
-                        console.log('Form data:', Object.fromEntries(new FormData(this)));
-                        alert('Спасибо! Мы свяжемся с вами в ближайшее время.');
-                        this.reset();
-                        closeModal(this.closest('.modal-premium'));
-                    } catch(err) { alert('Ошибка отправки. Попробуйте ещё раз.'); }
-                    finally { btn.disabled = false; btn.innerHTML = original; }
-                });
-            });
-
-            // Phone mask
-            document.querySelectorAll('input[type="tel"]').forEach(input => {
-                input.addEventListener('input', function(e) {
-                    let v = e.target.value.replace(/\D/g,'');
-                    if (!v) { e.target.value = ''; return; }
-                    if (v[0]==='7'||v[0]==='8') v = v.slice(1);
-                    let f = '+7';
-                    if (v.length>0) f += ' (' + v.slice(0,3);
-                    if (v.length>=3) f += ') ' + v.slice(3,6);
-                    if (v.length>=6) f += '-' + v.slice(6,8);
-                    if (v.length>=8) f += '-' + v.slice(8,10);
-                    e.target.value = f;
-                });
-            });
+            // Модалки, отправка форм, маска телефона и плавный скролл
+            // обрабатываются глобально (premium-ui.js + global.js) — здесь не дублируем.
 
             // Scroll animations
             const scrollObs = new IntersectionObserver(entries => {
