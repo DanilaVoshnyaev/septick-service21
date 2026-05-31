@@ -95,7 +95,6 @@ $reviews_query = new WP_Query($args);
                                         <?php endif; ?>
                                     </div>
                                 </div>
-
                                 <!-- Звёзды -->
                                 <div class="review-rating">
                                     <?php for ($i = 1; $i <= 5; $i++): ?>
@@ -105,7 +104,6 @@ $reviews_query = new WP_Query($args);
                                     <?php endfor; ?>
                                 </div>
                             </div>
-
                             <!-- Текст -->
                             <?php if ($content): ?>
                                 <div class="review-text">

@@ -100,7 +100,6 @@ while (have_posts()) : the_post();
                             </ul>
                         </div>
                     <?php endif; ?>
-
                     <!-- Преимущества -->
                     <?php if (!empty($features)): ?>
                         <div class="features">
@@ -136,7 +135,6 @@ while (have_posts()) : the_post();
 
                 </div>
             </div>
-
             <!-- CTA блок в самом низу -->
             <section class="cta-bottom" id="order-form">
                 <h2>Нужна услуга «<?php the_title(); ?>»?</h2>
