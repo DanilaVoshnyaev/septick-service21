@@ -42,13 +42,6 @@ $company = getCompanyContacts();
                             </svg>
                             <span><?php echo esc_html($company['work_time']); ?></span>
                         </div>
-                        <div class="top-info-divider"></div>
-                        <div class="top-info-item">
-                            <svg class="top-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-                            </svg>
-                            <span><?php echo esc_html($company['address']); ?></span>
-                        </div>
                     </div>
 
                     <!-- Right: Contacts & CTA -->
@@ -62,12 +55,7 @@ $company = getCompanyContacts();
 
                         <div class="top-phones-wrapper">
                             <a href="tel:<?php echo $company['phone_clean']; ?>" class="top-phone-primary"><?php echo esc_html($company['phone']); ?></a>
-                            <button class="top-phone-toggle" aria-label="Показать дополнительные номера">
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
-                            </button>
-                            <div class="top-phones-dropdown">
-                                <a href="tel:<?php echo $company['phone_clean']; ?>"><?php echo esc_html($company['phone_alt']); ?></a>
-                            </div>
+
                         </div>
 
                         <button class="btn-premium btn-sm btn-ghost open-modal" data-modal="callback">

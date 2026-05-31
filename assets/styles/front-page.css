@@ -183,7 +183,7 @@
         .btn-premium:hover .btn-arrow { transform: translateX(3px); }
 
         /* ===== LUXURY FEATURES ===== */
-        .luxury-features { padding: clamp(60px, 10vw, 100px) 0; background: var(--premium-light); }
+        .luxury-features { padding: 100px 0 0; background: var(--premium-light); }
         .features-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 24px;
@@ -209,6 +209,37 @@
         .feature-luxury h3 { font-size: 18px; font-weight: 600; margin-bottom: 10px; color: var(--premium-text); }
         .feature-luxury p { font-size: 14px; color: var(--premium-gray); line-height: 1.5; }
 
+        /* ===== НАШИ ПРЕИМУЩЕСТВА ===== */
+        .advantages-premium { padding: clamp(70px, 10vw, 110px) 0; background: #fff; }
+        .advantages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+        .advantage-card {
+            background: var(--premium-light, #f8fafc);
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 16px;
+            padding: 28px 24px;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        .advantage-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--header-green, #21b224);
+            box-shadow: 0 12px 30px rgba(33,178,36,0.12);
+        }
+        .advantage-card__icon {
+            width: 56px; height: 56px;
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(33,178,36,0.1);
+            color: var(--header-green, #21b224);
+            margin-bottom: 16px;
+        }
+        .advantage-card__icon svg { width: 28px; height: 28px; }
+        .advantage-card h3 { font-size: 18px; font-weight: 700; margin: 0 0 8px; color: var(--premium-text, #1e293b); }
+        .advantage-card p { font-size: 14px; line-height: 1.55; color: var(--premium-gray, #64748b); margin: 0; }
+
         /* ===== CATALOG PREMIUM ===== */
         .catalog-premium { padding: clamp(80px, 12vw, 120px) 0; background: #fff; }
         .section-header { text-align: center; margin-bottom: 48px; }
@@ -220,6 +251,7 @@
         .section-title {
             font-size: clamp(28px, 4vw, 40px); font-weight: 300; color: var(--premium-text);
             margin-bottom: 12px; letter-spacing: -0.5px;
+            justify-content: center;
         }
         .section-title.text-left { text-align: left; }
         .section-subtitle {
@@ -329,39 +361,33 @@
         }
         .phone-link-premium:hover { transform: translateX(3px);  }
 
-        /* ===== WHY CHOOSE PREMIUM ===== */
-        .why-choose-premium { padding: clamp(80px, 12vw, 120px) 0; background: var(--premium-light); }
-        .split-layout {
-            display: grid; grid-template-columns: 1fr 1.2fr; gap: 60px; align-items: start;
+        /* ===== WHY CHOOSE PREMIUM (минимал) ===== */
+        .why-choose-premium { padding: clamp(70px, 10vw, 110px) 0; background: var(--premium-light); }
+        .advantages-list-premium {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 0 0 40px;
         }
-        @media (max-width: 968px) { .split-layout { grid-template-columns: 1fr; gap: 40px; } }
-
-        .split-image { position: relative; }
-        .image-wrapper {
-            position: relative; border-radius: 16px; overflow: hidden;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-        }
-        .image-wrapper img { width: 100%; height: auto; display: block; }
-        .image-badge {
-            position: absolute; bottom: 24px; left: 24px; background: #fff;
-            padding: 20px 28px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        .badge-number { display: block; font-size: 40px; font-weight: 300; color: var(--premium-gold); line-height: 1; }
-        .badge-text { font-size: 13px; color: var(--premium-gray); margin-top: 4px; }
-
-        .advantages-list-premium { margin: 32px 0; }
         .advantage-item {
-            display: flex; gap: 16px; margin-bottom: 24px; padding: 20px;
-            background: #fff; border-radius: 12px; transition: var(--transition);
+            display: flex; gap: 14px; padding: 22px;
+            background: #fff; border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 14px; transition: var(--transition);
         }
-        .advantage-item:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.08); transform: translateX(6px); }
+        .advantage-item:hover {
+            box-shadow: 0 10px 28px rgba(33,178,36,0.1);
+            transform: translateY(-3px);
+            border-color: var(--header-green, #21b224);
+        }
         .advantage-check {
-            width: 40px; height: 40px; background: linear-gradient(135deg, var(--premium-blue) 0%, var(--premium-gold) 100%);
+            width: 36px; height: 36px;
+            background: rgba(33,178,36,0.12);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            color: #fff; font-weight: 700; font-size: 18px; flex-shrink: 0;
+            color: var(--header-green, #21b224); font-weight: 700; font-size: 18px; flex-shrink: 0;
         }
-        .advantage-content h4 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--premium-text); }
+        .advantage-content h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: var(--premium-text); }
         .advantage-content p { font-size: 14px; color: var(--premium-gray); line-height: 1.5; margin: 0; }
+        .why-choose-cta { text-align: center; }
 
         /* ===== PROCESS PREMIUM ===== */
         .process-premium { padding: clamp(80px, 12vw, 120px) 0; background: #fff; }
@@ -392,7 +418,10 @@
         /* ===== TESTIMONIALS PREMIUM ===== */
         .testimonials-premium {
             padding: clamp(80px, 12vw, 120px) 0;
-            background: linear-gradient(135deg, var(--premium-darker) 0%, var(--premium-dark) 100%);
+            background:
+                linear-gradient(135deg, rgba(2, 6, 23, 0.15) 0%, rgba(15, 23, 42, 0.88) 100%),
+                url(../images/rewies.jpg) center / cover no-repeat,
+                var(--premium-darker);
         }
         .testimonials-premium .section-label { color: var(--premium-gold); }
         .testimonials-premium .section-title { color: #fff; }
@@ -402,6 +431,8 @@
             gap: 24px;
             margin-bottom: 40px;
         }
+        .testimonials-footer { text-align: center; }
+        .testimonials-footer .btn { display: inline-flex; width: auto; }
         .testimonial-card-premium {
             background: rgba(255,255,255,0.06); backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.12); border-radius: 16px;

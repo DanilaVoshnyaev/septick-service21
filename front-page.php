@@ -82,9 +82,16 @@ $company = getCompanyContacts();
             </div>
         </section>
 
+        <!-- Наши преимущества -->
+
+
         <!-- Luxury Features -->
         <section class="luxury-features">
             <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Преимущества септиков Топас</h2>
+                    <p class="section-subtitle">Не просто оборудование, а комплексное решение для комфортной жизни</p>
+                </div>
                 <div class="features-grid">
                     <div class="feature-luxury">
                         <div class="feature-icon-wrapper">
@@ -129,18 +136,58 @@ $company = getCompanyContacts();
         </section>
 
         <?php
+        // Параметры фильтра (с главной фильтруем на месте)
+        $f_capacity = isset($_GET['capacity']) ? absint($_GET['capacity']) : 0;
+        $f_drainage = isset($_GET['drainage']) ? sanitize_text_field(wp_unslash($_GET['drainage'])) : '';
+        $f_stock    = isset($_GET['stock']) ? sanitize_text_field(wp_unslash($_GET['stock'])) : '';
+        $f_sort     = isset($_GET['sort']) ? sanitize_text_field(wp_unslash($_GET['sort'])) : '';
+        $has_filter = ($f_capacity || $f_drainage || $f_stock !== '' || $f_sort !== '');
+
+        $meta_query = array();
+        if ($f_capacity) {
+            $meta_query[] = array(
+                'key' => 'crb_people_count_text',
+                'value' => '(^|[^0-9])' . $f_capacity . '([^0-9]|$)',
+                'compare' => 'REGEXP',
+            );
+        }
+        if ($f_drainage) {
+            // Разные формы в данных («самотёк»/«самотечный») — ищем по основе слова
+            $drainage_stem = (stripos($f_drainage, 'принуд') !== false) ? 'принуд' : 'самот';
+            $meta_query[] = array(
+                'relation' => 'OR',
+                array('key' => 'crb_water_disposal', 'value' => $drainage_stem, 'compare' => 'LIKE'),
+                array('key' => 'crb_mounting_dimensions', 'value' => $drainage_stem, 'compare' => 'LIKE'),
+            );
+        }
+        if ($f_stock === '1') {
+            $meta_query[] = array(
+                'key' => 'crb_in_stock',
+                'value' => array('yes', '1'),
+                'compare' => 'IN',
+            );
+        }
+
         // Параметры запроса
         $args = array(
             'post_type' => 'stations',
-            'posts_per_page' => 8,
+            'posts_per_page' => $has_filter ? 12 : 8,
             'orderby' => 'menu_order',
             'order' => 'ASC',
-
+            'post_status' => 'publish',
         );
+        if ($meta_query) {
+            $args['meta_query'] = $meta_query;
+        }
+        if ($f_sort === 'price_asc' || $f_sort === 'price_desc') {
+            $args['meta_key'] = 'crb_price_topas_s';
+            $args['orderby'] = 'meta_value_num';
+            $args['order'] = $f_sort === 'price_asc' ? 'ASC' : 'DESC';
+        }
         $stations_query = new WP_Query($args);
         ?>
 
-        <section id="catalog" class="catalog-premium" style="background: var(--bg-secondary); padding: clamp(80px, 12vw, 120px) 0;">
+        <section id="catalog" class="catalog-premium" style="background: var(--bg-secondary); padding: clamp(80px, 12vw, 80px) 0 0;">
             <div class="container">
 
                 <!-- Заголовок -->
@@ -150,22 +197,68 @@ $company = getCompanyContacts();
                     <p class="section-subtitle">Индивидуальный подбор под количество проживающих и особенности участка</p>
                 </div>
 
-                <!-- Табы -->
-                <div class="catalog-tabs">
-                    <button class="tab-btn active" data-tab="all">Все модели</button>
-                    <button class="tab-btn" data-tab="small">До 5 человек</button>
-                    <button class="tab-btn" data-tab="medium">5-10 человек</button>
-                    <button class="tab-btn" data-tab="large">10+ человек</button>
-                </div>
+                <!-- 🔷 SVG-иконки для карточек -->
+                <svg class="svg-sprite" aria-hidden="true" style="display:none">
+                    <symbol id="icon-people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+                    <symbol id="icon-tool" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol>
+                    <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></symbol>
+                </svg>
+
+                <!-- Фильтр (фильтрует каталог прямо на главной, скролл к #catalog) -->
+                <form class="catalog-filter" method="get" action="<?php echo esc_url(home_url('/')); ?>#catalog">
+                    <div class="catalog-filter__field">
+                        <label for="home-capacity">Пользователей</label>
+                        <select id="home-capacity" name="capacity">
+                            <option value="">Любое количество</option>
+                            <?php foreach ([4, 5, 6, 8, 10, 12] as $capacity) : ?>
+                                <option value="<?php echo esc_attr($capacity); ?>" <?php selected($f_capacity, $capacity); ?>>до <?php echo esc_html($capacity); ?> человек</option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="catalog-filter__field">
+                        <label for="home-drainage">Водоотведение</label>
+                        <select id="home-drainage" name="drainage">
+                            <option value="">Любое</option>
+                            <option value="Самотёк" <?php selected($f_drainage, 'Самотёк'); ?>>Самотёк</option>
+                            <option value="Принудительное" <?php selected($f_drainage, 'Принудительное'); ?>>Принудительное</option>
+                        </select>
+                    </div>
+                    <div class="catalog-filter__field">
+                        <label for="home-stock">Наличие</label>
+                        <select id="home-stock" name="stock">
+                            <option value="">Все</option>
+                            <option value="1" <?php selected($f_stock, '1'); ?>>В наличии</option>
+                        </select>
+                    </div>
+                    <div class="catalog-filter__field">
+                        <label for="home-sort">Сортировка</label>
+                        <select id="home-sort" name="sort">
+                            <option value="">По умолчанию</option>
+                            <option value="price_asc" <?php selected($f_sort, 'price_asc'); ?>>Сначала дешевле</option>
+                            <option value="price_desc" <?php selected($f_sort, 'price_desc'); ?>>Сначала дороже</option>
+                        </select>
+                    </div>
+                    <div class="catalog-filter__actions">
+                        <button class="btn-card btn-gold" type="submit">Показать</button>
+                        <a class="btn-card btn-outline" href="<?php echo esc_url(home_url('/')); ?>#catalog">Сбросить</a>
+                    </div>
+                </form>
 
                 <!-- Сетка карточек -->
                 <div class="catalog-grid-premium">
                     <?php if ($stations_query->have_posts()) : ?>
                         <?php while ($stations_query->have_posts()) : $stations_query->the_post();
                             $price = carbon_get_post_meta(get_the_ID(), 'crb_price');
+                            $price_topas_s = carbon_get_post_meta(get_the_ID(), 'crb_price_topas_s');
                             $old_price = carbon_get_post_meta(get_the_ID(), 'crb_old_price');
                             $people = carbon_get_post_meta(get_the_ID(), 'crb_people_count_text');
                             $is_hit = carbon_get_post_meta(get_the_ID(), 'crb_is_hit');
+                            $in_stock = carbon_get_post_meta(get_the_ID(), 'crb_in_stock');
+                            $daily_volume = carbon_get_post_meta(get_the_ID(), 'crb_daily_volume');
+                            $peak_discharge = carbon_get_post_meta(get_the_ID(), 'crb_peak_discharge');
+                            $power_consumption = carbon_get_post_meta(get_the_ID(), 'crb_power_consumption');
+                            $water_disposal = carbon_get_post_meta(get_the_ID(), 'crb_water_disposal');
+                            $display_price = $price_topas_s ?: $price;
 
                             // Берём ПЕРВОЕ число из текста («до 5 человек» → 5),
                             // при отсутствии — из названия модели («ТОПАС-8» → 8).
@@ -178,47 +271,74 @@ $company = getCompanyContacts();
                             }
                             $category = $people_num <= 5 ? 'small' : ($people_num <= 10 ? 'medium' : 'large');
                             ?>
-                            <article class="station-card-home" data-category="<?php echo esc_attr($category); ?>">
+                            <article class="station-card" data-category="<?php echo esc_attr($category); ?>">
                                 <?php if ($is_hit) : ?>
                                     <span class="station-badge-home">✓ Хит</span>
                                 <?php endif; ?>
 
-                                <div class="station-card-home__image">
+                                <!-- Изображение -->
+                                <div class="station-card__image">
                                     <a href="<?php the_permalink(); ?>">
                                         <?php if (has_post_thumbnail()) : ?>
-                                            <?php the_post_thumbnail('medium_large', array('loading' => 'lazy', 'style' => 'width:100%;height:100%;object-fit:contain;padding:1rem;')); ?>
+                                            <?php the_post_thumbnail('medium_large', array('loading' => 'lazy', 'decoding' => 'async')); ?>
                                         <?php else : ?>
-                                            <img src="<?php echo get_template_directory_uri(); ?>/assets/images/no-image.jpg" loading="lazy" style="width:100%;height:100%;object-fit:contain;padding:1rem;">
+                                            <div class="station-placeholder">
+                                                <svg class="icon"><use href="#icon-tool"/></svg>
+                                            </div>
                                         <?php endif; ?>
                                     </a>
                                 </div>
 
-                                <div class="station-card-home__content">
-                                    <h3 class="station-card-home__title">
+                                <!-- Контент -->
+                                <div class="station-card__content">
+                                    <?php if ($in_stock) : ?>
+                                        <span class="station-stock-pill">
+                                            <svg class="icon" width="14" height="14"><use href="#icon-check"/></svg> В наличии
+                                        </span>
+                                    <?php endif; ?>
+
+                                    <h3 class="station-card__title">
                                         <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
                                     </h3>
 
                                     <?php if ($people) : ?>
-                                        <p class="station-card-home__people">
-                                            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-                                            </svg>
+                                        <p class="station-card__people">
+                                            <svg class="icon"><use href="#icon-people"/></svg>
                                             <?php echo esc_html($people); ?>
                                         </p>
                                     <?php endif; ?>
 
-                                    <div class="station-card-home__price">
-                                        <?php if ($old_price && $old_price > $price) : ?>
+                                    <!-- Краткие характеристики -->
+                                    <?php if ($daily_volume || $peak_discharge || $power_consumption || $water_disposal) : ?>
+                                        <ul class="station-card__specs">
+                                            <?php if ($daily_volume) : ?>
+                                                <li><span>Производительность</span><strong><?php echo esc_html($daily_volume); ?></strong></li>
+                                            <?php endif; ?>
+                                            <?php if ($peak_discharge) : ?>
+                                                <li><span>Залповый сброс</span><strong><?php echo esc_html($peak_discharge); ?></strong></li>
+                                            <?php endif; ?>
+                                            <?php if ($power_consumption) : ?>
+                                                <li><span>Потребление</span><strong><?php echo esc_html($power_consumption); ?></strong></li>
+                                            <?php endif; ?>
+                                            <?php if ($water_disposal) : ?>
+                                                <li><span>Водоотведение</span><strong><?php echo esc_html($water_disposal); ?></strong></li>
+                                            <?php endif; ?>
+                                        </ul>
+                                    <?php endif; ?>
+
+                                    <!-- Цена (показываем ТОПАС-С — она ниже) -->
+                                    <div class="station-card__price">
+                                        <span class="station-card__price-label">ТОПАС-С</span>
+                                        <?php if ($old_price && $old_price > $display_price) : ?>
                                             <span class="price-old"><?php echo number_format($old_price, 0, '.', ' '); ?> ₽</span>
                                         <?php endif; ?>
-                                        <span class="price-current">
-                                    <?php echo $price ? number_format($price, 0, '.', ' ') . ' ₽' : 'По запросу'; ?>
-                                </span>
+                                        <span class="price-current"><?php echo $display_price ? number_format($display_price, 0, '.', ' ') . ' ₽' : 'По запросу'; ?></span>
                                     </div>
 
-                                    <div class="station-card-home__actions">
-                                        <a href="<?php the_permalink(); ?>" class="btn-card-home btn-outline">Подробнее</a>
-                                        <button type="button" class="btn-card-home btn-green open-modal" data-modal="order" data-product="<?php the_title_attribute(); ?>">Заказать</button>
+                                    <!-- Кнопки -->
+                                    <div class="station-card__actions">
+                                        <a href="<?php the_permalink(); ?>" class="btn-card btn-outline">Подробнее</a>
+                                        <button type="button" class="btn-card btn-gold open-modal" data-modal="order" data-product="<?php the_title_attribute(); ?>">Заказать</button>
                                     </div>
                                 </div>
                             </article>
@@ -245,22 +365,13 @@ $company = getCompanyContacts();
         <!-- Why Choose Us Premium -->
         <section class="why-choose-premium">
             <div class="container">
-                <div class="split-layout">
-                    <div class="split-image">
-                        <div class="image-wrapper">
-                            <img src=<?=assets('/images/topas-montazh.jpg')?>" alt="Монтаж ТОПАС">
-                            <div class="image-badge">
-                                <span class="badge-number">1 день</span>
-                                <span class="badge-text">монтаж под ключ</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="split-content">
-                        <span class="section-label">Почему мы</span>
-                        <h2 class="section-title text-left">Преимущества работы с нами</h2>
-                        <p class="section-subtitle text-left">Мы предлагаем не просто оборудование, а комплексное решение для комфортной жизни</p>
+                <div class="section-header">
+                    <span class="section-label">Почему мы</span>
+                    <h2 class="section-title">Преимущества работы с нами</h2>
+                    <p class="section-subtitle">Доверьте ТОПАС нам: профессионализм исполнения, опыт мастеров и гарантия надёжности!</p>
+                </div>
 
-                        <div class="advantages-list-premium">
+                <div class="advantages-list-premium">
                             <div class="advantage-item">
                                 <div class="advantage-check">✓</div>
                                 <div class="advantage-content">
@@ -305,53 +416,21 @@ $company = getCompanyContacts();
                             </div>
                         </div>
 
-                        <button class="btn-premium btn-primary open-modal" data-modal="engineer">
-                            <span>Вызвать инженера</span>
-                            <svg class="btn-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </button>
-                    </div>
+                <div class="why-choose-cta">
+                    <button class="btn-premium btn-primary open-modal" data-modal="engineer">
+                        <span>Вызвать инженера</span>
+                        <svg class="btn-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </section>
-
-        <!-- Process Premium -->
-        <section class="process-premium">
-            <div class="container">
-                <div class="section-header">
-                    <span class="section-label">Как мы работаем</span>
-                    <h2 class="section-title">4 простых шага до комфортной жизни за городом без неприятных запахов и лишних хлопот</h2>
-                </div>
-                <div class="process-steps">
-                    <div class="step-item">
-                        <div class="step-number">01</div>
-                        <div class="step-content"><h4>Заявка</h4><p>Оставьте заявку на сайте или позвоните нам</p></div>
-                    </div>
-                    <div class="step-connector"></div>
-                    <div class="step-item">
-                        <div class="step-number">02</div>
-                        <div class="step-content"><h4>Выезд инженера</h4><p>Бесплатный замер участка и подбор оптимальной модели</p></div>
-                    </div>
-                    <div class="step-connector"></div>
-                    <div class="step-item">
-                        <div class="step-number">03</div>
-                        <div class="step-content"><h4>Монтаж</h4><p>Установка и подключение за 1 день с гарантией качества</p></div>
-                    </div>
-                    <div class="step-connector"></div>
-                    <div class="step-item">
-                        <div class="step-number">04</div>
-                        <div class="step-content"><h4>Запуск и сервис</h4><p>Пусконаладка, инструктаж и поддержка на весь срок эксплуатации</p></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- Testimonials Premium -->
         <section class="testimonials-premium">
             <div class="container">
                 <div class="section-header">
-                    <span class="section-label">Отзывы</span>
+                    <span class="section-label" style="background-color: white">Отзывы</span>
                     <h2 class="section-title">Что говорят наши клиенты</h2>
                 </div>
 
@@ -377,12 +456,27 @@ $company = getCompanyContacts();
                     <div class="testimonials-slider-premium">
                         <?php while ($testimonials_query->have_posts()) : $testimonials_query->the_post();
 
-                            // 🔷 ПОЛУЧЕНИЕ ПОЛЕЙ - ПРОБУЕМ НЕСКОЛЬКО ВАРИАНТОВ
-                            $author = get_post_meta(get_the_ID(), 'crb_review_author', true);
-                            $position = get_post_meta(get_the_ID(), 'crb_review_position', true);
-                            $rating = get_post_meta(get_the_ID(), 'crb_review_rating', true);
-                            $avatar = get_post_meta(get_the_ID(), 'crb_review_avatar', true);
-                            $service = get_post_meta(get_the_ID(), 'crb_review_service', true);
+                            // 🔷 ПОЛУЧЕНИЕ ПОЛЕЙ через Carbon Fields (хранит ключи с префиксом «_»,
+                            //    поэтому обычный get_post_meta возвращал пусто → «Анонимный»)
+                            $cf = function ($key, $default = '') {
+                                if (function_exists('carbon_get_post_meta')) {
+                                    $v = carbon_get_post_meta(get_the_ID(), $key);
+                                    if ($v !== null && $v !== '' && $v !== []) {
+                                        return $v;
+                                    }
+                                }
+                                return get_post_meta(get_the_ID(), $key, true) ?: $default;
+                            };
+
+                            $author = $cf('crb_review_author');
+                            $position = $cf('crb_review_position');
+                            $rating = $cf('crb_review_rating');
+                            $avatar = $cf('crb_review_avatar');
+                            // Carbon Fields хранит ID вложения — превращаем в URL
+                            if (is_numeric($avatar)) {
+                                $avatar = wp_get_attachment_image_url($avatar, 'thumbnail');
+                            }
+                            $service = $cf('crb_review_service');
                             $content = wp_trim_words(get_the_content(), 40, '...');
 
                             // Если Carbon Fields возвращает массив
@@ -457,6 +551,36 @@ $company = getCompanyContacts();
 
             </div>
         </section>
+        <!-- Process Premium -->
+        <section class="process-premium">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-label">Как мы работаем</span>
+                    <h2 class="section-title">4 простых шага до комфортной жизни за городом без неприятных запахов и лишних хлопот</h2>
+                </div>
+                <div class="process-steps">
+                    <div class="step-item">
+                        <div class="step-number">01</div>
+                        <div class="step-content"><h4>Заявка</h4><p>Оставьте заявку на сайте или позвоните нам</p></div>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step-item">
+                        <div class="step-number">02</div>
+                        <div class="step-content"><h4>Выезд инженера</h4><p>Бесплатный замер участка и подбор оптимальной модели</p></div>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step-item">
+                        <div class="step-number">03</div>
+                        <div class="step-content"><h4>Монтаж</h4><p>Установка и подключение за 1 день с гарантией качества</p></div>
+                    </div>
+                    <div class="step-connector"></div>
+                    <div class="step-item">
+                        <div class="step-number">04</div>
+                        <div class="step-content"><h4>Запуск и сервис</h4><p>Пусконаладка, инструктаж и поддержка на весь срок эксплуатации</p></div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <!-- CTA Premium -->
         <section class="cta-premium" id="contacts" style="background-image: url(<?=assets('/images/cta.jpg')?>;">
@@ -491,53 +615,8 @@ $company = getCompanyContacts();
 
     </main>
 
-    <!-- Modals -->
-    <div class="modal-premium" id="modal-callback">
-        <div class="modal-backdrop"></div>
-        <div class="modal-content-premium">
-            <button class="modal-close" aria-label="Закрыть">&times;</button>
-            <h3 class="modal-title">Заказать звонок</h3>
-            <p class="modal-text" id="callbackModalText">Оставьте номер телефона, и мы перезвоним вам в течение 15 минут</p>
-            <form class="modal-form" id="callbackForm">
-                <input type="text" name="name" placeholder="Ваше имя" required>
-                <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required>
-                <button type="submit" class="btn-premium btn-primary btn-full">Жду звонка</button>
-                <p class="form-note">Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой конфиденциальности</a></p>
-            </form>
-        </div>
-    </div>
-
-    <div class="modal-premium" id="modal-engineer">
-        <div class="modal-backdrop"></div>
-        <div class="modal-content-premium">
-            <button class="modal-close" aria-label="Закрыть">&times;</button>
-            <h3 class="modal-title">Вызвать инженера</h3>
-            <p class="modal-text">Бесплатный выезд специалиста для замера и консультации</p>
-            <form class="modal-form" id="engineerForm">
-                <input type="text" name="name" placeholder="Ваше имя" required>
-                <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required>
-                <input type="text" name="address" placeholder="Адрес участка">
-                <button type="submit" class="btn-premium btn-primary btn-full">Вызвать инженера</button>
-                <p class="form-note">Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой конфиденциальности</a></p>
-            </form>
-        </div>
-    </div>
-
-    <div class="modal-premium" id="modal-order">
-        <div class="modal-backdrop"></div>
-        <div class="modal-content-premium">
-            <button class="modal-close" aria-label="Закрыть">&times;</button>
-            <h3 class="modal-title">Заказать станцию</h3>
-            <p class="modal-text" id="orderProductModalName"></p>
-            <form class="modal-form" id="orderForm">
-                <input type="text" name="name" placeholder="Ваше имя" required>
-                <input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required>
-                <textarea name="comment" placeholder="Комментарий" rows="3"></textarea>
-                <button type="submit" class="btn-premium btn-primary btn-full">Отправить заявку</button>
-                <p class="form-note">Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой конфиденциальности</a></p>
-            </form>
-        </div>
-    </div>
+    <!-- Модалки выводятся глобально в footer.php (с рабочим крестиком .modal-close-btn);
+         здесь дубликаты убраны во избежание конфликта одинаковых id -->
 
     <!-- JavaScript -->
     <script>
@@ -560,24 +639,27 @@ $company = getCompanyContacts();
             const statsSection = document.querySelector('.hero-stats');
             if (statsSection) statsObserver.observe(statsSection);
 
-            // Catalog tabs
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    const filter = this.dataset.tab;
-                    document.querySelectorAll('.station-card-home').forEach(card => {
-                        const cat = card.dataset.category;
-                        const show = filter === 'all' || cat === filter;
-                        card.style.display = show ? 'flex' : 'none';
-                        if (show) setTimeout(() => { card.style.opacity='1'; card.style.transform='translateY(0)'; }, 10);
-                        else { card.style.opacity='0'; card.style.transform='translateY(20px)'; }
-                    });
-                });
-            });
-
             // Модалки, отправка форм, маска телефона и плавный скролл
             // обрабатываются глобально (premium-ui.js + global.js) — здесь не дублируем.
+
+            // Если применён фильтр каталога — прокручиваем к секции каталога
+            try {
+                var params = new URLSearchParams(window.location.search);
+                if (params.has('capacity') || params.has('drainage') || params.has('stock') || params.has('sort')) {
+                    var catalogSection = document.getElementById('catalog');
+                    if (catalogSection) {
+                        // отменяем авто-восстановление позиции и учитываем фикс-шапку
+                        if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+                        var doScroll = function () {
+                            var header = document.querySelector('.site-header-premium');
+                            var offset = (header ? header.offsetHeight : 0) + 12;
+                            var top = catalogSection.getBoundingClientRect().top + window.pageYOffset - offset;
+                            window.scrollTo({ top: top, behavior: 'smooth' });
+                        };
+                        setTimeout(doScroll, 250);
+                    }
+                }
+            } catch (e) {}
 
             // Scroll animations
             const scrollObs = new IntersectionObserver(entries => {

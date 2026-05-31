@@ -33,7 +33,7 @@ $company = getCompanyContacts();
             <section class="about-hero">
                 <h1 class="about-hero__title">О компании</h1>
                 <p class="about-hero__subtitle">
-                    Профессиональная установка автономных канализаций ТОПАС в Чувашской Республике.
+                    Профессиональная установка автономных канализаций ТОПАС в Чувашской Республике. <br>
                     Надёжно • Быстро • С гарантией
                 </p>
                 <a href="tel:<?php echo esc_attr($company['phone_clean']); ?>" class="about-hero__cta">
@@ -63,11 +63,11 @@ $company = getCompanyContacts();
                 </h2>
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <span class="stat-number">500+</span>
+                        <span class="stat-number">1000+</span>
                         <span class="stat-label">Установленных станций</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">7+</span>
+                        <span class="stat-number">8+</span>
                         <span class="stat-label">Лет на рынке</span>
                     </div>
                     <div class="stat-item">
@@ -212,7 +212,7 @@ $company = getCompanyContacts();
                             </svg>
                             Получить консультацию
                         </button>
-                        <p class="about-cta__note"> Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой
+                        <p class="about-cta__note"> Нажимая кнопку, вы соглашаетесь с <a href="/privacy/" style="color: #21b224">политикой
                                 конфиденциальности</a></p>
                     </form>
                 </div>

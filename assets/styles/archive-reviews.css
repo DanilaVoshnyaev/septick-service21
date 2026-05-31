@@ -1,25 +1,27 @@
 /* ===== Архив отзывов — единый премиум-стиль (зелёная гамма) ===== */
 .reviews-page {
-    --accent: var(--header-green, #21b224);
+    /* Привязываемся к общим токенам сайта (как services/about), фолбэки — те же значения */
+    --accent: var(--green, #21b224);
     --accent-hover: #16a34a;
     --accent-soft: rgba(33, 178, 36, 0.1);
     --star: #f59e0b;
-    --rv-text: var(--header-text, #1e293b);
-    --rv-text-muted: var(--header-text-muted, #64748b);
-    --rv-card-bg: #ffffff;
-    --rv-border: rgba(0, 0, 0, 0.08);
+    --rv-text: var(--text, #1e293b);
+    --rv-text-muted: var(--text-muted, #64748b);
+    --rv-card-bg: var(--card-bg, #ffffff);
+    --rv-border: var(--border, rgba(0, 0, 0, 0.08));
     --rv-shadow: 0 6px 24px rgba(15, 23, 42, 0.05);
     --rv-radius: 16px;
 
     padding: 2.5rem 0 4rem;
 }
 
-/* Центрируем колонку отзывов внутри общего контейнера (1280px) */
+/* Ограничиваем колонку отзывов до читаемой ширины, но в одну линию с остальными
+   архивами — крупнее прежних 860px, чтобы не выглядело «уже» контейнера */
 .reviews-page .reviews-header,
 .reviews-page .reviews-list,
 .reviews-page .pagination,
 .reviews-page .no-reviews {
-    max-width: 860px;
+    max-width: 1100px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -113,6 +115,19 @@
     width: 32px;
     height: 32px;
     color: var(--rv-text-muted);
+}
+
+/* Запасной аватар с инициалами */
+.review-avatar--initials {
+    background: var(--accent);
+}
+
+.review-avatar-initials {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.15rem;
+    line-height: 1;
+    text-transform: uppercase;
 }
 
 /* Инфо */

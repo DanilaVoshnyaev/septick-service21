@@ -48,20 +48,33 @@ $reviews_query = new WP_Query($args);
                         $rating_data = carbon_get_post_meta(get_the_ID(), 'crb_review_rating');
                         $rating = !empty($rating_data) ? intval($rating_data[0]['rating_value']) : 5;
                         $date = carbon_get_post_meta(get_the_ID(), 'crb_review_date');
-                        $avatar = carbon_get_post_meta(get_the_ID(), 'crb_review_avatar');
+                        $avatar_raw = carbon_get_post_meta(get_the_ID(), 'crb_review_avatar');
+                        // Carbon Fields хранит ID вложения — превращаем в URL
+                        $avatar = is_numeric($avatar_raw)
+                            ? wp_get_attachment_image_url($avatar_raw, 'thumbnail')
+                            : $avatar_raw;
                         $verified = carbon_get_post_meta(get_the_ID(), 'crb_review_verified');
                         $service = carbon_get_post_meta(get_the_ID(), 'crb_review_service');
                         $content = get_the_content();
+
+                        // Инициалы для запасного аватара (как на главной)
+                        $initials = 'К';
+                        if ($author) {
+                            $name_parts = explode(' ', trim($author));
+                            $first_initial = mb_strtoupper(mb_substr($name_parts[0], 0, 1));
+                            $second_initial = isset($name_parts[1]) ? mb_strtoupper(mb_substr($name_parts[1], 0, 1)) : '';
+                            $initials = $first_initial . $second_initial;
+                        }
                         ?>
 
                         <li class="review-item">
                             <div class="review-header">
                                 <!-- Аватар -->
-                                <div class="review-avatar">
+                                <div class="review-avatar<?php echo $avatar ? '' : ' review-avatar--initials'; ?>">
                                     <?php if ($avatar): ?>
                                         <img src="<?php echo esc_url($avatar); ?>" alt="<?php echo esc_attr($author); ?>">
                                     <?php else: ?>
-                                        <svg class="placeholder" width="32" height="32"><use href="#icon-user"/></svg>
+                                        <span class="review-avatar-initials"><?php echo esc_html($initials); ?></span>
                                     <?php endif; ?>
                                 </div>
 

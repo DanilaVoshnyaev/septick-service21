@@ -8,6 +8,20 @@
 
 // Контакты компании (из Carbon Fields, с запасными значениями)
 $company = getCompanyContacts();
+
+// Реквизиты оператора (из Carbon Fields → Настройки темы → Реквизиты)
+$cf_opt = function ($key, $fallback) {
+    if (function_exists('carbon_get_theme_option')) {
+        $v = carbon_get_theme_option($key);
+        if ($v !== null && $v !== '') {
+            return $v;
+        }
+    }
+    return $fallback;
+};
+$op_name = $cf_opt('operator_name', 'ИП Белков Сергей Валерьевич');
+$op_inn  = $cf_opt('operator_inn', '210403597536');
+$op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
 ?>
 
 </main><!-- #main --><!-- Premium Footer -->
@@ -102,23 +116,33 @@ $company = getCompanyContacts();
     <div class="footer-bottom">
         <div class="container">
             <div class="footer-bottom-inner">
-
-                <!-- Copyright -->
-                <div class="footer-copyright">
-                    <p>&copy; <?php echo date('Y'); ?> <a href="<?php echo esc_url(home_url('/')); ?>">ТОПАС Чебоксары</a>. Все права защищены.</p>
+                <!-- Реквизиты и контакты -->
+                <div class="footer-company-info">
+                    <p class="footer-legal-line">
+                        &copy;<?php echo date('Y'); ?> <?php echo esc_html($op_name); ?>
+                        <?php if ($op_inn) : ?> / ИНН: <?php echo esc_html($op_inn); ?><?php endif; ?>
+                        <?php if ($op_ogrn) : ?> / ОГРНИП: <?php echo esc_html($op_ogrn); ?><?php endif; ?>
+                    </p>
+                    <p class="footer-tagline">
+                        Септики ТОПАС &middot; Продажа &mdash; Монтаж &mdash; Обслуживание
+                    </p>
+                    <p class="footer-contacts-line">
+                        Контактный телефон:
+                        <a href="tel:<?php echo esc_attr($company['phone_clean']); ?>"><?php echo esc_html($company['phone']); ?></a>
+                        <?php if (!empty($company['work_time'])) : ?>
+                            <span class="footer-worktime">(<?php echo esc_html($company['work_time']); ?>)</span>
+                        <?php endif; ?>
+                    </p>
+                    <p class="footer-contacts-line">
+                        Электронная почта:
+                        <a href="mailto:<?php echo antispambot($company['email']); ?>"><?php echo antispambot($company['email']); ?></a>
+                    </p>
                 </div>
 
                 <!-- Legal Links -->
                 <div class="footer-legal">
                     <a href="/privacy/">Политика конфиденциальности</a>
-                    <a href="/terms/">Пользовательское соглашение</a>
                 </div>
-
-                <!-- Developer Credit -->
-<!--                <div class="footer-developer">
-                    <span>Разработка:</span>
-                    <a href="https://izex.org/" target="_blank" rel="noopener">IZEX</a>
-                </div>-->
 
             </div>
         </div>
@@ -258,6 +282,55 @@ $company = getCompanyContacts();
             <p class="form-privacy">Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой конфиденциальности</a></p>
         </form>
     </div>
-</div><?php wp_footer(); ?>
+</div>
+
+<!-- ===== Cookie-уведомление (152-ФЗ) ===== -->
+<div class="cookie-consent" id="cookieConsent" role="dialog" aria-live="polite" aria-label="Уведомление об использовании cookie" hidden>
+    <div class="cookie-consent__inner">
+        <p class="cookie-consent__text">
+            Мы используем файлы cookie и обрабатываем пользовательские данные (IP-адрес, сведения о действиях
+            на сайте) для работы сайта, аналитики и улучшения сервиса. Продолжая пользоваться сайтом, вы
+            соглашаетесь с этим в соответствии с
+            <a href="/privacy/">Политикой конфиденциальности</a>.
+        </p>
+        <button type="button" class="cookie-consent__btn" id="cookieConsentAccept">Принять</button>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var KEY = 'cookie_consent_accepted';
+        var box = document.getElementById('cookieConsent');
+        if (!box) return;
+        var accepted;
+        try { accepted = localStorage.getItem(KEY); } catch (e) { accepted = null; }
+        if (!accepted) {
+            box.hidden = false;
+            requestAnimationFrame(function () { box.classList.add('is-visible'); });
+        }
+        var btn = document.getElementById('cookieConsentAccept');
+        if (btn) {
+            btn.addEventListener('click', function () {
+                try { localStorage.setItem(KEY, '1'); } catch (e) {}
+                box.classList.remove('is-visible');
+                setTimeout(function () { box.hidden = true; }, 300);
+            });
+        }
+    })();
+</script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=109479860', 'ym');
+
+    ym(109479860, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/109479860&quot; style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<?php wp_footer(); ?>
 </body>
 </html>

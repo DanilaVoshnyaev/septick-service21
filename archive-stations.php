@@ -53,7 +53,8 @@ $company = getCompanyContacts();
                 </div>
             </section>
 
-            <form class="catalog-filter" method="get" action="<?php echo esc_url(get_post_type_archive_link('stations')); ?>">
+            <?php $catalog_anchor = esc_url(get_post_type_archive_link('stations')) . '#catalog'; ?>
+            <form id="catalog" class="catalog-filter" method="get" action="<?php echo $catalog_anchor; ?>">
                 <div class="catalog-filter__field">
                     <label for="station-capacity">Пользователей</label>
                     <select id="station-capacity" name="capacity">
@@ -94,25 +95,24 @@ $company = getCompanyContacts();
 
             <!-- ===== СЕТКА СТАНЦИЙ ===== -->
             <?php
+            // Фильтры по точным мета-полям (водоотведение, наличие).
+            // Фильтр по пользователям обрабатывается в PHP ниже — текстовое поле
+            // может содержать диапазон («3-5 человек»), поэтому сравниваем числа.
             $meta_query = [];
-            if ($selected_capacity) {
-                $meta_query[] = [
-                    'key' => 'crb_people_count_text',
-                    'value' => '(^|[^0-9])' . $selected_capacity . '([^0-9]|$)',
-                    'compare' => 'REGEXP',
-                ];
-            }
             if ($selected_drainage) {
+                // В данных встречаются разные формы («самотёк», «самотечный»),
+                // поэтому ищем по основе слова: «самот» / «принуд».
+                $drainage_stem = (stripos($selected_drainage, 'принуд') !== false) ? 'принуд' : 'самот';
                 $meta_query[] = [
                     'relation' => 'OR',
                     [
                         'key' => 'crb_water_disposal',
-                        'value' => $selected_drainage,
+                        'value' => $drainage_stem,
                         'compare' => 'LIKE',
                     ],
                     [
-                        'key' => 'crb_dimensions',
-                        'value' => $selected_drainage,
+                        'key' => 'crb_mounting_dimensions',
+                        'value' => $drainage_stem,
                         'compare' => 'LIKE',
                     ],
                 ];
@@ -124,10 +124,10 @@ $company = getCompanyContacts();
                     'compare' => 'IN',
                 ];
             }
+
             $args = array(
                 'post_type' => 'stations',
-                'posts_per_page' => 12,
-                'paged' => get_query_var('paged') ?: 1,
+                'posts_per_page' => -1, // берём все, дальше фильтруем и пагинируем вручную
                 'orderby' => 'menu_order',
                 'order' => 'ASC',
                 'post_status' => 'publish',
@@ -136,16 +136,46 @@ $company = getCompanyContacts();
                 $args['meta_query'] = $meta_query;
             }
             if ($selected_sort === 'price_asc' || $selected_sort === 'price_desc') {
-                $args['meta_key'] = 'crb_price';
+                $args['meta_key'] = 'crb_price_topas_s';
                 $args['orderby'] = 'meta_value_num';
                 $args['order'] = $selected_sort === 'price_asc' ? 'ASC' : 'DESC';
             }
             $catalog_query = new WP_Query($args);
+            $all_stations = $catalog_query->posts;
+
+            // Фильтр по пользователям: вытаскиваем числа из текста (или из заголовка),
+            // понимаем диапазон min-max и одиночное значение.
+            if ($selected_capacity) {
+                $all_stations = array_values(array_filter($all_stations, function ($p) use ($selected_capacity) {
+                    $text = (string) carbon_get_post_meta($p->ID, 'crb_people_count_text');
+                    preg_match_all('/\d+/', $text, $m);
+                    $nums = $m[0];
+                    if (empty($nums)) {
+                        preg_match_all('/\d+/', $p->post_title, $mt);
+                        $nums = $mt[0];
+                    }
+                    if (empty($nums)) {
+                        return false;
+                    }
+                    $nums = array_map('intval', $nums);
+                    return $selected_capacity >= min($nums) && $selected_capacity <= max($nums);
+                }));
+            }
+
+            // Ручная пагинация
+            $per_page = 12;
+            $paged = max(1, (int) (get_query_var('paged') ?: 1));
+            $total_stations = count($all_stations);
+            $max_pages = max(1, (int) ceil($total_stations / $per_page));
+            $paged = min($paged, $max_pages);
+            $page_stations = array_slice($all_stations, ($paged - 1) * $per_page, $per_page);
             ?>
 
-            <?php if ($catalog_query->have_posts()) : ?>
+            <?php if (!empty($page_stations)) : ?>
                 <div class="stations-grid">
-                    <?php while ($catalog_query->have_posts()) : $catalog_query->the_post();
+                    <?php foreach ($page_stations as $station_post) :
+                        $GLOBALS['post'] = $station_post;
+                        setup_postdata($station_post);
 
                         $price = carbon_get_post_meta(get_the_ID(), 'crb_price');
                         $price_topas_s = carbon_get_post_meta(get_the_ID(), 'crb_price_topas_s');
@@ -153,6 +183,10 @@ $company = getCompanyContacts();
                         $people = carbon_get_post_meta(get_the_ID(), 'crb_people_count_text');
                         $is_hit = carbon_get_post_meta(get_the_ID(), 'crb_is_hit');
                         $in_stock = carbon_get_post_meta(get_the_ID(), 'crb_in_stock');
+                        $daily_volume = carbon_get_post_meta(get_the_ID(), 'crb_daily_volume');
+                        $peak_discharge = carbon_get_post_meta(get_the_ID(), 'crb_peak_discharge');
+                        $power_consumption = carbon_get_post_meta(get_the_ID(), 'crb_power_consumption');
+                        $water_disposal = carbon_get_post_meta(get_the_ID(), 'crb_water_disposal');
                         ?>
 
                         <article class="station-card">
@@ -174,6 +208,12 @@ $company = getCompanyContacts();
 
                             <!-- Контент -->
                             <div class="station-card__content">
+                                <?php if ($in_stock) : ?>
+                                    <span class="station-stock-pill">
+                                        <svg class="icon" width="14" height="14"><use href="#icon-check"/></svg> В наличии
+                                    </span>
+                                <?php endif; ?>
+
                                 <h3 class="station-card__title">
                                     <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
                                 </h3>
@@ -185,14 +225,33 @@ $company = getCompanyContacts();
                                     </p>
                                 <?php endif; ?>
 
-                                <!-- Цена -->
-                                <div class="station-card__price">
-                                    <div class="station-card-home__price">
-                                        <?php if ($old_price && $old_price > $price) : ?>
-                                            <span class="price-old"><?php echo number_format($old_price, 0, '.', ' '); ?> ₽</span>
+                                <!-- Краткие характеристики -->
+                                <?php if ($daily_volume || $peak_discharge || $power_consumption || $water_disposal) : ?>
+                                    <ul class="station-card__specs">
+                                        <?php if ($daily_volume) : ?>
+                                            <li><span>Производительность</span><strong><?php echo esc_html($daily_volume); ?></strong></li>
                                         <?php endif; ?>
-                                        <span class="price-current"><?php echo $price ? number_format($price, 0, '.', ' ') . ' ₽' : 'По запросу'; ?></span>
-                                    </div>
+                                        <?php if ($peak_discharge) : ?>
+                                            <li><span>Залповый сброс</span><strong><?php echo esc_html($peak_discharge); ?></strong></li>
+                                        <?php endif; ?>
+                                        <?php if ($power_consumption) : ?>
+                                            <li><span>Потребление</span><strong><?php echo esc_html($power_consumption); ?></strong></li>
+                                        <?php endif; ?>
+                                        <?php if ($water_disposal) : ?>
+                                            <li><span>Водоотведение</span><strong><?php echo esc_html($water_disposal); ?></strong></li>
+                                        <?php endif; ?>
+                                    </ul>
+                                <?php endif; ?>
+
+                                <!-- Цена (показываем ТОПАС-С — она ниже) -->
+                                <?php $display_price = $price_topas_s ?: $price; ?>
+                                <div class="station-card__price">
+                                    <span class="station-card__price-label">ТОПАС-С</span>
+                                    <?php if ($old_price && $old_price > $display_price) : ?>
+                                        <span class="price-old"><?php echo number_format($old_price, 0, '.', ' '); ?> ₽</span>
+                                    <?php endif; ?>
+                                    <span class="price-current"><?php echo $display_price ? number_format($display_price, 0, '.', ' ') . ' ₽' : 'По запросу'; ?></span>
+                                </div>
 
                                 <!-- Кнопки -->
                                 <div class="station-card__actions">
@@ -202,22 +261,23 @@ $company = getCompanyContacts();
                             </div>
                         </article>
 
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 </div>
 
                 <!-- Пагинация -->
-                <?php if ($catalog_query->max_num_pages > 1) : ?>
+                <?php if ($max_pages > 1) : ?>
                     <nav class="pagination" aria-label="Навигация">
                         <?php
                         echo paginate_links(array(
                             'base' => str_replace(999999999, '%#%', esc_url(get_pagenum_link(999999999))),
                             'format' => '?paged=%#%',
-                            'current' => max(1, get_query_var('paged')),
-                            'total' => $catalog_query->max_num_pages,
+                            'current' => $paged,
+                            'total' => $max_pages,
                             'prev_text' => '←',
                             'next_text' => '→',
                             'type' => 'list',
-                            'mid_size' => 2
+                            'mid_size' => 2,
+                            'add_fragment' => '#catalog',
                         ));
                         ?>
                     </nav>
@@ -225,7 +285,9 @@ $company = getCompanyContacts();
 
             <?php else : ?>
                 <div class="no-results">
-                    <p>Станции пока не добавлены в каталог.</p>
+                    <p><?php echo $selected_capacity || $selected_drainage || $selected_stock
+                        ? 'По заданным фильтрам станции не найдены. Попробуйте изменить параметры.'
+                        : 'Станции пока не добавлены в каталог.'; ?></p>
                 </div>
             <?php endif; ?>
 

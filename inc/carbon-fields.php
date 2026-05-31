@@ -53,11 +53,37 @@ function crb_attach_theme_options()
     Container::make('theme_options', 'Реквизиты')
         ->set_page_parent($basic_options_container)
         ->add_fields(array(
+            Field::make('text', 'operator_name', 'Оператор (наименование)')
+                ->set_help_text('Например: ИП Иванов Иван Иванович или ООО «Название». Используется в Политике конфиденциальности.'),
+            Field::make('text', 'operator_inn', 'ИНН'),
+            Field::make('text', 'operator_ogrn', 'ОГРН / ОГРНИП'),
             Field::make('complex', 'requisites', 'Реквизиты')
                 ->add_fields(array(
                     Field::make('text', 'requisite_name', 'Название')->set_attribute('placeholder', 'Название'),
                     Field::make('text', 'requisite_value', 'Значение')->set_attribute('placeholder', 'Значение'),
                 )),
+        ));
+
+    // ===== SEO главной страницы =====
+    Container::make('theme_options', 'SEO главной')
+        ->set_page_parent($basic_options_container)
+        ->add_fields(array(
+            Field::make('text', 'home_seo_title', 'SEO Title главной')
+                ->set_help_text('Тег &lt;title&gt; главной. Если пусто — «Название сайта — Краткое описание». ~50–60 символов.'),
+            Field::make('textarea', 'home_seo_description', 'SEO Description главной')
+                ->set_help_text('Meta description главной. ~150–160 символов.'),
+        ));
+
+    // ===== SEO-поля для контента (страницы, станции, услуги, записи) =====
+    Container::make('post_meta', 'SEO')
+        ->where('post_type', 'IN', array('page', 'post', 'stations', 'services'))
+        ->set_context('normal')
+        ->set_priority('low')
+        ->add_fields(array(
+            Field::make('text', 'crb_seo_title', 'SEO Title')
+                ->set_help_text('Тег &lt;title&gt;. Если пусто — формируется автоматически. ~50–60 символов.'),
+            Field::make('textarea', 'crb_seo_description', 'SEO Description')
+                ->set_help_text('Meta description. Если пусто — берётся из описания/контента. ~150–160 символов.'),
         ));
 
     // Register fields for all post types
@@ -82,6 +108,16 @@ function crb_attach_theme_options()
     Container::make('post_meta', 'Характеристики станции')
         ->where('post_type', '=', 'stations')
         ->add_tab('📊 Параметры', array(
+            Field::make('text', 'crb_model_number', 'Номер модели (цифра после ТОПАС)')
+                ->set_help_text('Например: 5 — выведется как «ТОПАС 5» и «ТОПАС-С 5»')
+                ->set_width(34),
+            Field::make('text', 'crb_compressors_topas_s', 'Компрессоров (ТОПАС-С)')
+                ->set_default_value('1')
+                ->set_width(33),
+            Field::make('text', 'crb_compressors_topas', 'Компрессоров (ТОПАС)')
+                ->set_default_value('2')
+                ->set_width(33),
+
             Field::make('text', 'crb_price_topas_s', 'Цена ТОПАС-С, ₽')
                 ->set_width(50),
             Field::make('text', 'crb_price', 'Цена ТОПАС, ₽')

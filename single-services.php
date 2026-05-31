@@ -123,24 +123,40 @@ while (have_posts()) : the_post();
                         </div>
                     <?php endif; ?>
 
-                    <!-- Кнопка заказать звонок (внизу описания) -->
-                    <a href="tel:<?php echo $phone_clean; ?>" class="btn-call">
-                        <svg class="icon"><use href="#icon-phone"/></svg>
-                        Заказать звонок
-                    </a>
+                    <!-- Действия -->
+                    <div class="service-actions">
+                        <button type="button" class="btn-call open-modal" data-modal="order" data-product="<?php the_title_attribute(); ?>">
+                            <svg class="icon"><use href="#icon-phone"/></svg>
+                            Заказать звонок
+                        </button>
+                        <a href="tel:<?php echo $phone_clean; ?>" class="btn-call-link">
+                            Или позвоните: <?php echo esc_html($phone_raw); ?>
+                        </a>
+                    </div>
 
                 </div>
             </div>
 
             <!-- CTA блок в самом низу -->
-            <section class="cta-bottom">
-                <h2>Готовы заказать "<?php the_title(); ?>"?</h2>
-                <p>Специалист свяжется с вами в течение 15 минут</p>
-                <a href="tel:<?php echo $phone_clean; ?>" class="btn-call">
-                    <svg class="icon"><use href="#icon-phone"/></svg>
-                    Позвонить сейчас
-                </a>
-                <p class="cta-note">Конфиденциально • Без спама</p>
+            <section class="cta-bottom" id="order-form">
+                <h2>Нужна услуга «<?php the_title(); ?>»?</h2>
+                <p>Оставьте заявку — и вот что мы сделаем:</p>
+
+                <ul class="cta-bottom__steps">
+                    <li><svg class="icon" width="18" height="18"><use href="#icon-check"/></svg> Перезвоним в течение 15 минут</li>
+                    <li><svg class="icon" width="18" height="18"><use href="#icon-check"/></svg> Бесплатно проконсультируем и подберём решение</li>
+                    <li><svg class="icon" width="18" height="18"><use href="#icon-check"/></svg> Рассчитаем точную стоимость работ</li>
+                </ul>
+
+                <div class="cta-bottom__actions">
+                    <button type="button" class="btn-call open-modal" data-modal="order" data-product="<?php the_title_attribute(); ?>">
+                        <svg class="icon"><use href="#icon-phone"/></svg>
+                        Заказать звонок
+                    </button>
+                    <a href="tel:<?php echo $phone_clean; ?>" class="cta-bottom__phone">Позвонить: <?php echo esc_html($phone_raw); ?></a>
+                </div>
+
+                <p class="cta-note">Бесплатно и без обязательств • Конфиденциально • Без спама</p>
             </section>
 
         </div>

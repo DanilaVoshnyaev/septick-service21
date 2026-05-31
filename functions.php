@@ -285,6 +285,14 @@ require get_template_directory() . '/inc/carbon-fields.php';
  */
 require get_template_directory() . '/inc/install-theme.php';
 
+/**
+ * SEO: meta-теги, Open Graph, canonical, Schema.org, robots.txt.
+ * При установке SEO-плагина (Yoast/Rank Math) — закомментировать строку ниже.
+ */
+if (file_exists(get_template_directory() . '/inc/seo.php')) {
+    require get_template_directory() . '/inc/seo.php';
+}
+
 function my_pre_get_posts($query)
 {
     if ($query->is_main_query() && $query->is_archive()) {
