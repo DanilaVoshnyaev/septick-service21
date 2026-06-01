@@ -17,7 +17,6 @@ $company = getCompanyContacts();
     </svg>
     <main class="stations-archive">
         <div class="container">
-
             <!-- ===== HERO: Заголовок + Описание ===== -->
             <section class="stations-hero">
                 <h1 class="stations-hero__title">Каталог станций ТОПАС</h1>
@@ -71,19 +70,18 @@ $company = getCompanyContacts();
                         <option value="Принудительное" <?php selected($selected_drainage, 'Принудительное'); ?>>Принудительное</option>
                     </select>
                 </div>
-                <div class="catalog-filter__field">
+<!--                <div class="catalog-filter__field">
                     <label for="station-stock">Наличие</label>
                     <select id="station-stock" name="stock">
                         <option value="">Все</option>
-                        <option value="1" <?php selected($selected_stock, '1'); ?>>В наличии</option>
+                        <option value="1" <?php /*selected($selected_stock, '1'); */?>>В наличии</option>
                     </select>
-                </div>
+                </div>-->
                 <div class="catalog-filter__field">
                     <label for="station-sort">Сортировка</label>
                     <select id="station-sort" name="sort">
-                        <option value="">По умолчанию</option>
-                        <option value="price_asc" <?php selected($selected_sort, 'price_asc'); ?>>ТОПАС дешевле</option>
-                        <option value="price_desc" <?php selected($selected_sort, 'price_desc'); ?>>ТОПАС дороже</option>
+                        <option value="">Сначала дешёвые</option>
+                        <option value="price_desc" <?php selected($selected_sort, 'price_desc'); ?>>Сначала дорогие</option>
                     </select>
                 </div>
                 <div class="catalog-filter__actions">
@@ -94,52 +92,16 @@ $company = getCompanyContacts();
 
             <!-- ===== СЕТКА СТАНЦИЙ ===== -->
             <?php
-            // Фильтры по точным мета-полям (водоотведение, наличие).
-            // Фильтр по пользователям обрабатывается в PHP ниже — текстовое поле
-            // может содержать диапазон («3-5 человек»), поэтому сравниваем числа.
-            $meta_query = [];
-            if ($selected_drainage) {
-                // В данных встречаются разные формы («самотёк», «самотечный»),
-                // поэтому ищем по основе слова: «самот» / «принуд».
-                $drainage_stem = (stripos($selected_drainage, 'принуд') !== false) ? 'принуд' : 'самот';
-                $meta_query[] = [
-                    'relation' => 'OR',
-                    [
-                        'key' => 'crb_water_disposal',
-                        'value' => $drainage_stem,
-                        'compare' => 'LIKE',
-                    ],
-                    [
-                        'key' => 'crb_mounting_dimensions',
-                        'value' => $drainage_stem,
-                        'compare' => 'LIKE',
-                    ],
-                ];
-            }
-            if ($selected_stock === '1') {
-                $meta_query[] = [
-                    'key' => 'crb_in_stock',
-                    'value' => ['yes', '1'],
-                    'compare' => 'IN',
-                ];
-            }
-
-            $args = array(
-                'post_type' => 'stations',
-                'posts_per_page' => -1, // берём все, дальше фильтруем и пагинируем вручную
-                'orderby' => 'menu_order',
-                'order' => 'ASC',
-                'post_status' => 'publish',
-            );
-            if ($meta_query) {
-                $args['meta_query'] = $meta_query;
-            }
-            if ($selected_sort === 'price_asc' || $selected_sort === 'price_desc') {
-                $args['meta_key'] = 'crb_price_topas_s';
-                $args['orderby'] = 'meta_value_num';
-                $args['order'] = $selected_sort === 'price_asc' ? 'ASC' : 'DESC';
-            }
-            $catalog_query = new WP_Query($args);
+            // Берём все станции одним запросом, дальше всё фильтруем и сортируем
+            // в PHP через carbon_get_post_meta() — это надёжнее, чем meta_query,
+            // т.к. не зависит от того, в каком формате Carbon Fields хранит значения.
+            $catalog_query = new WP_Query(array(
+                'post_type'      => 'stations',
+                'posts_per_page' => -1,
+                'orderby'        => 'menu_order',
+                'order'          => 'ASC',
+                'post_status'    => 'publish',
+            ));
             $all_stations = $catalog_query->posts;
 
             // Фильтр по пользователям: вытаскиваем числа из текста (или из заголовка),
@@ -161,6 +123,44 @@ $company = getCompanyContacts();
                 }));
             }
 
+            // Фильтр по водоотведению: ищем основу слова «самот» / «принуд»
+            // в полях водоотведения и габаритов монтажа.
+            if ($selected_drainage) {
+                $drainage_stem = (stripos($selected_drainage, 'принуд') !== false) ? 'принуд' : 'самот';
+                $all_stations = array_values(array_filter($all_stations, function ($p) use ($drainage_stem) {
+                    $haystack = mb_strtolower(
+                        (string) carbon_get_post_meta($p->ID, 'crb_water_disposal') . ' ' .
+                        (string) carbon_get_post_meta($p->ID, 'crb_mounting_dimensions')
+                    );
+                    return mb_strpos($haystack, $drainage_stem) !== false;
+                }));
+            }
+
+            // Фильтр по наличию (по умолчанию все товары в наличии).
+            if ($selected_stock === '1') {
+                $all_stations = array_values(array_filter($all_stations, function ($p) {
+                    return station_is_in_stock($p->ID);
+                }));
+            }
+
+            // Сортировка по цене (берём цену ТОПАС-С, иначе обычную ТОПАС).
+            // По умолчанию — от дешёвых к дорогим. Товары без цены («По запросу») — в конце.
+            $sort_desc = ($selected_sort === 'price_desc');
+            usort($all_stations, function ($a, $b) use ($sort_desc) {
+                $pa = (float) (carbon_get_post_meta($a->ID, 'crb_price_topas_s') ?: carbon_get_post_meta($a->ID, 'crb_price'));
+                $pb = (float) (carbon_get_post_meta($b->ID, 'crb_price_topas_s') ?: carbon_get_post_meta($b->ID, 'crb_price'));
+                if ($pa <= 0 && $pb <= 0) {
+                    return 0;
+                }
+                if ($pa <= 0) {
+                    return 1; // $a без цены — в конец
+                }
+                if ($pb <= 0) {
+                    return -1; // $b без цены — в конец
+                }
+                return $sort_desc ? ($pb <=> $pa) : ($pa <=> $pb);
+            });
+
             // Ручная пагинация
             $per_page = 12;
             $paged = max(1, (int) (get_query_var('paged') ?: 1));
@@ -181,7 +181,7 @@ $company = getCompanyContacts();
                         $old_price = carbon_get_post_meta(get_the_ID(), 'crb_old_price');
                         $people = carbon_get_post_meta(get_the_ID(), 'crb_people_count_text');
                         $is_hit = carbon_get_post_meta(get_the_ID(), 'crb_is_hit');
-                        $in_stock = carbon_get_post_meta(get_the_ID(), 'crb_in_stock');
+                        $in_stock = station_is_in_stock(get_the_ID());
                         $daily_volume = carbon_get_post_meta(get_the_ID(), 'crb_daily_volume');
                         $peak_discharge = carbon_get_post_meta(get_the_ID(), 'crb_peak_discharge');
                         $power_consumption = carbon_get_post_meta(get_the_ID(), 'crb_power_consumption');
@@ -189,7 +189,6 @@ $company = getCompanyContacts();
                         ?>
 
                         <article class="station-card">
-
 
 
                             <!-- Изображение -->
@@ -204,10 +203,9 @@ $company = getCompanyContacts();
                                     <?php endif; ?>
                                 </a>
                             </div>
-
                             <!-- Контент -->
                             <div class="station-card__content">
-                                <?php if ($in_stock) : ?>
+                                <?php if (true) : ?>
                                     <span class="station-stock-pill">
                                         <svg class="icon" width="14" height="14"><use href="#icon-check"/></svg> В наличии
                                     </span>

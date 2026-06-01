@@ -136,55 +136,72 @@ $company = getCompanyContacts();
         </section>
 
         <?php
-        // Параметры фильтра (с главной фильтруем на месте)
+        // Параметры фильтра (фильтруем прямо на главной — так же, как в каталоге:
+        // берём все станции и фильтруем/сортируем в PHP через carbon_get_post_meta,
+        // это надёжнее meta_query и не зависит от формата хранения Carbon Fields).
         $f_capacity = isset($_GET['capacity']) ? absint($_GET['capacity']) : 0;
         $f_drainage = isset($_GET['drainage']) ? sanitize_text_field(wp_unslash($_GET['drainage'])) : '';
-        $f_stock    = isset($_GET['stock']) ? sanitize_text_field(wp_unslash($_GET['stock'])) : '';
         $f_sort     = isset($_GET['sort']) ? sanitize_text_field(wp_unslash($_GET['sort'])) : '';
-        $has_filter = ($f_capacity || $f_drainage || $f_stock !== '' || $f_sort !== '');
+        $has_filter = ($f_capacity || $f_drainage || $f_sort !== '');
 
-        $meta_query = array();
+        $stations_query = new WP_Query(array(
+            'post_type'      => 'stations',
+            'posts_per_page' => -1,
+            'orderby'        => 'menu_order',
+            'order'          => 'ASC',
+            'post_status'    => 'publish',
+        ));
+        $all_stations = $stations_query->posts;
+
+        // Фильтр по пользователям: число из текста (или из названия), учитываем диапазон.
         if ($f_capacity) {
-            $meta_query[] = array(
-                'key' => 'crb_people_count_text',
-                'value' => '(^|[^0-9])' . $f_capacity . '([^0-9]|$)',
-                'compare' => 'REGEXP',
-            );
-        }
-        if ($f_drainage) {
-            // Разные формы в данных («самотёк»/«самотечный») — ищем по основе слова
-            $drainage_stem = (stripos($f_drainage, 'принуд') !== false) ? 'принуд' : 'самот';
-            $meta_query[] = array(
-                'relation' => 'OR',
-                array('key' => 'crb_water_disposal', 'value' => $drainage_stem, 'compare' => 'LIKE'),
-                array('key' => 'crb_mounting_dimensions', 'value' => $drainage_stem, 'compare' => 'LIKE'),
-            );
-        }
-        if ($f_stock === '1') {
-            $meta_query[] = array(
-                'key' => 'crb_in_stock',
-                'value' => array('yes', '1'),
-                'compare' => 'IN',
-            );
+            $all_stations = array_values(array_filter($all_stations, function ($p) use ($f_capacity) {
+                $text = (string) carbon_get_post_meta($p->ID, 'crb_people_count_text');
+                preg_match_all('/\d+/', $text, $m);
+                $nums = $m[0];
+                if (empty($nums)) {
+                    preg_match_all('/\d+/', $p->post_title, $mt);
+                    $nums = $mt[0];
+                }
+                if (empty($nums)) {
+                    return false;
+                }
+                $nums = array_map('intval', $nums);
+                return $f_capacity >= min($nums) && $f_capacity <= max($nums);
+            }));
         }
 
-        // Параметры запроса
-        $args = array(
-            'post_type' => 'stations',
-            'posts_per_page' => $has_filter ? 12 : 8,
-            'orderby' => 'menu_order',
-            'order' => 'ASC',
-            'post_status' => 'publish',
-        );
-        if ($meta_query) {
-            $args['meta_query'] = $meta_query;
+        // Фильтр по водоотведению: основа слова «самот» / «принуд».
+        if ($f_drainage) {
+            $drainage_stem = (stripos($f_drainage, 'принуд') !== false) ? 'принуд' : 'самот';
+            $all_stations = array_values(array_filter($all_stations, function ($p) use ($drainage_stem) {
+                $haystack = mb_strtolower(
+                    (string) carbon_get_post_meta($p->ID, 'crb_water_disposal') . ' ' .
+                    (string) carbon_get_post_meta($p->ID, 'crb_mounting_dimensions')
+                );
+                return mb_strpos($haystack, $drainage_stem) !== false;
+            }));
         }
-        if ($f_sort === 'price_asc' || $f_sort === 'price_desc') {
-            $args['meta_key'] = 'crb_price_topas_s';
-            $args['orderby'] = 'meta_value_num';
-            $args['order'] = $f_sort === 'price_asc' ? 'ASC' : 'DESC';
-        }
-        $stations_query = new WP_Query($args);
+
+        // Сортировка по цене: по умолчанию от дешёвых к дорогим, «По запросу» — в конец.
+        $sort_desc = ($f_sort === 'price_desc');
+        usort($all_stations, function ($a, $b) use ($sort_desc) {
+            $pa = (float) (carbon_get_post_meta($a->ID, 'crb_price_topas_s') ?: carbon_get_post_meta($a->ID, 'crb_price'));
+            $pb = (float) (carbon_get_post_meta($b->ID, 'crb_price_topas_s') ?: carbon_get_post_meta($b->ID, 'crb_price'));
+            if ($pa <= 0 && $pb <= 0) {
+                return 0;
+            }
+            if ($pa <= 0) {
+                return 1;
+            }
+            if ($pb <= 0) {
+                return -1;
+            }
+            return $sort_desc ? ($pb <=> $pa) : ($pa <=> $pb);
+        });
+
+        // На главной показываем превью: до 12 при активном фильтре, иначе 8.
+        $page_stations = array_slice($all_stations, 0, $has_filter ? 12 : 8);
         ?>
 
         <section id="catalog" class="catalog-premium" style="background: var(--bg-secondary); padding: clamp(80px, 12vw, 80px) 0 0;">
@@ -223,19 +240,18 @@ $company = getCompanyContacts();
                             <option value="Принудительное" <?php selected($f_drainage, 'Принудительное'); ?>>Принудительное</option>
                         </select>
                     </div>
-                    <div class="catalog-filter__field">
+                  <!--  <div class="catalog-filter__field">
                         <label for="home-stock">Наличие</label>
                         <select id="home-stock" name="stock">
                             <option value="">Все</option>
-                            <option value="1" <?php selected($f_stock, '1'); ?>>В наличии</option>
+                            <option value="1" <?php /*selected($f_stock, '1'); */?>>В наличии</option>
                         </select>
-                    </div>
+                    </div>-->
                     <div class="catalog-filter__field">
                         <label for="home-sort">Сортировка</label>
                         <select id="home-sort" name="sort">
-                            <option value="">По умолчанию</option>
-                            <option value="price_asc" <?php selected($f_sort, 'price_asc'); ?>>Сначала дешевле</option>
-                            <option value="price_desc" <?php selected($f_sort, 'price_desc'); ?>>Сначала дороже</option>
+                            <option value="">Сначала дешёвые</option>
+                            <option value="price_desc" <?php selected($f_sort, 'price_desc'); ?>>Сначала дорогие</option>
                         </select>
                     </div>
                     <div class="catalog-filter__actions">
@@ -246,14 +262,16 @@ $company = getCompanyContacts();
 
                 <!-- Сетка карточек -->
                 <div class="catalog-grid-premium">
-                    <?php if ($stations_query->have_posts()) : ?>
-                        <?php while ($stations_query->have_posts()) : $stations_query->the_post();
+                    <?php if (!empty($page_stations)) : ?>
+                        <?php foreach ($page_stations as $station_post) :
+                            $GLOBALS['post'] = $station_post;
+                            setup_postdata($station_post);
                             $price = carbon_get_post_meta(get_the_ID(), 'crb_price');
                             $price_topas_s = carbon_get_post_meta(get_the_ID(), 'crb_price_topas_s');
                             $old_price = carbon_get_post_meta(get_the_ID(), 'crb_old_price');
                             $people = carbon_get_post_meta(get_the_ID(), 'crb_people_count_text');
                             $is_hit = carbon_get_post_meta(get_the_ID(), 'crb_is_hit');
-                            $in_stock = carbon_get_post_meta(get_the_ID(), 'crb_in_stock');
+                            $in_stock = true;
                             $daily_volume = carbon_get_post_meta(get_the_ID(), 'crb_daily_volume');
                             $peak_discharge = carbon_get_post_meta(get_the_ID(), 'crb_peak_discharge');
                             $power_consumption = carbon_get_post_meta(get_the_ID(), 'crb_power_consumption');
@@ -291,7 +309,7 @@ $company = getCompanyContacts();
 
                                 <!-- Контент -->
                                 <div class="station-card__content">
-                                    <?php if ($in_stock) : ?>
+                                    <?php if (true) : ?>
                                         <span class="station-stock-pill">
                                             <svg class="icon" width="14" height="14"><use href="#icon-check"/></svg> В наличии
                                         </span>
@@ -342,10 +360,10 @@ $company = getCompanyContacts();
                                     </div>
                                 </div>
                             </article>
-                        <?php endwhile; ?>
+                        <?php endforeach; ?>
                     <?php else : ?>
                         <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: var(--bg-primary); border-radius: var(--radius-lg);">
-                            <p style="color: var(--text-secondary);">Станции пока не добавлены в каталог</p>
+                            <p style="color: var(--text-secondary);"><?php echo $has_filter ? 'По заданным фильтрам станции не найдены. Попробуйте изменить параметры.' : 'Станции пока не добавлены в каталог'; ?></p>
                         </div>
                     <?php endif; ?>
                     <?php wp_reset_postdata(); ?>

@@ -144,7 +144,9 @@ function crb_attach_theme_options()
         ->add_tab('🏷️ Статусы', array(
             Field::make('checkbox', 'crb_is_hit', 'Хит продаж'),
             Field::make('checkbox', 'crb_is_new', 'Новинка'),
-            Field::make('checkbox', 'crb_in_stock', 'В наличии'),
+            Field::make('checkbox', 'crb_in_stock', 'В наличии')
+                ->set_default_value(true)
+                ->set_help_text('По умолчанию включено — все товары считаются в наличии. Снимите галочку, если товара нет.'),
         ))
         ->add_tab('📐 Комплектация', array(
             Field::make('complex', 'crb_equipment', 'Состав комплекта')
@@ -419,6 +421,28 @@ function getCarbonAddressLink()
         return '';
     }
     return $addressLink;
+}
+
+/**
+ * В наличии ли станция.
+ *
+ * По умолчанию ВСЕ товары считаются в наличии: если поле «В наличии»
+ * ещё ни разу не сохранялось у записи (старые товары) — возвращаем true.
+ * Если поле сохранено, используем его реальное значение, чтобы при
+ * необходимости можно было снять галочку и пометить товар как отсутствующий.
+ *
+ * @param int $post_id
+ * @return bool
+ */
+function station_is_in_stock($post_id)
+{
+    foreach (array('_crb_in_stock', 'crb_in_stock') as $meta_key) {
+        if (metadata_exists('post', $post_id, $meta_key)) {
+            return (bool) carbon_get_post_meta($post_id, 'crb_in_stock');
+        }
+    }
+    // Поле никогда не сохранялось — по умолчанию «в наличии».
+    return true;
 }
 
 function getCarbonJdCode()

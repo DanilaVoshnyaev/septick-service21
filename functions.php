@@ -351,6 +351,37 @@ function crb_register_stations_cpt() {
 }
 add_action('init', 'crb_register_stations_cpt');
 
+/**
+ * Разовая миграция: помечаем все существующие станции как «в наличии».
+ * Заказчик попросил, чтобы по умолчанию все товары были в наличии.
+ * После прогона админ может вручную снять галочку у отсутствующих товаров —
+ * повторно миграция не запускается (флаг в опциях).
+ */
+function izex_migrate_stations_in_stock()
+{
+    if (get_option('izex_stations_instock_migrated')) {
+        return;
+    }
+    if (!function_exists('carbon_set_post_meta')) {
+        return; // Carbon ещё не загружен — попробуем на следующем заходе
+    }
+
+    $station_ids = get_posts(array(
+        'post_type'      => 'stations',
+        'post_status'    => 'any',
+        'posts_per_page' => -1,
+        'fields'         => 'ids',
+    ));
+    foreach ($station_ids as $station_id) {
+        if (!station_is_in_stock($station_id)) {
+            carbon_set_post_meta($station_id, 'crb_in_stock', true);
+        }
+    }
+
+    update_option('izex_stations_instock_migrated', 1);
+}
+add_action('admin_init', 'izex_migrate_stations_in_stock');
+
 // Регистрация типа записи "Услуги"
 function register_services_cpt() {
     $labels = array(
