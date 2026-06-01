@@ -240,4 +240,23 @@
             });
         });
 
+        // ===== Плавающий блок соцсетей: сворачивание/разворачивание =====
+        const socialFloat = document.querySelector('.social-float');
+        if (socialFloat) {
+            const toggle = socialFloat.querySelector('.social-float__toggle');
+            const KEY = 'social_float_collapsed';
+            let collapsed = false;
+            try { collapsed = localStorage.getItem(KEY) === '1'; } catch (e) {}
+            const apply = () => {
+                socialFloat.classList.toggle('social-float--collapsed', collapsed);
+                if (toggle) toggle.setAttribute('aria-expanded', String(!collapsed));
+            };
+            apply();
+            toggle?.addEventListener('click', () => {
+                collapsed = !collapsed;
+                try { localStorage.setItem(KEY, collapsed ? '1' : '0'); } catch (e) {}
+                apply();
+            });
+        }
+
     });

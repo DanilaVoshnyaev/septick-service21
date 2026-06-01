@@ -369,7 +369,7 @@ $company = getCompanyContacts();
                     <?php wp_reset_postdata(); ?>
                 </div>
 
-                <div class="catalog-cta-premium" style="background-image: url(<?=assets('/images/cta.jpg')?>;">
+                <div class="catalog-cta-premium" style="background-image: url('<?=assets('/images/cta.jpg')?>');">
                     <div class="catalog-cta-premium--block">
                         <p>Не нашли подходящую модель? <strong>Мы поставляем всю линейку ТОПАС</strong></p>
                         <a href="tel:<?php echo $company['phone_clean']; ?>" class="phone-link-premium"><?php echo $company['phone']; ?></a>
@@ -601,15 +601,17 @@ $company = getCompanyContacts();
         </section>
 
         <!-- CTA Premium -->
-        <section class="cta-premium" id="contacts" style="background-image: url(<?=assets('/images/cta.jpg')?>;">
+        <section class="cta-premium" id="contacts" style="background-image: url('<?=assets('/images/cta.jpg')?>');">
             <div class="cta-bg-pattern"></div>
             <div class="container">
                 <div class="cta-content">
                     <h2 class="cta-title">Готовы сделать первый шаг?</h2>
                     <p class="cta-subtitle">Получите бесплатную консультацию инженера и скидку на монтаж при заказе до конца месяца</p>
-                    <form class="cta-form-premium" id="consultationForm">
-                        <div class="form-group"><input type="text" name="name" placeholder="Ваше имя" required></div>
-                        <div class="form-group"><input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required></div>
+                    <form class="cta-form-premium premium-contact-form" id="consultationForm" data-form-type="consultation">
+                        <input type="hidden" name="action" value="premium_form_submit">
+                        <input type="hidden" name="page_url" value="<?php echo esc_url($_SERVER['REQUEST_URI'] ?? ''); ?>">
+                        <div class="form-group"><input type="text" name="name" placeholder="Ваше имя" required><span class="form-error"></span></div>
+                        <div class="form-group"><input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required><span class="form-error"></span></div>
                         <button type="submit" class="btn-premium btn-primary btn-large">
                             <span>Получить консультацию</span>
                             <svg class="btn-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>

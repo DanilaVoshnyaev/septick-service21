@@ -27,10 +27,20 @@ function crb_attach_theme_options()
                         )),
                 )),
             Field::make('text', 'main_email', __('Email'))->set_attribute('placeholder', 'email')->set_attribute('type', 'email'),
+            Field::make('text', 'lead_emails', __('Email(ы) для заявок'))
+                ->set_attribute('placeholder', 'zakazchik@mail.ru, manager@mail.ru')
+                ->set_help_text('Куда отправлять заявки с форм сайта. Можно указать несколько адресов через запятую.'),
             Field::make('text', 'work_time', __('Режим работы'))->set_attribute('placeholder', 'Режим работы'),
             Field::make('text', 'map_link', __('Ссылка на карту'))->set_attribute('placeholder', 'Ссылка на карту'),
             Field::make('textarea', 'address_text', __('Адрес'))->set_attribute('placeholder', 'Адрес'),
             Field::make('text', 'jd_code', __('ж.д коды'))->set_attribute('placeholder', 'ЖД код'),
+            Field::make('complex', 'social_links', __('Социальные сети'))
+                ->set_help_text('Иконки выводятся плавающим блоком сбоку сайта.')
+                ->add_fields(array(
+                    Field::make('text', 'social_caption', 'Название')->set_attribute('placeholder', 'Например: VK, Telegram, MAX')->set_width(40),
+                    Field::make('text', 'social_url', 'Ссылка')->set_attribute('placeholder', 'https://...')->set_width(60),
+                    Field::make('image', 'social_icon', 'Иконка (SVG/PNG)'),
+                )),
             // Field::make('textarea', 'map_script', __('Скрипт каты'))->set_attribute('placeholder', 'Скрипт каты'),
 //            Field::make('textarea', 'requisites', __('реквизиты'))->set_attribute('placeholder', 'реквизиты'),
         ));
@@ -391,6 +401,116 @@ function getCarbonEmail()
         return '';
     }
     return $email;
+}
+
+/**
+ * Список email-адресов, на которые отправляются заявки с форм.
+ * Берём адреса из настроек темы (поле «Email(ы) для заявок», можно несколько
+ * через запятую). Если поле пустое — фолбэк на основной email сайта.
+ *
+ * @return string[] валидные email-адреса (уникальные)
+ */
+function getLeadEmails()
+{
+    $emails = array();
+
+    $raw = getCarbonFields('lead_emails');
+    if (!empty($raw)) {
+        foreach (preg_split('/[,;\s]+/', $raw) as $email) {
+            $email = trim($email);
+            if ($email !== '' && is_email($email)) {
+                $emails[] = $email;
+            }
+        }
+    }
+
+    // Фолбэк — основной email сайта.
+    if (empty($emails)) {
+        $main = getCarbonEmail();
+        if ($main && is_email($main)) {
+            $emails[] = $main;
+        }
+    }
+
+    return array_values(array_unique($emails));
+}
+
+/**
+ * Социальные сети для плавающего блока сбоку.
+ * Каждый элемент: ['caption' => ..., 'url' => ..., 'icon' => ...].
+ * Если в настройках ничего не задано — возвращаем дефолтную ссылку (MAX),
+ * чтобы блок не был пустым.
+ *
+ * @return array<int,array{caption:string,url:string,icon:string}>
+ */
+function getSocialLinks()
+{
+    $links = array();
+    $raw = getCarbonFields('social_links');
+
+    if (!empty($raw) && is_array($raw)) {
+        foreach ($raw as $item) {
+            $url = isset($item['social_url']) ? trim($item['social_url']) : '';
+            if ($url === '') {
+                continue;
+            }
+            $icon = '';
+            if (!empty($item['social_icon'])) {
+                // Carbon image возвращает ID вложения — получаем URL.
+                $icon = is_numeric($item['social_icon'])
+                    ? wp_get_attachment_image_url((int) $item['social_icon'], 'full')
+                    : $item['social_icon'];
+            }
+            $links[] = array(
+                'caption' => isset($item['social_caption']) ? $item['social_caption'] : '',
+                'url'     => $url,
+                'icon'    => $icon ?: '',
+            );
+        }
+    }
+
+    // Фолбэк — текущая ссылка MAX.
+    if (empty($links)) {
+        $links[] = array(
+            'caption' => 'MAX',
+            'url'     => 'https://max.ru/u/f9LHodD0cOI_AGyWf9AKcrl72RIFsKRL7vOApMiqwT37En8F81IprazW1ro',
+            'icon'    => 'https://maxicons.ru/icons/MAX.svg',
+        );
+    }
+
+    return $links;
+}
+
+/**
+ * Печатает плавающий блок соцсетей сбоку сайта.
+ */
+function printSocialFloat()
+{
+    $links = getSocialLinks();
+    if (empty($links)) {
+        return;
+    }
+    ?>
+    <aside class="social-float" aria-label="Мы в соцсетях">
+        <button type="button" class="social-float__toggle" aria-label="Свернуть/развернуть соцсети" aria-expanded="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <div class="social-float__list">
+            <?php foreach ($links as $link) : ?>
+                <a class="social-float__item" href="<?php echo esc_url($link['url']); ?>" target="_blank" rel="noopener nofollow" aria-label="<?php echo esc_attr($link['caption'] ?: 'Соцсеть'); ?>">
+                    <?php if (!empty($link['icon'])) : ?>
+                        <img class="social-float__icon" src="<?php echo esc_url($link['icon']); ?>" alt="<?php echo esc_attr($link['caption']); ?>" width="26" height="26" loading="lazy">
+                    <?php else : ?>
+                        <span class="social-float__letter"><?php echo esc_html(mb_substr($link['caption'] ?: '?', 0, 1)); ?></span>
+                    <?php endif; ?>
+                    <?php if (!empty($link['caption'])) : ?>
+                        <span class="social-float__label"><?php echo esc_html($link['caption']); ?></span>
+                    <?php endif; ?>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    </aside>
+    <?php
 }
 
 function getCarbonRequisites()

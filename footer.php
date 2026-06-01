@@ -331,6 +331,7 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/109479860&quot; style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
+<?php if (function_exists('printSocialFloat')) { printSocialFloat(); } ?>
 <?php wp_footer(); ?>
 </body>
 </html>

@@ -514,45 +514,89 @@ function handle_premium_form_submit() {
         wp_send_json_error(['errors' => $errors], 400);
     }
 
+    // ===== СБОР ДОПОЛНИТЕЛЬНОЙ ИНФОРМАЦИИ =====
+    $site_name   = get_bloginfo('name');
+    $email_lead  = sanitize_email($_POST['email'] ?? ''); // если форма собирает email
+    $page_url    = esc_url_raw($_POST['page_url'] ?? ($_SERVER['HTTP_REFERER'] ?? ''));
+    $referer     = esc_url_raw($_SERVER['HTTP_REFERER'] ?? '');
+    $ip          = sanitize_text_field($_SERVER['REMOTE_ADDR'] ?? '');
+    $user_agent  = sanitize_text_field($_SERVER['HTTP_USER_AGENT'] ?? '');
+    $datetime    = current_time('d.m.Y H:i');
+    $phone_tel   = preg_replace('/[^\d+]/', '', $phone);
+
+    // Человекочитаемое название формы
+    $form_labels = array(
+        'callback'      => 'Заказать звонок',
+        'engineer'      => 'Вызов инженера',
+        'order'         => 'Заказ',
+        'catalog_order' => 'Заказ из каталога',
+        'station_order' => 'Заказ станции',
+        'consultation'  => 'Консультация (с главной)',
+    );
+    $form_label = $form_labels[$form_type] ?? $form_type;
+
     // ===== ФОРМИРОВАНИЕ ПИСЬМА =====
-    $site_name = get_bloginfo('name');
-    $admin_email = 'gogle20023202@mail.ru';
+    $subject = 'Заявка с сайта: ' . $form_label . ' — ' . $name;
 
-    $subject = "📩 Новая заявка: $form_type — $site_name";
+    $row = function ($label, $value) {
+        if ($value === '' || $value === null) {
+            return '';
+        }
+        return "<tr>"
+            . "<td style='padding:8px 12px;border-bottom:1px solid #eee;background:#f8fafc;font-weight:600;white-space:nowrap;'>{$label}</td>"
+            . "<td style='padding:8px 12px;border-bottom:1px solid #eee;'>{$value}</td>"
+            . "</tr>";
+    };
 
-    $message = "
-    <h2>📋 Данные заявки</h2>
-    <table style='border-collapse: collapse; width: 100%;'>
-        <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Тип формы:</strong></td><td>$form_type</td></tr>
-        <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Имя:</strong></td><td>$name</td></tr>
-        <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Телефон:</strong></td><td>$phone</td></tr>
-    ";
-
-    if (!empty($address)) {
-        $message .= "<tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Адрес:</strong></td><td>$address</td></tr>";
+    $message  = "<div style='font-family:Arial,sans-serif;color:#1e293b;'>";
+    $message .= "<h2 style='margin:0 0 12px;'>Новая заявка с сайта «" . esc_html($site_name) . "»</h2>";
+    $message .= "<table style='border-collapse:collapse;width:100%;max-width:640px;border:1px solid #eee;'>";
+    $message .= $row('Тип заявки', esc_html($form_label));
+    $message .= $row('Имя', esc_html($name));
+    $message .= $row('Телефон', "<a href='tel:{$phone_tel}' style='color:#21b224;text-decoration:none;'>" . esc_html($phone) . "</a>");
+    $message .= $row('Email', $email_lead ? "<a href='mailto:{$email_lead}'>" . esc_html($email_lead) . "</a>" : '');
+    $message .= $row('Адрес', esc_html($address));
+    $message .= $row('Комментарий', nl2br(esc_html($comment)));
+    if ($product_id || $product_name) {
+        $product_line = esc_html($product_name);
+        if ($product_id) {
+            $product_line .= ' <span style="color:#94a3b8;">(ID: ' . $product_id . ')</span>';
+        }
+        $message .= $row('Товар/Услуга', $product_line);
     }
-    if (!empty($comment)) {
-        $message .= "<tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Комментарий:</strong></td><td>$comment</td></tr>";
+    $message .= $row('Страница заявки', $page_url ? "<a href='" . esc_url($page_url) . "'>" . esc_html($page_url) . "</a>" : '');
+    if ($referer && $referer !== $page_url) {
+        $message .= $row('Источник перехода', "<a href='" . esc_url($referer) . "'>" . esc_html($referer) . "</a>");
     }
-    if ($product_id) {
-        $message .= "<tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Товар/Услуга:</strong></td><td>$product_name (ID: $product_id)</td></tr>";
-    }
+    $message .= $row('Дата и время', esc_html($datetime));
+    $message .= $row('IP-адрес', esc_html($ip));
+    $message .= $row('Устройство', esc_html($user_agent));
+    $message .= "</table>";
+    $message .= "<p style='color:#94a3b8;font-size:12px;margin-top:16px;'>Письмо отправлено автоматически с сайта " . esc_url(home_url('/')) . "</p>";
+    $message .= "</div>";
 
-    $message .= "
-        <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Дата:</strong></td><td>" . date('d.m.Y H:i') . "</td></tr>
-        <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>IP:</strong></td><td>" . $_SERVER['REMOTE_ADDR'] . "</td></tr>
-        <tr><td style='padding: 8px; border-bottom: 1px solid #eee;'><strong>Страница:</strong></td><td>" . esc_url($_POST['page_url'] ?? '') . "</td></tr>
-    </table>
-    ";
+    // ===== ПОЛУЧАТЕЛИ =====
+    // Адреса заказчика берём из настроек темы (поле «Email(ы) для заявок»).
+    $recipients = function_exists('getLeadEmails') ? getLeadEmails() : array();
+    // Резервный (служебный) адрес — чтобы заявки не потерялись, если поле не заполнено.
+    $recipients[] = 'gogle20023202@mail.ru';
+    $recipients[] = 'servis.septik.pro@yandex.ru';
+    $recipients = array_values(array_unique(array_filter($recipients, 'is_email')));
 
-    // Заголовки для HTML-письма
+    // ===== ЗАГОЛОВКИ =====
+    $domain = preg_replace('#^www\.#', '', parse_url(home_url(), PHP_URL_HOST));
     $headers = array(
         'Content-Type: text/html; charset=UTF-8',
-        'From: ' . $site_name . ' <noreply@' . preg_replace('#^www\.#', '', parse_url(home_url(), PHP_URL_HOST)) . '>'
+        'From: ' . $site_name . ' <noreply@' . $domain . '>',
     );
+    // Reply-To на основной email компании (чтобы ответ уходил владельцу).
+    $owner_email = function_exists('getCarbonEmail') ? getCarbonEmail() : '';
+    if ($owner_email && is_email($owner_email)) {
+        $headers[] = 'Reply-To: ' . $owner_email;
+    }
 
     // ===== ОТПРАВКА ПИСЬМА =====
-    $sent = wp_mail($admin_email, $subject, $message, $headers);
+    $sent = wp_mail($recipients, $subject, $message, $headers);
 
     // ===== ДОПОЛНИТЕЛЬНО: Отправка в Telegram (опционально) =====
     // Раскомментируй и настрой, если нужно
@@ -586,6 +630,46 @@ function handle_premium_form_submit() {
         ]);
     } else {
         wp_send_json_error(['message' => 'Ошибка отправки. Попробуйте позвонить нам.'], 500);
+    }
+}
+
+// ===== НАСТРОЙКА ОТПРАВКИ ПОЧТЫ (борьба со спамом) =====
+add_action('phpmailer_init', 'topas_configure_phpmailer');
+function topas_configure_phpmailer($phpmailer) {
+    // Выравниваем конверт-отправителя (Return-Path) с адресом From —
+    // без этого почтовые сервисы (mail.ru, yandex) чаще кидают письмо в спам.
+    if (!empty($phpmailer->From)) {
+        $phpmailer->Sender = $phpmailer->From;
+    }
+
+    // Аутентифицированная отправка через SMTP — самый надёжный способ
+    // доставлять письма во «Входящие». Включается, если в wp-config.php
+    // заданы константы (логин/пароль ящика заказчика или транзакционного сервиса):
+    //
+    //   define('TOPAS_SMTP_HOST', 'smtp.yandex.ru');
+    //   define('TOPAS_SMTP_USER', 'box@domain.ru');
+    //   define('TOPAS_SMTP_PASS', 'app-password');
+    //   define('TOPAS_SMTP_PORT', 465);
+    //   define('TOPAS_SMTP_SECURE', 'ssl');      // ssl | tls
+    //   define('TOPAS_SMTP_FROM', 'box@domain.ru');
+    //   define('TOPAS_SMTP_FROM_NAME', 'Сервис Септик');
+    if (defined('TOPAS_SMTP_HOST') && TOPAS_SMTP_HOST) {
+        $phpmailer->isSMTP();
+        $phpmailer->Host       = TOPAS_SMTP_HOST;
+        $phpmailer->SMTPAuth   = true;
+        $phpmailer->Username   = defined('TOPAS_SMTP_USER') ? TOPAS_SMTP_USER : '';
+        $phpmailer->Password   = defined('TOPAS_SMTP_PASS') ? TOPAS_SMTP_PASS : '';
+        $phpmailer->Port       = defined('TOPAS_SMTP_PORT') ? (int) TOPAS_SMTP_PORT : 465;
+        $phpmailer->SMTPSecure = defined('TOPAS_SMTP_SECURE') ? TOPAS_SMTP_SECURE : 'ssl';
+
+        // From обязан совпадать с авторизованным ящиком, иначе SMTP отклонит письмо.
+        if (defined('TOPAS_SMTP_FROM') && TOPAS_SMTP_FROM) {
+            $phpmailer->From   = TOPAS_SMTP_FROM;
+            $phpmailer->Sender = TOPAS_SMTP_FROM;
+        }
+        if (defined('TOPAS_SMTP_FROM_NAME') && TOPAS_SMTP_FROM_NAME) {
+            $phpmailer->FromName = TOPAS_SMTP_FROM_NAME;
+        }
     }
 }
 
