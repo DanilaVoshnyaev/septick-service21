@@ -204,6 +204,9 @@ $company = getCompanyContacts();
                     <p> Оставьте заявку — инженер бесплатно проконсультирует, подберёт оптимальную станцию и рассчитает
                         стоимость монтажа для вашего участка </p>
                     <form class="about-cta__form" id="consultationForm">
+                        <input type="hidden" name="action" value="premium_form_submit">
+                        <input type="hidden" name="page_url" value="<?php echo esc_url($_SERVER['REQUEST_URI'] ?? ''); ?>">
+
                         <div class="form-group"><input type="text" name="name" placeholder="Ваше имя" required></div>
                         <div class="form-group"><input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required></div>
                         <button type="submit" class="btn">

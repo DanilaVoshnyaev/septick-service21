@@ -596,8 +596,10 @@ function handle_premium_form_submit() {
     }
 
     // ===== ОТПРАВКА ПИСЬМА =====
+    d($recipients);
+    d($subject);
     $sent = wp_mail($recipients, $subject, $message, $headers);
-
+    dd($sent);
     // ===== ДОПОЛНИТЕЛЬНО: Отправка в Telegram (опционально) =====
     // Раскомментируй и настрой, если нужно
     /*
@@ -622,7 +624,6 @@ function handle_premium_form_submit() {
 
     // ===== ЛОГИРОВАНИЕ (опционально) =====
     // error_log("Premium Form [$form_type]: $name, $phone");
-
     if ($sent) {
         wp_send_json_success([
             'message' => 'Спасибо! Мы свяжемся с вами в течение 15 минут.',
@@ -634,7 +635,7 @@ function handle_premium_form_submit() {
 }
 
 // ===== НАСТРОЙКА ОТПРАВКИ ПОЧТЫ (борьба со спамом) =====
-add_action('phpmailer_init', 'topas_configure_phpmailer');
+/*add_action('phpmailer_init', 'topas_configure_phpmailer');
 function topas_configure_phpmailer($phpmailer) {
     // Выравниваем конверт-отправителя (Return-Path) с адресом From —
     // без этого почтовые сервисы (mail.ru, yandex) чаще кидают письмо в спам.
@@ -671,7 +672,7 @@ function topas_configure_phpmailer($phpmailer) {
             $phpmailer->FromName = TOPAS_SMTP_FROM_NAME;
         }
     }
-}
+}*/
 
 // ===== ШОРТКОД ДЛЯ ФОРМЫ (опционально) =====
 add_shortcode('premium_contact_form', 'render_premium_contact_form');
@@ -761,7 +762,6 @@ add_action('after_setup_theme', 'replace_image_path_on_page_1971');*/
 //    return $new_rules + $rules;
 //}
 //add_filter('rewrite_rules_array', 'custom_rewrite_rules');
-
 /*function custom_category_template_redirect() {
     if (is_category('staty')) {
         $custom_template = get_template_directory() . '/category-staty.php';

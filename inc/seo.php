@@ -72,15 +72,10 @@ function izex_seo_image()
         }
     }
 
-    $custom_logo_id = get_theme_mod('custom_logo');
-    if ($custom_logo_id) {
-        $img = wp_get_attachment_image_url($custom_logo_id, 'full');
-        if ($img) {
-            return $img;
-        }
-    }
-
-    return get_template_directory_uri() . '/assets/images/logo.png';
+    // Готовая шер-картинка 1200x630 на сплошном фоне.
+    // (Не используем прозрачный логотип как og:image — мессенджеры
+    //  показывают прозрачность чёрным фоном и обрезают квадрат.)
+    return get_template_directory_uri() . '/assets/images/og-image.jpg';
 }
 
 /**
@@ -161,6 +156,12 @@ function izex_seo_meta_tags()
     printf('<meta property="og:site_name" content="%s">' . "\n", esc_attr($site_name));
     if ($image) {
         printf('<meta property="og:image" content="%s">' . "\n", esc_url($image));
+        // Для дефолтной шер-картинки знаем размеры — помогает корректному превью.
+        if (substr($image, -strlen('/og-image.jpg')) === '/og-image.jpg') {
+            echo '<meta property="og:image:width" content="1200">' . "\n";
+            echo '<meta property="og:image:height" content="630">' . "\n";
+            echo '<meta property="og:image:type" content="image/jpeg">' . "\n";
+        }
     }
 
     // Twitter
