@@ -35,8 +35,8 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
                 <!-- Company Column -->
                 <div class="footer-col footer-col-company">
                     <a href="<?php echo esc_url(home_url('/')); ?>" class="footer-logo">
-                        <?php if (has_custom_logo()) : ?>
-                            <?php the_custom_logo(); ?>
+                        <?php if (true) : ?>
+                            <img src="<?=assets('/images/logo-transparent.png')?>" alt="" width="108">
                         <?php else : ?>
                             <span>ТОПАС</span>
                         <?php endif; ?>

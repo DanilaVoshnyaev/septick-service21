@@ -78,12 +78,11 @@ $company = getCompanyContacts();
 
                     <!-- Logo -->
                     <a href="<?php echo esc_url(home_url('/')); ?>" class="header-logo-premium">
-                        <?php if (has_custom_logo()) : ?>
-                            <?php the_custom_logo(); ?>
+                        <?php if (true) : ?>
+                            <img src="<?=assets('/images/logo-transparent.png')?>" alt="" width="108">
                         <?php else : ?>
                             <span class="header-logo-text">ТОПАС</span>
                         <?php endif; ?>
-                        <span class="logo-tagline">автономные канализации</span>
                     </a>
 
                     <!-- Desktop Navigation -->
