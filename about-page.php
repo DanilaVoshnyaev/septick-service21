@@ -203,12 +203,13 @@ $company = getCompanyContacts();
                 <div class="about-cta__content"><h2>Готовы обсудить ваш проект?</h2>
                     <p> Оставьте заявку — инженер бесплатно проконсультирует, подберёт оптимальную станцию и рассчитает
                         стоимость монтажа для вашего участка </p>
-                    <form class="about-cta__form" id="consultationForm">
+                    <form class="about-cta__form premium-contact-form" id="consultationForm" data-form-type="consultation">
                         <input type="hidden" name="action" value="premium_form_submit">
                         <input type="hidden" name="page_url" value="<?php echo esc_url($_SERVER['REQUEST_URI'] ?? ''); ?>">
 
-                        <div class="form-group"><input type="text" name="name" placeholder="Ваше имя" required></div>
-                        <div class="form-group"><input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required></div>
+                        <div class="form-group"><input type="text" name="name" placeholder="Ваше имя" required><span class="form-error"></span></div>
+                        <div class="form-group"><input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required><span class="form-error"></span></div>
+                        <label class="form-consent"><input type="checkbox" name="consent" required checked> Согласен на обработку персональных данных</label>
                         <button type="submit" class="btn">
                             <svg class="icon">
                                 <use href="#icon-phone"/>

@@ -19,7 +19,7 @@ $company = getCompanyContacts();
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
         <!-- Favicon -->
-        <link rel="icon" href="<?php echo get_template_directory_uri(); ?>/favicon.ico" sizes="any">
+        <link rel="icon" href="<?php echo get_template_directory_uri(); ?>/favicon.ico" type="image/x-icon" sizes="any">
         <link rel="icon" type="image/png" sizes="32x32" href="<?php echo get_template_directory_uri(); ?>/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="<?php echo get_template_directory_uri(); ?>/favicon-16x16.png">
         <link rel="icon" type="image/png" sizes="96x96" href="<?php echo get_template_directory_uri(); ?>/favicon-96x96.png">

@@ -51,6 +51,9 @@ $company = getCompanyContacts();
                 </div>
             </section>
 
+            <!-- ===== Калькулятор подбора и расчёта (4.1) ===== -->
+            <?php echo do_shortcode('[topas_calculator]'); ?>
+
             <?php $catalog_anchor = esc_url(get_post_type_archive_link('stations')) . '#catalog'; ?>
             <form id="catalog" class="catalog-filter" method="get" action="<?php echo $catalog_anchor; ?>">
                 <div class="catalog-filter__field">
@@ -226,13 +229,13 @@ $company = getCompanyContacts();
                                 <?php if ($daily_volume || $peak_discharge || $power_consumption || $water_disposal) : ?>
                                     <ul class="station-card__specs">
                                         <?php if ($daily_volume) : ?>
-                                            <li><span>Производительность</span><strong><?php echo esc_html($daily_volume); ?></strong></li>
+                                            <li><span>Производительность</span><strong><?php echo esc_html(izex_format_station_spec($daily_volume, 'м³/сут')); ?></strong></li>
                                         <?php endif; ?>
                                         <?php if ($peak_discharge) : ?>
-                                            <li><span>Залповый сброс</span><strong><?php echo esc_html($peak_discharge); ?></strong></li>
+                                            <li><span>Залповый сброс</span><strong><?php echo esc_html(izex_format_station_spec($peak_discharge, 'л')); ?></strong></li>
                                         <?php endif; ?>
                                         <?php if ($power_consumption) : ?>
-                                            <li><span>Потребление</span><strong><?php echo esc_html($power_consumption); ?></strong></li>
+                                            <li><span>Потребление</span><strong><?php echo esc_html(izex_format_station_spec($power_consumption, 'кВт·ч/сут')); ?></strong></li>
                                         <?php endif; ?>
                                         <?php if ($water_disposal) : ?>
                                             <li><span>Водоотведение</span><strong><?php echo esc_html($water_disposal); ?></strong></li>

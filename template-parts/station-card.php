@@ -72,22 +72,22 @@ $power_consumption = carbon_get_post_meta(get_the_ID(), 'crb_power_consumption')
             <?php if ($daily_volume) : ?>
                 <li class="spec-item">
                     <span class="spec-icon">📊</span>
-                    <span class="spec-value"><?php echo esc_html($daily_volume); ?></span>
-                    <span class="spec-label">м³/сутки</span>
+                    <span class="spec-value"><?php echo esc_html(izex_format_station_spec($daily_volume)); ?></span>
+                    <span class="spec-label">м³/сут</span>
                 </li>
             <?php endif; ?>
             <?php if ($peak_discharge) : ?>
                 <li class="spec-item">
                     <span class="spec-icon">💧</span>
-                    <span class="spec-value"><?php echo esc_html($peak_discharge); ?></span>
+                    <span class="spec-value"><?php echo esc_html(izex_format_station_spec($peak_discharge)); ?></span>
                     <span class="spec-label">л залповый</span>
                 </li>
             <?php endif; ?>
             <?php if ($power_consumption) : ?>
                 <li class="spec-item">
                     <span class="spec-icon">⚡</span>
-                    <span class="spec-value"><?php echo esc_html($power_consumption); ?></span>
-                    <span class="spec-label">кВт/сутки</span>
+                    <span class="spec-value"><?php echo esc_html(izex_format_station_spec($power_consumption)); ?></span>
+                    <span class="spec-label">кВт·ч/сут</span>
                 </li>
             <?php endif; ?>
         </ul>

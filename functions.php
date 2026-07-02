@@ -199,6 +199,14 @@ function izex_scripts()
     wp_enqueue_script('station-112-data', get_template_directory_uri() . '/assets/js/112-id.js', array('jquery'), '', true);
     //wp_enqueue_script('izex-navigation', get_template_directory_uri() . '/js/navigation.js', array(), _S_VERSION, true);
 
+    // ===== Калькулятор подбора (4.1) =====
+    izex_enqueue_theme_style('calculator', '/assets/styles/calculator.css');
+    wp_enqueue_script('topas-calculator', get_template_directory_uri() . '/assets/js/calculator.js', array(), filemtime(get_template_directory() . '/assets/js/calculator.js'), true);
+    wp_localize_script('topas-calculator', 'topasCalc', array(
+        'stations' => izex_get_calculator_stations(),
+        'settings' => izex_get_calculator_settings(),
+    ));
+
     // ===== Постраничные стили (вынесены из <style> в шаблонах) =====
     $template = $GLOBALS['izex_current_template'] ?? '';
 
@@ -289,8 +297,53 @@ require get_template_directory() . '/inc/install-theme.php';
  * SEO: meta-теги, Open Graph, canonical, Schema.org, robots.txt.
  * При установке SEO-плагина (Yoast/Rank Math) — закомментировать строку ниже.
  */
-if (file_exists(get_template_directory() . '/inc/seo.php')) {
-    require get_template_directory() . '/inc/seo.php';
+// Отключено: используется плагин Yoast SEO (модуль темы дублировал robots.txt и мета-теги).
+// if (file_exists(get_template_directory() . '/inc/seo.php')) {
+//     require get_template_directory() . '/inc/seo.php';
+// }
+
+add_action('init', function () {
+    remove_action('wp_head', 'wp_generator');
+});
+// Убираем маркер версии WordPress из RSS/Atom-лент и из ссылок на ассеты.
+// Версию срезаем только у core-ассетов (ver == версия WP), чтобы не сломать
+// cache-busting темы, где ver формируется через filemtime().
+add_filter('the_generator', '__return_empty_string');
+add_filter('style_loader_src', 'izex_remove_wp_version_query', 15);
+add_filter('script_loader_src', 'izex_remove_wp_version_query', 15);
+function izex_remove_wp_version_query($src)
+{
+    global $wp_version;
+    if ($src && $wp_version && strpos($src, 'ver=' . $wp_version) !== false) {
+        $src = remove_query_arg('ver', $src);
+    }
+    return $src;
+}
+
+// ===== SEO для архива услуг (P0): человекочитаемый Title + meta description =====
+// Активируем только если SEO-плагин (Yoast) не управляет мета-тегами.
+if (!defined('WPSEO_VERSION')) {
+    add_filter('document_title_parts', 'izex_services_archive_title');
+    add_action('wp_head', 'izex_services_archive_meta_description', 1);
+}
+
+function izex_services_archive_title($parts)
+{
+    if (is_post_type_archive('services')) {
+        $parts['title'] = 'Услуги: монтаж и обслуживание септиков ТОПАС';
+    }
+    return $parts;
+}
+
+function izex_services_archive_meta_description()
+{
+    if (!is_post_type_archive('services')) {
+        return;
+    }
+    $desc = 'Услуги по установке, монтажу «под ключ» и сервисному обслуживанию '
+        . 'автономной канализации ТОПАС в Чебоксарах, Новочебоксарске и Чувашии. '
+        . 'Бесплатный выезд инженера и расчёт стоимости.';
+    echo '<meta name="description" content="' . esc_attr($desc) . '">' . "\n";
 }
 
 function my_pre_get_posts($query)
@@ -509,6 +562,12 @@ function handle_premium_form_submit() {
     if (empty($phone_clean) || strlen($phone_clean) < 11) {
         $errors[] = 'Введите корректный телефон';
     }
+    // Согласие на обработку ПД (152-ФЗ). Блокируем только явный отказ,
+    // чтобы устаревший кешированный JS (без поля consent) не терял заявки.
+    $consent = isset($_POST['consent']) ? sanitize_text_field($_POST['consent']) : '';
+    if ($consent === '0') {
+        $errors[] = 'Необходимо согласие на обработку персональных данных';
+    }
 
     if (!empty($errors)) {
         wp_send_json_error(['errors' => $errors], 400);
@@ -569,6 +628,7 @@ function handle_premium_form_submit() {
         $message .= $row('Источник перехода', "<a href='" . esc_url($referer) . "'>" . esc_html($referer) . "</a>");
     }
     $message .= $row('Дата и время', esc_html($datetime));
+    $message .= $row('Согласие на обработку ПД', $consent === '0' ? 'Нет' : 'Да (' . esc_html($datetime) . ')');
     $message .= $row('IP-адрес', esc_html($ip));
     $message .= $row('Устройство', esc_html($user_agent));
     $message .= "</table>";
@@ -596,10 +656,8 @@ function handle_premium_form_submit() {
     }
 
     // ===== ОТПРАВКА ПИСЬМА =====
-    d($recipients);
-    d($subject);
+
     $sent = wp_mail($recipients, $subject, $message, $headers);
-    dd($sent);
     // ===== ДОПОЛНИТЕЛЬНО: Отправка в Telegram (опционально) =====
     // Раскомментируй и настрой, если нужно
     /*
@@ -693,9 +751,178 @@ function render_premium_contact_form($atts) {
         <div class="form-group">
             <input type="tel" name="phone" placeholder="+7 (___) ___-__-__ *" required>
         </div>
+        <label class="form-consent"><input type="checkbox" name="consent" required checked> Согласен на обработку персональных данных</label>
         <button type="submit" class="btn-premium btn-gold"><?php echo esc_html($atts['button']); ?></button>
         <p class="form-privacy">Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой конфиденциальности</a></p>
     </form>
+    <?php
+    return ob_get_clean();
+}
+
+/**
+ * ================= КАЛЬКУЛЯТОР ПОДБОРА И РАСЧЁТА (4.1) =================
+ */
+
+/**
+ * Данные станций для калькулятора: реальные посты каталога.
+ * Модель подбирается по «номеру» (ёмкости) = crb_model_number.
+ *
+ * @return array<int,array{number:int,title:string,url:string,price:int,img:string}>
+ */
+function izex_get_calculator_stations()
+{
+    $query = new WP_Query(array(
+        'post_type'      => 'stations',
+        'posts_per_page' => -1,
+        'post_status'    => 'publish',
+        'no_found_rows'  => true,
+    ));
+
+    $stations = array();
+    foreach ($query->posts as $post) {
+        $id = $post->ID;
+        $number = (int) carbon_get_post_meta($id, 'crb_model_number');
+        if ($number <= 0) {
+            continue; // без номера модель в подбор не участвует
+        }
+        // Базовая цена оборудования — линейка ТОПАС-С, с фолбэком на ТОПАС.
+        $price = (int) preg_replace('/[^\d]/', '', (string) carbon_get_post_meta($id, 'crb_price_topas_s'));
+        if ($price <= 0) {
+            $price = (int) preg_replace('/[^\d]/', '', (string) carbon_get_post_meta($id, 'crb_price'));
+        }
+        $stations[] = array(
+            'number' => $number,
+            'title'  => get_the_title($id),
+            'url'    => get_permalink($id),
+            'price'  => $price,
+            'img'    => get_the_post_thumbnail_url($id, 'medium') ?: '',
+        );
+    }
+    wp_reset_postdata();
+
+    // Сортируем по возрастанию ёмкости — для корректного подбора «ближайшей сверху».
+    usort($stations, function ($a, $b) {
+        return $a['number'] <=> $b['number'];
+    });
+
+    return $stations;
+}
+
+/**
+ * Настройки калькулятора из Carbon Fields с безопасными значениями по умолчанию.
+ *
+ * @return array<string,mixed>
+ */
+function izex_get_calculator_settings()
+{
+    $num = function ($key, $default) {
+        $val = carbon_get_theme_option($key);
+        return ($val === '' || $val === null) ? $default : (float) $val;
+    };
+
+    return array(
+        'installBase'     => $num('crb_calc_install_base', 35000),
+        'delivery'        => $num('crb_calc_delivery', 0),
+        'surchargeForced' => $num('crb_calc_surcharge_forced', 15000),
+        'surchargeUgv'    => $num('crb_calc_surcharge_ugv', 10000),
+        'surchargeLong'   => $num('crb_calc_surcharge_long', 6000),
+        'surchargeLongUs' => $num('crb_calc_surcharge_longus', 12000),
+        'soilCoeff'       => $num('crb_calc_soil_coeff', 10),
+        'remotenessCoeff' => $num('crb_calc_remoteness_coeff', 10),
+        'note'            => carbon_get_theme_option('crb_calc_note')
+            ?: 'Это ориентировочный расчёт. Точная смета — после бесплатного выезда инженера.',
+    );
+}
+
+/**
+ * Шорткод калькулятора: [topas_calculator]
+ */
+add_shortcode('topas_calculator', 'render_topas_calculator');
+function render_topas_calculator($atts)
+{
+    ob_start(); ?>
+    <section class="calc" id="calc" aria-labelledby="calc-heading">
+        <div class="calc__head">
+            <h2 class="calc__title" id="calc-heading">Калькулятор подбора и расчёта</h2>
+            <p class="calc__subtitle">Ответьте на 4 вопроса — подберём модель ТОПАС и покажем ориентировочную стоимость «под ключ».</p>
+        </div>
+
+        <div class="calc__progress" aria-hidden="true">
+            <span class="calc__progress-bar" data-calc-progress></span>
+        </div>
+
+        <form class="calc__form" data-calc-form novalidate>
+            <!-- Шаг 1 -->
+            <div class="calc-step is-active" data-step="1">
+                <p class="calc-step__q">Сколько человек будет проживать?</p>
+                <div class="calc-options calc-options--people" role="group">
+                    <?php for ($i = 1; $i <= 10; $i++) : ?>
+                        <button type="button" class="calc-opt" data-name="people" data-value="<?php echo $i; ?>"><?php echo $i; ?></button>
+                    <?php endfor; ?>
+                    <button type="button" class="calc-opt" data-name="people" data-value="11">10+</button>
+                </div>
+            </div>
+
+            <!-- Шаг 2 -->
+            <div class="calc-step" data-step="2">
+                <p class="calc-step__q">Способ водоотведения</p>
+                <div class="calc-options" role="group">
+                    <button type="button" class="calc-opt calc-opt--wide" data-name="disposal" data-value="gravity">
+                        <span class="calc-opt__t">Самотёк</span>
+                        <span class="calc-opt__d">Отвод очищенной воды в канаву/дренаж самотёком</span>
+                    </button>
+                    <button type="button" class="calc-opt calc-opt--wide" data-name="disposal" data-value="forced">
+                        <span class="calc-opt__t">Принудительное</span>
+                        <span class="calc-opt__d">С дренажным насосом — если самотёк невозможен</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Шаг 3 -->
+            <div class="calc-step" data-step="3">
+                <p class="calc-step__q">Глубина подводящей трубы</p>
+                <div class="calc-options" role="group">
+                    <button type="button" class="calc-opt calc-opt--wide" data-name="depth" data-value="standard">
+                        <span class="calc-opt__t">Стандарт</span>
+                        <span class="calc-opt__d">Труба входит на глубине до ~0,6 м</span>
+                    </button>
+                    <button type="button" class="calc-opt calc-opt--wide" data-name="depth" data-value="long">
+                        <span class="calc-opt__t">Лонг</span>
+                        <span class="calc-opt__d">Удлинённая горловина для глубокого входа</span>
+                    </button>
+                    <button type="button" class="calc-opt calc-opt--wide" data-name="depth" data-value="longus">
+                        <span class="calc-opt__t">Лонг Ус</span>
+                        <span class="calc-opt__d">Максимально глубокий вход трубы</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Шаг 4 -->
+            <div class="calc-step" data-step="4">
+                <p class="calc-step__q">Высокий уровень грунтовых вод (УГВ)?</p>
+                <div class="calc-options" role="group">
+                    <button type="button" class="calc-opt calc-opt--wide" data-name="ugv" data-value="no">
+                        <span class="calc-opt__t">Нет</span>
+                        <span class="calc-opt__d">Вода стоит ниже уровня установки</span>
+                    </button>
+                    <button type="button" class="calc-opt calc-opt--wide" data-name="ugv" data-value="yes">
+                        <span class="calc-opt__t">Да / не знаю</span>
+                        <span class="calc-opt__d">Потребуется пригруз/якорение станции</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Результат -->
+            <div class="calc-step calc-result" data-step="result" hidden>
+                <div class="calc-result__inner" data-calc-result></div>
+            </div>
+
+            <div class="calc__nav">
+                <button type="button" class="calc__back" data-calc-back hidden>← Назад</button>
+                <button type="button" class="calc__restart" data-calc-restart hidden>Начать заново</button>
+            </div>
+        </form>
+    </section>
     <?php
     return ob_get_clean();
 }

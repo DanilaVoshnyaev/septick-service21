@@ -40,25 +40,25 @@ $company = getCompanyContacts();
 
                     <!-- Заголовок -->
                     <h1 class="hero-title animate-fade-up delay-1">
-                        Автономная канализация ТОПАС<br>
+                        Септики ТОПАС в Чебоксарах и Чувашии<br>
                         <span class="gradient-text">для дома и дачи без переплат!</span>
                     </h1>
 
                     <!-- Подзаголовок -->
                     <p class="hero-subtitle animate-fade-up delay-2">
-                        Станции в наличии! Бесплатная доставка по всей <?php echo $company['region']; ?>
-                        и выгодная стоимость монтажа
+                        Более 1000 выполненных монтажей. Бесплатная доставка по всей <?php echo $company['region']; ?>,
+                        выезд инженера и официальная гарантия на оборудование и работы.
                     </p>
 
                     <!-- Статистика -->
                     <div class="hero-stats animate-fade-up delay-3">
                         <div class="stat-item">
-                            <span class="stat-number" data-count="8">0</span><span class="stat-suffix">+</span>
+                            <span class="stat-number" data-count="8">8</span><span class="stat-suffix">+</span>
                             <span class="stat-label">лет опыта</span>
                         </div>
                         <div class="stat-divider"></div>
                         <div class="stat-item">
-                            <span class="stat-number" data-count="1000">0</span><span class="stat-suffix">+</span>
+                            <span class="stat-number" data-count="1000">1000</span><span class="stat-suffix">+</span>
                             <span class="stat-label">установок</span>
                         </div>
                     </div>
@@ -132,6 +132,33 @@ $company = getCompanyContacts();
                         <p>Не требуется вызов ассенизаторской машины — чистка 2-4 раза в год самостоятельно</p>
                     </div>
                 </div>
+            </div>
+        </section>
+        <section class="seo-home-block" style="display: none;">
+            <div class="container">
+
+                <h2>Продажа и монтаж септиков ТОПАС в Чебоксарах и Чувашии</h2>
+
+                <p>
+                    Компания «Сервис Септик21» занимается продажей, доставкой,
+                    монтажом и обслуживанием септиков ТОПАС в Чебоксарах,
+                    Новочебоксарске и по всей Чувашской Республике.
+                </p>
+
+                <p>
+                    Выполняем установку автономной канализации под ключ для
+                    частных домов, дач, коттеджей и коммерческих объектов.
+                    В наличии популярные модели ТОПАС-С 4, ТОПАС-С 5,
+                    ТОПАС-С 6, ТОПАС-С 8 и ТОПАС-С 10.
+                </p>
+
+                <p>
+                    Работаем по Чувашии и регионам Поволжья.
+                    Бесплатно выезжаем на участок, подбираем оборудование,
+                    рассчитываем стоимость монтажа и предоставляем гарантию
+                    на все выполненные работы.
+                </p>
+
             </div>
         </section>
 
@@ -330,13 +357,13 @@ $company = getCompanyContacts();
                                     <?php if ($daily_volume || $peak_discharge || $power_consumption || $water_disposal) : ?>
                                         <ul class="station-card__specs">
                                             <?php if ($daily_volume) : ?>
-                                                <li><span>Производительность</span><strong><?php echo esc_html($daily_volume); ?></strong></li>
+                                                <li><span>Производительность</span><strong><?php echo esc_html(izex_format_station_spec($daily_volume, 'м³/сут')); ?></strong></li>
                                             <?php endif; ?>
                                             <?php if ($peak_discharge) : ?>
-                                                <li><span>Залповый сброс</span><strong><?php echo esc_html($peak_discharge); ?></strong></li>
+                                                <li><span>Залповый сброс</span><strong><?php echo esc_html(izex_format_station_spec($peak_discharge, 'л')); ?></strong></li>
                                             <?php endif; ?>
                                             <?php if ($power_consumption) : ?>
-                                                <li><span>Потребление</span><strong><?php echo esc_html($power_consumption); ?></strong></li>
+                                                <li><span>Потребление</span><strong><?php echo esc_html(izex_format_station_spec($power_consumption, 'кВт·ч/сут')); ?></strong></li>
                                             <?php endif; ?>
                                             <?php if ($water_disposal) : ?>
                                                 <li><span>Водоотведение</span><strong><?php echo esc_html($water_disposal); ?></strong></li>
@@ -600,6 +627,90 @@ $company = getCompanyContacts();
             </div>
         </section>
 
+        <?php
+        // ===== FAQ (частые вопросы) =====
+        // Вопросы/ответы держим в одном массиве: из него рендерим видимый
+        // аккордеон И микроразметку FAQPage (schema.org) — чтобы они не расходились.
+        $faq_items = array(
+            array(
+                'q' => 'Сколько стоит монтаж септика ТОПАС под ключ?',
+                'a' => 'Стоимость зависит от модели станции, типа грунта и удалённости участка. Точную цену инженер называет после бесплатного выезда и замера. Мы заранее согласовываем смету и не добавляем скрытых платежей.',
+            ),
+            array(
+                'q' => 'За какое время устанавливается станция?',
+                'a' => 'В большинстве случаев монтаж и подключение автономной канализации ТОПАС занимают один день. Бригада выполняет земляные работы, установку, обвязку и пусконаладку, после чего проводит инструктаж по эксплуатации.',
+            ),
+            array(
+                'q' => 'Можно ли установить ТОПАС при высоком уровне грунтовых вод?',
+                'a' => 'Да. Септики ТОПАС полностью герметичны и устанавливаются в любых типах грунта, в том числе при высоком уровне грунтовых вод. Для сложных условий подбирается подходящая модификация станции и способ водоотведения (самотёк или принудительный).',
+            ),
+            array(
+                'q' => 'Как часто нужно обслуживать септик ТОПАС?',
+                'a' => 'Регламентное обслуживание проводится 2–4 раза в год: удаление избыточного ила и осмотр оборудования. Вызов ассенизаторской машины не требуется — обслуживание можно выполнять самостоятельно или доверить нашему сервису.',
+            ),
+            array(
+                'q' => 'Какую модель ТОПАС выбрать для дома или дачи?',
+                'a' => 'Модель подбирается по количеству постоянно проживающих: ТОПАС-С 4 и 5 — для дачи и небольшого дома, ТОПАС-С 6, 8 и 10 — для большого дома и коттеджа. Инженер поможет с выбором бесплатно с учётом залпового сброса и особенностей участка.',
+            ),
+            array(
+                'q' => 'Вы работаете только в Чебоксарах?',
+                'a' => 'Мы работаем в Чебоксарах, Новочебоксарске и по всей Чувашской Республике, а также в соседних регионах Поволжья. Доставка станций по Чувашии — бесплатная.',
+            ),
+            array(
+                'q' => 'Какая гарантия на станцию и монтажные работы?',
+                'a' => 'Мы работаем официально и подписываем договор, в котором закреплены гарантии. На оборудование действует заводская гарантия производителя, на выполненные монтажные работы — гарантия нашей компании. Также выполняем гарантийное и постгарантийное обслуживание.',
+            ),
+            array(
+                'q' => 'Можно ли пользоваться септиком зимой и при сезонном проживании?',
+                'a' => 'Да. Станция рассчитана на круглогодичную эксплуатацию и не боится морозов при правильном монтаже. Для дач с сезонным проживанием предусмотрен режим консервации — расскажем, как правильно подготовить станцию к зиме.',
+            ),
+        );
+        ?>
+
+        <section class="faq-premium">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-label">Вопросы и ответы</span>
+                    <h2 class="section-title">Частые вопросы о септиках ТОПАС</h2>
+                    <p class="section-subtitle">Собрали ответы на вопросы, которые чаще всего задают при выборе, монтаже и обслуживании автономной канализации</p>
+                </div>
+
+                <div class="faq-list">
+                    <?php foreach ($faq_items as $item) : ?>
+                        <details class="faq-item">
+                            <summary class="faq-question">
+                                <span><?php echo esc_html($item['q']); ?></span>
+                                <svg class="faq-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                            </summary>
+                            <div class="faq-answer">
+                                <p><?php echo esc_html($item['a']); ?></p>
+                            </div>
+                        </details>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </section>
+
+        <?php
+        $faq_schema = array(
+            '@context'   => 'https://schema.org',
+            '@type'      => 'FAQPage',
+            'mainEntity' => array_map(function ($item) {
+                return array(
+                    '@type'          => 'Question',
+                    'name'           => $item['q'],
+                    'acceptedAnswer' => array(
+                        '@type' => 'Answer',
+                        'text'  => $item['a'],
+                    ),
+                );
+            }, $faq_items),
+        );
+        echo '<script type="application/ld+json">' .
+            wp_json_encode($faq_schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) .
+            '</script>' . "\n";
+        ?>
+
         <!-- CTA Premium -->
         <section class="cta-premium" id="contacts" style="background-image: url('<?=assets('/images/cta.jpg')?>');">
             <div class="cta-bg-pattern"></div>
@@ -612,6 +723,7 @@ $company = getCompanyContacts();
                         <input type="hidden" name="page_url" value="<?php echo esc_url($_SERVER['REQUEST_URI'] ?? ''); ?>">
                         <div class="form-group"><input type="text" name="name" placeholder="Ваше имя" required><span class="form-error"></span></div>
                         <div class="form-group"><input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required><span class="form-error"></span></div>
+                        <label class="form-consent form-consent--light"><input type="checkbox" name="consent" required checked> Согласен на обработку персональных данных</label>
                         <button type="submit" class="btn-premium btn-primary btn-large">
                             <span>Получить консультацию</span>
                             <svg class="btn-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -633,6 +745,35 @@ $company = getCompanyContacts();
             </div>
         </section>
 
+        <section class="seo-home-block">
+            <div class="container">
+                <h2>Продажа и монтаж септиков ТОПАС в Чебоксарах и Чувашии</h2>
+
+                <p>
+                    Компания «Сервис Септик21» занимается продажей, доставкой, монтажом
+                    и обслуживанием септиков ТОПАС в Чебоксарах, Новочебоксарске
+                    и по всей Чувашской Республике. Выполняем установку автономной
+                    канализации под ключ для частных домов, дач, коттеджей
+                    и коммерческих объектов.
+                </p>
+
+                <p>
+                    В наличии популярные модели — ТОПАС-С 4, ТОПАС-С 5, ТОПАС-С 6,
+                    ТОПАС-С 8 и ТОПАС-С 10. Подбираем станцию под количество
+                    проживающих, тип грунта и уровень грунтовых вод, монтируем
+                    в любых условиях и в любую погоду, как правило, за один день.
+                </p>
+
+                <p>
+                    Работаем по Чувашии и регионам Поволжья. Бесплатно выезжаем
+                    на участок, подбираем оборудование, рассчитываем стоимость монтажа
+                    и предоставляем гарантию на все выполненные работы. Выполняем
+                    сервисное обслуживание, чистку и ремонт септиков ТОПАС, а также
+                    станций других производителей.
+                </p>
+            </div>
+        </section>
+
     </main>
 
     <!-- Модалки выводятся глобально в footer.php (с рабочим крестиком .modal-close-btn);
@@ -641,28 +782,7 @@ $company = getCompanyContacts();
     <!-- JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Counters
-            const counters = document.querySelectorAll('.stat-number');
-            const animateCounters = () => {
-                counters.forEach(counter => {
-                    const target = +counter.getAttribute('data-count');
-                    const count = +counter.innerText;
-                    if (count < target) {
-                        counter.innerText = Math.ceil(count + target / 150);
-                        requestAnimationFrame(animateCounters);
-                    } else counter.innerText = target;
-                });
-            };
-            const statsObserver = new IntersectionObserver(entries => {
-                entries.forEach(e => { if (e.isIntersecting) { animateCounters(); statsObserver.unobserve(e.target); } });
-            }, { threshold: 0.5 });
-            const statsSection = document.querySelector('.hero-stats');
-            if (statsSection) statsObserver.observe(statsSection);
 
-            // Модалки, отправка форм, маска телефона и плавный скролл
-            // обрабатываются глобально (premium-ui.js + global.js) — здесь не дублируем.
-
-            // Если применён фильтр каталога — прокручиваем к секции каталога
             try {
                 var params = new URLSearchParams(window.location.search);
                 if (params.has('capacity') || params.has('drainage') || params.has('stock') || params.has('sort')) {
@@ -681,7 +801,6 @@ $company = getCompanyContacts();
                 }
             } catch (e) {}
 
-            // Scroll animations
             const scrollObs = new IntersectionObserver(entries => {
                 entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('animate-in'); });
             }, { threshold: 0.1 });

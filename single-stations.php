@@ -184,19 +184,19 @@ $main_image = $gallery_images[0] ?? ['url' => get_template_directory_uri() . '/a
 
                     <ul class="specs-list">
                         <?php if ($daily_volume): ?>
-                            <li class="spec-row"><span class="spec-label">Производительность</span><span class="spec-value"><?php echo esc_html($daily_volume); ?></span></li>
+                            <li class="spec-row"><span class="spec-label">Производительность</span><span class="spec-value"><?php echo esc_html(izex_format_station_spec($daily_volume, 'м³/сут')); ?></span></li>
                         <?php endif; ?>
                         <?php if ($peak_discharge): ?>
-                            <li class="spec-row"><span class="spec-label">Залповый сброс</span><span class="spec-value"><?php echo esc_html($peak_discharge); ?> </span></li>
+                            <li class="spec-row"><span class="spec-label">Залповый сброс</span><span class="spec-value"><?php echo esc_html(izex_format_station_spec($peak_discharge, 'л')); ?></span></li>
                         <?php endif; ?>
                         <?php if ($power_consumption): ?>
-                            <li class="spec-row"><span class="spec-label">Потребление</span><span class="spec-value"><?php echo esc_html($power_consumption); ?></span></li>
+                            <li class="spec-row"><span class="spec-label">Потребление</span><span class="spec-value"><?php echo esc_html(izex_format_station_spec($power_consumption, 'кВт·ч/сут')); ?></span></li>
                         <?php endif; ?>
                         <?php if ($water_disposal): ?>
                             <li class="spec-row"><span class="spec-label">Способ водоотведения</span><span class="spec-value"><?php echo esc_html($water_disposal); ?></span></li>
                         <?php endif; ?>
                         <?php if ($installation_depth): ?>
-                            <li class="spec-row"><span class="spec-label">Глубина монтажа</span><span class="spec-value"><?php echo esc_html($installation_depth); ?> м</span></li>
+                            <li class="spec-row"><span class="spec-label">Глубина монтажа</span><span class="spec-value"><?php echo esc_html(izex_format_station_spec($installation_depth, 'м')); ?></span></li>
                         <?php endif; ?>
                     </ul>
                 </div>
@@ -348,7 +348,7 @@ $main_image = $gallery_images[0] ?? ['url' => get_template_directory_uri() . '/a
             <label class="form-consent"><input type="checkbox" name="consent" required checked> Согласен на обработку персональных данных</label>
             <button type="submit" class="btn btn--gold">Отправить заявку</button>
         </form>
-        <p class="modal__note">Нажимая кнопку, вы соглашаетесь с <a href="/privacy-policy" target="_blank">политикой конфиденциальности</a></p>
+        <p class="modal__note">Нажимая кнопку, вы соглашаетесь с <a href="/privacy/" target="_blank">политикой конфиденциальности</a></p>
     </div>
 </div>
 

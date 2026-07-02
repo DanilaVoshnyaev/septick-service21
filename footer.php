@@ -24,7 +24,7 @@ $op_inn  = $cf_opt('operator_inn', '210403597536');
 $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
 ?>
 
-</main><!-- #main --><!-- Premium Footer -->
+</main>
 <footer class="site-footer" id="site-footer">
 
     <!-- Footer Top -->
@@ -68,7 +68,7 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
                             'fallback_cb' => function() {
                                 echo '<ul class="footer-menu">';
                                 echo '<li><a href="/">Главная</a></li>';
-                                echo '<li><a href="/station/">Каталог</a></li>';
+                                echo '<li><a href="/stations/">Каталог</a></li>';
                                 echo '<li><a href="/services/">Услуги</a></li>';
                                 echo '<li><a href="/about/">О компании</a></li>';
                                 echo '<li><a href="/reviews/">Отзывы</a></li>';
@@ -112,11 +112,9 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
         </div>
     </div>
 
-    <!-- Footer Bottom -->
     <div class="footer-bottom">
         <div class="container">
             <div class="footer-bottom-inner">
-                <!-- Реквизиты и контакты -->
                 <div class="footer-company-info">
                     <p class="footer-legal-line">
                         &copy;<?php echo date('Y'); ?> <?php echo esc_html($op_name); ?>
@@ -139,7 +137,6 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
                     </p>
                 </div>
 
-                <!-- Legal Links -->
                 <div class="footer-legal">
                     <a href="/privacy/">Политика конфиденциальности</a>
                 </div>
@@ -148,7 +145,6 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
         </div>
     </div>
 
-    <!-- Back to Top -->
     <button class="back-to-top" id="backToTop" aria-label="Наверх">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="m18 15-6-6-6 6"/>
@@ -157,8 +153,6 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
 
 </footer>
 
-<!-- Callback Modal -->
-<!-- Modals Premium -->
 <div class="modal-premium" id="modal-callback">
     <div class="modal-backdrop"></div>
     <div class="modal-panel">
@@ -173,7 +167,6 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
         </div>
 
         <form class="modal-form-premium" id="callbackForm" data-form-type="callback">
-            <!-- Hidden поля для AJAX-обработчика -->
             <input type="hidden" name="action" value="premium_form_submit">
             <input type="hidden" name="page_url" value="<?php echo esc_url($_SERVER['REQUEST_URI'] ?? ''); ?>">
 
@@ -185,6 +178,7 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
                 <input type="tel" name="phone" placeholder="+7 (___) ___-__-__ *" required>
                 <span class="form-error"></span>
             </div>
+            <label class="form-consent"><input type="checkbox" name="consent" required checked> Согласен на обработку персональных данных</label>
 
             <button type="submit" class="btn-premium btn-full btn-gold">
                 <span class="spinner"></span>
@@ -227,7 +221,7 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
             <div class="form-group form-group-premium">
                 <input type="text" name="address" placeholder="Адрес участка">
             </div>
-
+            <label class="form-consent"><input type="checkbox" name="consent" required checked> Согласен на обработку персональных данных</label>
             <button type="submit" class="btn-premium btn-full btn-gold">
                 <span class="spinner"></span>
                 <span class="btn-text">Вызвать инженера</span>
@@ -240,7 +234,6 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
     </div>
 </div>
 
-<!-- Order Modal (каталог: «Заказать») -->
 <div class="modal-premium" id="modal-order">
     <div class="modal-backdrop"></div>
     <div class="modal-panel">
@@ -272,6 +265,9 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
                 <textarea name="comment" rows="3" placeholder="Комментарий (необязательно)"></textarea>
             </div>
 
+            <label class="form-consent"><input type="checkbox" name="consent" required checked> Согласен на обработку персональных данных</label>
+
+
             <button type="submit" class="btn-premium btn-full btn-gold">
                 <span class="spinner"></span>
                 <span class="btn-text">Отправить заявку</span>
@@ -284,7 +280,6 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
     </div>
 </div>
 
-<!-- ===== Cookie-уведомление (152-ФЗ) ===== -->
 <div class="cookie-consent" id="cookieConsent" role="dialog" aria-live="polite" aria-label="Уведомление об использовании cookie" hidden>
     <div class="cookie-consent__inner">
         <p class="cookie-consent__text">
@@ -329,7 +324,7 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
 
     ym(109479860, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
 </script>
-<noscript><div><img src="https://mc.yandex.ru/watch/109479860&quot; style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<noscript><div><img src="https://mc.yandex.ru/watch/109479860" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
 <?php if (function_exists('printSocialFloat')) { printSocialFloat(); } ?>
 <?php wp_footer(); ?>

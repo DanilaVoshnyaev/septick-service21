@@ -74,6 +74,54 @@ function crb_attach_theme_options()
                 )),
         ));
 
+    // ===== Калькулятор подбора и расчёта стоимости =====
+    Container::make('theme_options', 'Калькулятор')
+        ->set_page_parent($basic_options_container)
+        ->add_fields(array(
+            Field::make('text', 'crb_calc_install_base', 'Базовый монтаж «под ключ», ₽')
+                ->set_attribute('type', 'number')
+                ->set_default_value('35000')
+                ->set_help_text('Ориентировочная стоимость стандартного монтажа станции «под ключ».')
+                ->set_width(50),
+            Field::make('text', 'crb_calc_delivery', 'Доставка, ₽')
+                ->set_attribute('type', 'number')
+                ->set_default_value('0')
+                ->set_help_text('0 — доставка включена/бесплатна.')
+                ->set_width(50),
+
+            Field::make('text', 'crb_calc_surcharge_forced', 'Надбавка: принудительное водоотведение (насос), ₽')
+                ->set_attribute('type', 'number')
+                ->set_default_value('15000')
+                ->set_width(50),
+            Field::make('text', 'crb_calc_surcharge_ugv', 'Надбавка: высокий УГВ (пригруз/якорение), ₽')
+                ->set_attribute('type', 'number')
+                ->set_default_value('10000')
+                ->set_width(50),
+
+            Field::make('text', 'crb_calc_surcharge_long', 'Надбавка: удлинённая горловина «Лонг», ₽')
+                ->set_attribute('type', 'number')
+                ->set_default_value('6000')
+                ->set_width(50),
+            Field::make('text', 'crb_calc_surcharge_longus', 'Надбавка: «Лонг Ус», ₽')
+                ->set_attribute('type', 'number')
+                ->set_default_value('12000')
+                ->set_width(50),
+
+            Field::make('text', 'crb_calc_soil_coeff', 'Коэффициент сложного грунта, %')
+                ->set_attribute('type', 'number')
+                ->set_default_value('10')
+                ->set_help_text('Расширяет верхнюю границу вилки — учитывает тяжёлый грунт, песок и т.п.')
+                ->set_width(50),
+            Field::make('text', 'crb_calc_remoteness_coeff', 'Коэффициент удалённости, %')
+                ->set_attribute('type', 'number')
+                ->set_default_value('10')
+                ->set_help_text('Расширяет верхнюю границу вилки — учитывает удалённость объекта.')
+                ->set_width(50),
+
+            Field::make('textarea', 'crb_calc_note', 'Примечание под результатом')
+                ->set_default_value('Это ориентировочный расчёт. Точная смета — после бесплатного выезда инженера.'),
+        ));
+
     // ===== SEO главной страницы =====
     Container::make('theme_options', 'SEO главной')
         ->set_page_parent($basic_options_container)

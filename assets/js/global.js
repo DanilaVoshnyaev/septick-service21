@@ -643,6 +643,15 @@ $(function () {
             const originalBtnText = $btn.html();
             const formType = $form.data('form-type') || $form.closest('[data-modal]').data('modal') || 'callback';
 
+            // Проверка согласия на обработку ПД (152-ФЗ): без галочки отправку блокируем
+            const $consent = $form.find('input[name="consent"]');
+            if ($consent.length && !$consent.is(':checked')) {
+                PremiumForms.showConsentError($form);
+                PremiumForms.showToast('warning', '⚠️ Требуется согласие', 'Отметьте согласие на обработку персональных данных');
+                return;
+            }
+            PremiumForms.clearConsentError($form);
+
             // Сбор данных
             const data = {
                 action: 'premium_form_submit',
@@ -654,6 +663,7 @@ $(function () {
                 comment: $form.find('[name="comment"]').val() || '',
                 product_id: $form.find('[name="product_id"]').val() || 0,
                 product_name: $form.find('[name="product_name"]').val() || '',
+                consent: $consent.length ? ($consent.is(':checked') ? 1 : 0) : '',
                 page_url: window.location.href
             };
 
@@ -732,6 +742,14 @@ $(function () {
         clearErrors: function($form) {
             $form.find('.form-group input').removeClass('error');
             $form.find('.form-error').removeClass('visible').text('');
+        },
+
+        showConsentError: function($form) {
+            $form.find('.form-consent').addClass('error');
+        },
+
+        clearConsentError: function($form) {
+            $form.find('.form-consent').removeClass('error');
         },
 
         showToast: function(type, title, message) {

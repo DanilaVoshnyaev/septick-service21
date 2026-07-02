@@ -3087,6 +3087,19 @@ body {
     margin-top: 0.2rem;
 }
 
+.form-consent.error {
+    color: #e11d48;
+}
+
+.form-consent.error input {
+    outline: 2px solid #e11d48;
+    outline-offset: 2px;
+}
+
+.form-consent--light {
+    color: rgba(255, 255, 255, 0.85);
+}
+
 .modal__note {
     font-size: 0.8rem;
     color: var(--text-muted);
