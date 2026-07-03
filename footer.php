@@ -69,7 +69,9 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
                                 echo '<ul class="footer-menu">';
                                 echo '<li><a href="/">Главная</a></li>';
                                 echo '<li><a href="/stations/">Каталог</a></li>';
+                                echo '<li><a href="' . esc_url(izex_prices_page_url()) . '">Цены</a></li>';
                                 echo '<li><a href="/services/">Услуги</a></li>';
+                                echo '<li><a href="' . esc_url(get_post_type_archive_link('works')) . '">Наши работы</a></li>';
                                 echo '<li><a href="/about/">О компании</a></li>';
                                 echo '<li><a href="/reviews/">Отзывы</a></li>';
                                 echo '</ul>';
@@ -152,6 +154,26 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
     </button>
 
 </footer>
+
+<?php
+// Плавающая панель действий на мобильных (ТЗ 5.3) + мессенджеры (ТЗ 4.6).
+$mobile_bar = getCompanyContacts();
+?>
+<nav class="mobile-action-bar" aria-label="Быстрые действия">
+    <a class="mobile-action-bar__btn mobile-action-bar__btn--call" href="tel:<?php echo esc_attr($mobile_bar['phone_clean']); ?>">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <span>Позвонить</span>
+    </a>
+    <?php if (!empty($mobile_bar['whatsapp'])) : ?>
+        <a href="https://max.ru/u/f9LHodD0cOI_AGyWf9AKcrl72RIFsKRL7vOApMiqwT37En8F81IprazW1ro" class="mobile-action-bar__btn mobile-action-bar__btn--wa" target="_blank" rel="noopener nofollow" aria-label="MAX">
+            <img src="https://maxicons.ru/icons/MAX.svg" alt="Иконка MAX" width="32" height="32">
+        </a>
+    <?php endif; ?>
+    <button type="button" class="mobile-action-bar__btn mobile-action-bar__btn--order open-modal" data-modal="order">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15h6M9 11h2"/></svg>
+        <span>Заявка</span>
+    </button>
+</nav>
 
 <div class="modal-premium" id="modal-callback">
     <div class="modal-backdrop"></div>

@@ -207,6 +207,13 @@ function izex_scripts()
         'settings' => izex_get_calculator_settings(),
     ));
 
+    // ===== Сравнение моделей (4.2) =====
+    izex_enqueue_theme_style('compare', '/assets/styles/compare.css');
+    wp_enqueue_script('topas-compare', get_template_directory_uri() . '/assets/js/compare.js', array(), filemtime(get_template_directory() . '/assets/js/compare.js'), true);
+    wp_localize_script('topas-compare', 'topasCompare', array(
+        'stations' => izex_get_compare_stations(),
+    ));
+
     // ===== Постраничные стили (вынесены из <style> в шаблонах) =====
     $template = $GLOBALS['izex_current_template'] ?? '';
 
@@ -227,6 +234,14 @@ function izex_scripts()
     }
     if (is_single(4108)) {
         izex_enqueue_theme_style('legacy-product', '/assets/styles/legacy-product.css');
+    }
+    // Галерея работ (4.3): архив, страница работы и блок на главной.
+    if (is_post_type_archive('works') || is_singular('works') || is_front_page()) {
+        izex_enqueue_theme_style('works', '/assets/styles/works.css');
+    }
+    // Страница «Цены» (4.4).
+    if ($template === 'page-prices.php') {
+        izex_enqueue_theme_style('prices', '/assets/styles/prices.css');
     }
 
 //    if (is_singular() && comments_open() && get_option('thread_comments')) {
@@ -526,6 +541,67 @@ function register_reviews_cpt()
     );
 
     register_post_type('reviews', $args);
+}
+
+/**
+ * URL страницы «Цены»: ищем страницу с шаблоном page-prices.php.
+ * Если не найдена — фолбэк на /ceny/. Используется в навигации.
+ *
+ * @return string
+ */
+function izex_prices_page_url()
+{
+    $pages = get_posts(array(
+        'post_type'   => 'page',
+        'post_status' => 'publish',
+        'numberposts' => 1,
+        'fields'      => 'ids',
+        'meta_key'    => '_wp_page_template',
+        'meta_value'  => 'page-prices.php',
+    ));
+    if (!empty($pages)) {
+        return get_permalink($pages[0]);
+    }
+    return home_url('/ceny/');
+}
+
+// ===== CPT «Наши работы» (4.3) =====
+add_action('init', 'register_works_cpt');
+function register_works_cpt()
+{
+    $labels = array(
+        'name' => 'Наши работы',
+        'singular_name' => 'Работа',
+        'add_new' => 'Добавить работу',
+        'add_new_item' => 'Добавить работу',
+        'edit_item' => 'Редактировать работу',
+        'new_item' => 'Новая работа',
+        'view_item' => 'Просмотр работы',
+        'search_items' => 'Поиск работ',
+        'not_found' => 'Работы не найдены',
+        'not_found_in_trash' => 'В корзине не найдено',
+        'menu_name' => 'Наши работы',
+        'name_admin_bar' => 'Работа',
+    );
+
+    $args = array(
+        'labels' => $labels,
+        'public' => true,
+        'publicly_queryable' => true,
+        'show_ui' => true,
+        'show_in_menu' => true,
+        'query_var' => true,
+        'rewrite' => array('slug' => 'raboty', 'with_front' => false),
+        'capability_type' => 'post',
+        'has_archive' => true,
+        'hierarchical' => false,
+        'menu_position' => 27,
+        'menu_icon' => 'dashicons-format-gallery',
+        'supports' => array('title', 'editor', 'thumbnail', 'excerpt'),
+        'show_in_rest' => true,
+    );
+
+    register_post_type('works', $args);
 }
 
 /**
@@ -925,6 +1001,259 @@ function render_topas_calculator($atts)
     </section>
     <?php
     return ob_get_clean();
+}
+
+/**
+ * ================= СРАВНЕНИЕ МОДЕЛЕЙ (4.2) =================
+ *
+ * Полный набор характеристик станций для таблицы сравнения.
+ * Числовые характеристики форматируются тем же хелпером, что и в каталоге
+ * (izex_format_station_spec) — единый вид единиц измерения (см. 5.1).
+ *
+ * @return array<int,array{id:int,title:string,url:string,img:string,specs:array<int,array{label:string,value:string}>}>
+ */
+function izex_get_compare_stations()
+{
+    $query = new WP_Query(array(
+        'post_type'      => 'stations',
+        'posts_per_page' => -1,
+        'post_status'    => 'publish',
+        'no_found_rows'  => true,
+    ));
+
+    $rub = function ($raw) {
+        $n = (int) preg_replace('/[^\d]/', '', (string) $raw);
+        return $n > 0 ? number_format($n, 0, '.', ' ') . ' ₽' : '';
+    };
+
+    $out = array();
+    foreach ($query->posts as $post) {
+        $id = $post->ID;
+        $specs = array(
+            array('label' => 'Обслуживает',      'value' => (string) carbon_get_post_meta($id, 'crb_people_count_text')),
+            array('label' => 'Производительность', 'value' => izex_format_station_spec(carbon_get_post_meta($id, 'crb_daily_volume'), 'м³/сут')),
+            array('label' => 'Залповый сброс',   'value' => izex_format_station_spec(carbon_get_post_meta($id, 'crb_peak_discharge'), 'л')),
+            array('label' => 'Потребление',      'value' => izex_format_station_spec(carbon_get_post_meta($id, 'crb_power_consumption'), 'кВт·ч/сут')),
+            array('label' => 'Водоотведение',    'value' => (string) carbon_get_post_meta($id, 'crb_water_disposal')),
+            array('label' => 'Компрессоров',     'value' => (string) carbon_get_post_meta($id, 'crb_compressors_topas_s')),
+            array('label' => 'Габариты (монтаж)', 'value' => (string) carbon_get_post_meta($id, 'crb_mounting_dimensions')),
+            array('label' => 'Цена ТОПАС-С',     'value' => $rub(carbon_get_post_meta($id, 'crb_price_topas_s'))),
+            array('label' => 'Цена ТОПАС',       'value' => $rub(carbon_get_post_meta($id, 'crb_price'))),
+        );
+        // Пустые значения показываем как прочерк — чтобы строки таблицы совпадали по колонкам.
+        foreach ($specs as &$row) {
+            if ($row['value'] === '' || $row['value'] === null) {
+                $row['value'] = '—';
+            }
+        }
+        unset($row);
+
+        $out[$id] = array(
+            'id'    => $id,
+            'title' => get_the_title($id),
+            'url'   => get_permalink($id),
+            'img'   => get_the_post_thumbnail_url($id, 'medium') ?: '',
+            'specs' => $specs,
+        );
+    }
+    wp_reset_postdata();
+
+    return $out;
+}
+
+/**
+ * Разметка кнопки «Сравнить» для карточки станции.
+ * Используется в шаблонах каталога.
+ */
+function izex_compare_button($post_id)
+{
+    $post_id = (int) $post_id;
+    ?>
+    <button type="button" class="station-compare js-compare-toggle" data-compare-id="<?php echo esc_attr($post_id); ?>" aria-pressed="false">
+        <svg class="station-compare__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 16V4M7 4 3 8M7 4l4 4M17 8v12M17 20l4-4M17 20l-4-4"/></svg>
+        <span class="station-compare__label">Сравнить</span>
+    </button>
+    <?php
+}
+
+/**
+ * ================= ГАЛЕРЕЯ РАБОТ (4.3) =================
+ */
+
+/**
+ * Карточка выполненной работы для сетки.
+ */
+function izex_render_work_card($post_id)
+{
+    $post_id = (int) $post_id;
+    $model = carbon_get_post_meta($post_id, 'crb_work_model');
+    $location = carbon_get_post_meta($post_id, 'crb_work_location');
+    $img = get_the_post_thumbnail_url($post_id, 'medium_large');
+    ?>
+    <article class="work-card" data-model="<?php echo esc_attr($model); ?>">
+        <a class="work-card__media" href="<?php echo esc_url(get_permalink($post_id)); ?>">
+            <?php if ($img) : ?>
+                <img src="<?php echo esc_url($img); ?>" alt="<?php echo esc_attr(get_the_title($post_id)); ?>" loading="lazy">
+            <?php else : ?>
+                <span class="work-card__noimg">Фото объекта</span>
+            <?php endif; ?>
+            <?php if ($model) : ?>
+                <span class="work-card__badge"><?php echo esc_html($model); ?></span>
+            <?php endif; ?>
+        </a>
+        <div class="work-card__body">
+            <h3 class="work-card__title">
+                <a href="<?php echo esc_url(get_permalink($post_id)); ?>"><?php echo esc_html(get_the_title($post_id)); ?></a>
+            </h3>
+            <?php if ($location) : ?>
+                <p class="work-card__loc">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <?php echo esc_html($location); ?>
+                </p>
+            <?php endif; ?>
+            <?php $excerpt = get_the_excerpt($post_id); ?>
+            <?php if ($excerpt) : ?>
+                <p class="work-card__desc"><?php echo esc_html(wp_trim_words($excerpt, 18)); ?></p>
+            <?php endif; ?>
+        </div>
+    </article>
+    <?php
+}
+
+/**
+ * Шорткод блока последних работ: [topas_works count="8"]
+ * Возвращает пустую строку, если работ ещё нет — чтобы не показывать пустой блок.
+ */
+add_shortcode('topas_works', 'render_topas_works_block');
+function render_topas_works_block($atts)
+{
+    $atts = shortcode_atts(array('count' => 8), $atts, 'topas_works');
+
+    $query = new WP_Query(array(
+        'post_type'      => 'works',
+        'posts_per_page' => (int) $atts['count'],
+        'post_status'    => 'publish',
+        'no_found_rows'  => true,
+    ));
+
+    if (!$query->have_posts()) {
+        wp_reset_postdata();
+        return '';
+    }
+
+    ob_start(); ?>
+    <section class="works-block">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Наши работы</h2>
+                <p class="section-subtitle">Реальные объекты с установленными станциями ТОПАС</p>
+            </div>
+            <div class="works-grid">
+                <?php while ($query->have_posts()) : $query->the_post(); ?>
+                    <?php izex_render_work_card(get_the_ID()); ?>
+                <?php endwhile; ?>
+            </div>
+            <div class="works-block__more">
+                <a class="btn-premium btn-primary" href="<?php echo esc_url(get_post_type_archive_link('works')); ?>">Смотреть все работы</a>
+            </div>
+        </div>
+    </section>
+    <?php
+    wp_reset_postdata();
+    return ob_get_clean();
+}
+
+/**
+ * ================= СТРАНИЦА «ЦЕНЫ» (4.4) =================
+ */
+
+/**
+ * Таблица цен по моделям: оборудование / монтаж / под ключ.
+ * Оборудование и модели — из реального каталога; монтаж — из настроек
+ * калькулятора (базовый монтаж «под ключ»). «Под ключ» = оборудование + монтаж.
+ *
+ * @return array<int,array{title:string,url:string,equipment:int,install:int,turnkey:int}>
+ */
+function izex_get_prices_table()
+{
+    $stations = izex_get_calculator_stations();
+    $settings = izex_get_calculator_settings();
+    $install = (int) $settings['installBase'];
+
+    $rows = array();
+    foreach ($stations as $st) {
+        $equip = (int) $st['price'];
+        $rows[] = array(
+            'title'     => $st['title'],
+            'url'       => $st['url'],
+            'equipment' => $equip,
+            'install'   => $install,
+            'turnkey'   => $equip > 0 ? $equip + $install : 0,
+        );
+    }
+    return $rows;
+}
+
+/**
+ * Списки «входит в монтаж» / «оплачивается отдельно» / прайс обслуживания.
+ * Берутся из настроек темы (вкладка «Цены»); для «входит/отдельно» —
+ * разумные значения по умолчанию, чтобы страница не была пустой до заполнения.
+ *
+ * @return array{included:string[],extra:string[],maintenance:array<int,array{model:string,price:string}>}
+ */
+function izex_get_prices_lists()
+{
+    $pluck = function ($raw, $key) {
+        $out = array();
+        if (!empty($raw) && is_array($raw)) {
+            foreach ($raw as $row) {
+                if (!empty($row[$key])) {
+                    $out[] = $row[$key];
+                }
+            }
+        }
+        return $out;
+    };
+
+    $included = $pluck(carbon_get_theme_option('crb_prices_included'), 'item');
+    $extra = $pluck(carbon_get_theme_option('crb_prices_extra'), 'item');
+
+    if (empty($included)) {
+        $included = array(
+            'Выезд инженера и разметка',
+            'Земляные работы (котлован под станцию)',
+            'Установка и обвязка станции',
+            'Врезка подводящей трубы',
+            'Пусконаладка и инструктаж',
+        );
+    }
+    if (empty($extra)) {
+        $extra = array(
+            'Разработка тяжёлого/скального грунта',
+            'Обратная засыпка песком (при необходимости)',
+            'Прокладка длинных траншей отвода',
+            'Обустройство точки сброса на большом удалении',
+        );
+    }
+
+    $maintenance = array();
+    $raw_m = carbon_get_theme_option('crb_prices_maintenance');
+    if (!empty($raw_m) && is_array($raw_m)) {
+        foreach ($raw_m as $row) {
+            if (!empty($row['model'])) {
+                $maintenance[] = array(
+                    'model' => $row['model'],
+                    'price' => isset($row['price']) ? $row['price'] : '',
+                );
+            }
+        }
+    }
+
+    return array(
+        'included'    => $included,
+        'extra'       => $extra,
+        'maintenance' => $maintenance,
+    );
 }
 
 // ===== ПОДКЛЮЧЕНИЕ СКРИПТОВ И СТИЛЕЙ =====

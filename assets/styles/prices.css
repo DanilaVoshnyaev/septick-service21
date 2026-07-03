@@ -1,0 +1,221 @@
+/* ===== Страница «Цены» (ТЗ 4.4) ===== */
+.prices-page {
+    padding: clamp(28px, 5vw, 56px) 0 clamp(48px, 8vw, 80px);
+}
+
+.prices-head {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto 2.5rem;
+}
+
+.prices-head__title {
+    margin: 0 0 0.7rem;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 800;
+}
+
+.prices-head__subtitle {
+    margin: 0;
+    color: #64748b;
+    font-size: 1.05rem;
+}
+
+.prices-intro {
+    max-width: 760px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.7;
+    color: #334155;
+}
+
+.prices-section {
+    margin-bottom: 3rem;
+}
+
+.prices-section__title {
+    margin: 0 0 1.25rem;
+    font-size: clamp(1.3rem, 3vw, 1.75rem);
+    font-weight: 800;
+    text-align: center;
+}
+
+/* Таблица */
+.prices-table-wrap {
+    overflow-x: auto;
+    border-radius: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.prices-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+}
+
+.prices-table th,
+.prices-table td {
+    box-sizing: border-box;
+    padding: 0.9rem 1.1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.prices-table thead th {
+    background: #f8fafc;
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 0.9rem;
+}
+
+.prices-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.prices-table td a {
+    color: #1e293b;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.prices-table td a:hover {
+    color: #21b224;
+}
+
+.prices-table__turnkey {
+    font-weight: 800;
+    color: #21b224;
+    white-space: nowrap;
+}
+
+.prices-note {
+    margin: 1rem 0 0;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.prices-note a {
+    color: #21b224;
+}
+
+/* Колонки «входит / отдельно» */
+.prices-cols {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.prices-col {
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.prices-col--in {
+    background: #f0fdf4;
+    border-color: rgba(33, 178, 36, 0.25);
+}
+
+.prices-col--out {
+    background: #fff7ed;
+    border-color: rgba(234, 88, 12, 0.2);
+}
+
+.prices-col__title {
+    margin: 0 0 1rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.prices-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.prices-list li {
+    position: relative;
+    padding-left: 1.8rem;
+    line-height: 1.4;
+    color: #334155;
+}
+
+.prices-list li::before {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-weight: 700;
+}
+
+.prices-list--in li::before {
+    content: '✓';
+    color: #21b224;
+}
+
+.prices-list--out li::before {
+    content: '＋';
+    color: #ea580c;
+}
+
+/* CTA */
+.prices-cta {
+    text-align: center;
+    padding: clamp(2rem, 5vw, 3rem);
+    background: #f8fafc;
+    border-radius: 20px;
+}
+
+.prices-cta__title {
+    margin: 0 0 0.6rem;
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+    font-weight: 800;
+}
+
+.prices-cta__text {
+    margin: 0 0 1.5rem;
+    color: #64748b;
+}
+
+/* Мобильная таблица — карточки */
+@media (max-width: 640px) {
+    .prices-table-wrap {
+        border: none;
+    }
+    .prices-table,
+    .prices-table thead,
+    .prices-table tbody,
+    .prices-table tr,
+    .prices-table td {
+        display: block;
+        width: 100%;
+    }
+    .prices-table thead {
+        display: none;
+    }
+    .prices-table tr {
+        margin-bottom: 1rem;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
+        overflow: hidden;
+        background: #fff;
+    }
+    .prices-table td {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.7rem 1rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        text-align: right;
+    }
+    .prices-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #64748b;
+        text-align: left;
+    }
+    .prices-table td:last-child {
+        border-bottom: none;
+    }
+}

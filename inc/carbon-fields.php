@@ -26,6 +26,11 @@ function crb_attach_theme_options()
                             Field::make('text', 'phone_number', 'Телефон')->set_attribute('placeholder', '+7 (****) **-**-**')->set_attribute('type', 'tel'),
                         )),
                 )),
+            Field::make('text', 'whatsapp_number', __('WhatsApp (номер)'))
+                ->set_attribute('placeholder', '+7 908 303 32 82')
+                ->set_help_text('Номер для кнопки WhatsApp. Если пусто — берётся основной телефон.'),
+            Field::make('text', 'telegram_username', __('Telegram (username без @)'))
+                ->set_attribute('placeholder', 'servis_septik'),
             Field::make('text', 'main_email', __('Email'))->set_attribute('placeholder', 'email')->set_attribute('type', 'email'),
             Field::make('text', 'lead_emails', __('Email(ы) для заявок'))
                 ->set_attribute('placeholder', 'zakazchik@mail.ru, manager@mail.ru')
@@ -120,6 +125,28 @@ function crb_attach_theme_options()
 
             Field::make('textarea', 'crb_calc_note', 'Примечание под результатом')
                 ->set_default_value('Это ориентировочный расчёт. Точная смета — после бесплатного выезда инженера.'),
+        ));
+
+    // ===== Страница «Цены» (4.4) =====
+    Container::make('theme_options', 'Цены')
+        ->set_page_parent($basic_options_container)
+        ->add_fields(array(
+            Field::make('complex', 'crb_prices_included', 'Входит в стандартный монтаж')
+                ->set_help_text('Список пунктов, которые входят в стоимость монтажа «под ключ».')
+                ->add_fields(array(
+                    Field::make('text', 'item', 'Пункт')->set_attribute('placeholder', 'Например: земляные работы, врезка трубы'),
+                )),
+            Field::make('complex', 'crb_prices_extra', 'Оплачивается отдельно')
+                ->set_help_text('Что не входит в стандартный монтаж и оплачивается дополнительно.')
+                ->add_fields(array(
+                    Field::make('text', 'item', 'Пункт')->set_attribute('placeholder', 'Например: тяжёлый грунт, песок, длинные траншеи'),
+                )),
+            Field::make('complex', 'crb_prices_maintenance', 'Прайс на обслуживание')
+                ->set_help_text('Стоимость разового сервисного обслуживания по моделям.')
+                ->add_fields(array(
+                    Field::make('text', 'model', 'Модель')->set_attribute('placeholder', 'ТОПАС 5')->set_width(60),
+                    Field::make('text', 'price', 'Цена, ₽')->set_attribute('placeholder', '3500')->set_width(40),
+                )),
         ));
 
     // ===== SEO главной страницы =====
@@ -273,6 +300,25 @@ function crb_attach_theme_options()
                 ->set_default_value(0)
                 ->set_help_text('Чем меньше число — тем выше отзыв'),
         ));
+
+    // ===== Поля выполненных работ (4.3) =====
+    Container::make('post_meta', 'Данные работы')
+        ->where('post_type', '=', 'works')
+        ->add_fields(array(
+            Field::make('text', 'crb_work_model', 'Модель станции')
+                ->set_attribute('placeholder', 'Например: ТОПАС-С 5 Лонг')
+                ->set_width(50),
+            Field::make('text', 'crb_work_location', 'Район / населённый пункт')
+                ->set_attribute('placeholder', 'Например: Чебоксары, Заволжье')
+                ->set_width(50),
+            Field::make('image', 'crb_work_before', 'Фото «До» (необязательно)')
+                ->set_help_text('Если заполнить оба фото «До/После» — на странице работы покажется сравнение.')
+                ->set_width(50),
+            Field::make('image', 'crb_work_after', 'Фото «После» (необязательно)')
+                ->set_width(50),
+            Field::make('media_gallery', 'crb_work_gallery', 'Галерея объекта')
+                ->set_type(array('image')),
+        ));
 //    // Register fields for post type 'vacancies'
 //    Container::make('post_meta', 'Поля вакансий')
 //        ->where('post_type', '=', 'vacancies')
@@ -391,6 +437,8 @@ function getCompanyContacts()
         'work_time'   => 'Пн-Вс: 9:00 - 20:00',
         'map_link'    => '',
         'region'      => 'Чувашии',
+        'whatsapp'    => '',
+        'telegram'    => '',
     );
 
     // Собираем плоский список всех номеров из Carbon Fields
@@ -436,6 +484,16 @@ function getCompanyContacts()
     $map_link = getCarbonAddressLink();
     if (!empty($map_link)) {
         $company['map_link'] = $map_link;
+    }
+
+    // Мессенджеры. WhatsApp по умолчанию — основной телефон (только цифры).
+    $wa = getCarbonFields('whatsapp_number');
+    $wa_digits = preg_replace('/[^0-9]/', '', $wa ?: $company['phone_clean']);
+    $company['whatsapp'] = $wa_digits ? $wa_digits : '';
+
+    $tg = getCarbonFields('telegram_username');
+    if (!empty($tg)) {
+        $company['telegram'] = ltrim(trim($tg), '@');
     }
 
     return $company;

@@ -122,5 +122,7 @@ $power_consumption = carbon_get_post_meta(get_the_ID(), 'crb_power_consumption')
             </button>
         </div>
 
+        <?php if (function_exists('izex_compare_button')) izex_compare_button(get_the_ID()); ?>
+
     </div>
 </article>

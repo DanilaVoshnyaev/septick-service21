@@ -258,6 +258,7 @@ $company = getCompanyContacts();
                                     <a href="<?php the_permalink(); ?>" class="btn-card btn-outline">Подробнее</a>
                                     <button type="button" class="btn-card btn-gold open-modal" data-modal="order" data-product="<?php the_title_attribute(); ?>">Заказать</button>
                                 </div>
+                                <?php izex_compare_button(get_the_ID()); ?>
                             </div>
                         </article>
 

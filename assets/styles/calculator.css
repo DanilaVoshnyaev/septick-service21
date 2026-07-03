@@ -7,7 +7,7 @@
     --calc-border: rgba(0, 0, 0, 0.08);
     --calc-radius: 16px;
 
-    max-width: 760px;
+    //max-width: 860px;
     margin: 2rem auto;
     padding: clamp(1.25rem, 3vw, 2.25rem);
     background: #fff;

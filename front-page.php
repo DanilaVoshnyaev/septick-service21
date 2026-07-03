@@ -231,8 +231,10 @@ $company = getCompanyContacts();
         $page_stations = array_slice($all_stations, 0, $has_filter ? 12 : 8);
         ?>
 
+
         <section id="catalog" class="catalog-premium" style="background: var(--bg-secondary); padding: clamp(80px, 12vw, 80px) 0 0;">
             <div class="container">
+                <?php echo do_shortcode('[topas_calculator]'); ?>
 
                 <!-- Заголовок -->
                 <div class="section-header">
@@ -471,6 +473,10 @@ $company = getCompanyContacts();
                 </div>
             </div>
         </section>
+
+        <!-- ===== Наши работы (4.3) — выводится, если есть хотя бы одна работа ===== -->
+        <?php echo do_shortcode('[topas_works count="8"]'); ?>
+
         <!-- Testimonials Premium -->
         <section class="testimonials-premium">
             <div class="container">
