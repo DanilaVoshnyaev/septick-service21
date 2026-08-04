@@ -17,7 +17,6 @@ $company = getCompanyContacts();
 
     <main class="main-content">
 
-        <!-- Hero Section Premium -->
         <section class="hero-premium">
             <div class="hero-bg-image" style="background-image: url('https://sun9-56.userapi.com/s/v1/ig2/kbikJlm6FecDGc7rQ2y4nLt1d_CnM77y-rFvuDia8OG9XFQWu9PPrVRs-TWwpSV223IrJLI-IwP-QDFyB20lbQCZ.jpg?quality=95&as=32x24,48x36,72x54,108x81,160x120,240x180,360x270,480x360,540x405,640x480,720x540,1080x810,1280x960,1440x1080,1448x1086&from=bu&u=dSfrTf5fBdqBF5EfR4h6Xq0IypKt2NkMsitYpkqpHv8&cs=1448x0');"></div>
             <div class="hero-bg-overlay"></div>
@@ -81,11 +80,6 @@ $company = getCompanyContacts();
                 </div>
             </div>
         </section>
-
-        <!-- Наши преимущества -->
-
-
-        <!-- Luxury Features -->
         <section class="luxury-features">
             <div class="container">
                 <div class="section-header">
@@ -161,7 +155,6 @@ $company = getCompanyContacts();
 
             </div>
         </section>
-
         <?php
         // Параметры фильтра (фильтруем прямо на главной — так же, как в каталоге:
         // берём все станции и фильтруем/сортируем в PHP через carbon_get_post_meta,
@@ -230,8 +223,6 @@ $company = getCompanyContacts();
         // На главной показываем превью: до 12 при активном фильтре, иначе 8.
         $page_stations = array_slice($all_stations, 0, $has_filter ? 12 : 8);
         ?>
-
-
         <section id="catalog" class="catalog-premium" style="background: var(--bg-secondary); padding: clamp(80px, 12vw, 80px) 0 0;">
             <div class="container">
                 <?php echo do_shortcode('[topas_calculator]'); ?>
@@ -408,8 +399,7 @@ $company = getCompanyContacts();
 
             </div>
         </section>
-
-        <!-- Why Choose Us Premium -->
+        <?php echo do_shortcode('[topas_works count="8"]'); ?>
         <section class="why-choose-premium">
             <div class="container">
                 <div class="section-header">
@@ -473,11 +463,6 @@ $company = getCompanyContacts();
                 </div>
             </div>
         </section>
-
-        <!-- ===== Наши работы (4.3) — выводится, если есть хотя бы одна работа ===== -->
-        <?php echo do_shortcode('[topas_works count="8"]'); ?>
-
-        <!-- Testimonials Premium -->
         <section class="testimonials-premium">
             <div class="container">
                 <div class="section-header">
@@ -602,7 +587,6 @@ $company = getCompanyContacts();
 
             </div>
         </section>
-        <!-- Process Premium -->
         <section class="process-premium">
             <div class="container">
                 <div class="section-header">
@@ -717,7 +701,6 @@ $company = getCompanyContacts();
             '</script>' . "\n";
         ?>
 
-        <!-- CTA Premium -->
         <section class="cta-premium" id="contacts" style="background-image: url('<?=assets('/images/cta.jpg')?>');">
             <div class="cta-bg-pattern"></div>
             <div class="container">
@@ -725,6 +708,7 @@ $company = getCompanyContacts();
                     <h2 class="cta-title">Готовы сделать первый шаг?</h2>
                     <p class="cta-subtitle">Получите бесплатную консультацию инженера и скидку на монтаж при заказе до конца месяца</p>
                     <form class="cta-form-premium premium-contact-form" id="consultationForm" data-form-type="consultation">
+                        <input type="text" name="hp_email" class="form-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
                         <input type="hidden" name="action" value="premium_form_submit">
                         <input type="hidden" name="page_url" value="<?php echo esc_url($_SERVER['REQUEST_URI'] ?? ''); ?>">
                         <div class="form-group"><input type="text" name="name" placeholder="Ваше имя" required><span class="form-error"></span></div>

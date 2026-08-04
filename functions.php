@@ -591,7 +591,7 @@ function register_works_cpt()
         'show_ui' => true,
         'show_in_menu' => true,
         'query_var' => true,
-        'rewrite' => array('slug' => 'raboty', 'with_front' => false),
+        'rewrite' => array('slug' => 'works', 'with_front' => false),
         'capability_type' => 'post',
         'has_archive' => true,
         'hierarchical' => false,
@@ -602,6 +602,24 @@ function register_works_cpt()
     );
 
     register_post_type('works', $args);
+}
+
+/**
+ * Одноразовый сброс правил перезаписи после появления новых типов записей
+ * (CPT «works» → архив /works/). Без этого архив отдаёт 404, пока вручную
+ * не сохранить «Настройки → Постоянные ссылки».
+ *
+ * Флаг-версия хранится в опции: чтобы форсировать повторный сброс при изменении
+ * структуры URL — достаточно увеличить номер в $rewrite_version.
+ */
+add_action('init', 'izex_maybe_flush_rewrite_rules', 20);
+function izex_maybe_flush_rewrite_rules()
+{
+    $rewrite_version = '3'; // ↑ увеличить при изменении slug'ов/новых CPT
+    if (get_option('izex_rewrite_version') !== $rewrite_version) {
+        flush_rewrite_rules(false);
+        update_option('izex_rewrite_version', $rewrite_version);
+    }
 }
 
 /**
@@ -617,6 +635,16 @@ function handle_premium_form_submit() {
     // Проверка nonce (безопасность)
     if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'premium_form_nonce')) {
         wp_send_json_error(['message' => 'Ошибка безопасности'], 403);
+    }
+
+    // ===== Анти-спам (ТЗ 5.4) =====
+    // 1) Honeypot: скрытое поле hp_email заполняют только боты.
+    // 2) Временная ловушка: заявка быстрее 2 сек после загрузки — почти всегда бот.
+    // В обоих случаях возвращаем «успех» без отправки письма, чтобы не подсказывать боту.
+    $hp = isset($_POST['hp_email']) ? trim((string) $_POST['hp_email']) : '';
+    $elapsed = isset($_POST['elapsed']) ? (int) $_POST['elapsed'] : 0;
+    if ($hp !== '' || ($elapsed > 0 && $elapsed < 2000)) {
+        wp_send_json_success(['message' => 'Спасибо! Мы свяжемся с вами в течение 15 минут.']);
     }
 
     // Санитизация входных данных
@@ -820,6 +848,7 @@ function render_premium_contact_form($atts) {
     ob_start();
     ?>
     <form class="premium-contact-form" data-form-type="<?php echo esc_attr($atts['type']); ?>">
+        <input type="text" name="hp_email" class="form-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
         <h4><?php echo esc_html($atts['title']); ?></h4>
         <div class="form-group">
             <input type="text" name="name" placeholder="Ваше имя *" required>
@@ -1142,11 +1171,11 @@ function render_topas_works_block($atts)
     }
 
     ob_start(); ?>
-    <section class="works-block">
+    <section class="works-block testimonials-premium">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title">Наши работы</h2>
-                <p class="section-subtitle">Реальные объекты с установленными станциями ТОПАС</p>
+                <p class="section-subtitle" style="color: white">Реальные объекты с установленными станциями ТОПАС</p>
             </div>
             <div class="works-grid">
                 <?php while ($query->have_posts()) : $query->the_post(); ?>
@@ -1258,10 +1287,23 @@ function izex_get_prices_lists()
 
 // ===== ПОДКЛЮЧЕНИЕ СКРИПТОВ И СТИЛЕЙ =====
 add_action('wp_enqueue_scripts', 'enqueue_premium_form_assets');
+/**
+ * ID счётчика Яндекс.Метрики (для отправки целей из форм).
+ * Значение совпадает со счётчиком в footer.php. Можно переопределить фильтром
+ * 'izex_metrika_id' — на случай смены счётчика без правки JS.
+ *
+ * @return int
+ */
+function izex_metrika_id()
+{
+    return (int) apply_filters('izex_metrika_id', 109479860);
+}
+
 function enqueue_premium_form_assets() {
     wp_localize_script('global-scripts', 'premiumFormVars', [
         'ajaxUrl' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('premium_form_nonce'),
+        'metrikaId' => izex_metrika_id(),
         'messages' => [
             'success' => 'Спасибо! Мы свяжемся с вами в течение 15 минут.',
             'error' => 'Ошибка отправки. Попробуйте позвонить нам.',

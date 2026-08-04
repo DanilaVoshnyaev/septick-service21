@@ -81,12 +81,7 @@ $company = getCompanyContacts();
                 </div>
             </section>
 
-            <!-- География -->
-            <section class="about-section">
-                <h2 class="section-title">
-                    <svg class="icon"><use href="#icon-map"/></svg>
-                    Работаем по Чувашской Республике
-                </h2>
+
                 <!-- География -->
 
                 <section class="about-section">
@@ -120,7 +115,6 @@ $company = getCompanyContacts();
 
                 </section>
 
-            </section>
 
             <!-- Как мы работаем -->
             <section class="about-section">
@@ -204,18 +198,19 @@ $company = getCompanyContacts();
                     <p> Оставьте заявку — инженер бесплатно проконсультирует, подберёт оптимальную станцию и рассчитает
                         стоимость монтажа для вашего участка </p>
                     <form class="about-cta__form premium-contact-form" id="consultationForm" data-form-type="consultation">
+                        <input type="text" name="hp_email" class="form-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
                         <input type="hidden" name="action" value="premium_form_submit">
                         <input type="hidden" name="page_url" value="<?php echo esc_url($_SERVER['REQUEST_URI'] ?? ''); ?>">
 
                         <div class="form-group"><input type="text" name="name" placeholder="Ваше имя" required><span class="form-error"></span></div>
                         <div class="form-group"><input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required><span class="form-error"></span></div>
-                        <label class="form-consent"><input type="checkbox" name="consent" required checked> Согласен на обработку персональных данных</label>
                         <button type="submit" class="btn">
                             <svg class="icon">
                                 <use href="#icon-phone"/>
                             </svg>
                             Получить консультацию
                         </button>
+                        <label class="form-consent"><input type="checkbox" name="consent" style="width: 30px" required checked> Согласен на обработку персональных данных</label>
                         <p class="about-cta__note"> Нажимая кнопку, вы соглашаетесь с <a href="/privacy/" style="color: #21b224">политикой
                                 конфиденциальности</a></p>
                     </form>

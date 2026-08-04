@@ -189,6 +189,7 @@ $mobile_bar = getCompanyContacts();
         </div>
 
         <form class="modal-form-premium" id="callbackForm" data-form-type="callback">
+            <input type="text" name="hp_email" class="form-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
             <input type="hidden" name="action" value="premium_form_submit">
             <input type="hidden" name="page_url" value="<?php echo esc_url($_SERVER['REQUEST_URI'] ?? ''); ?>">
 
@@ -229,6 +230,7 @@ $mobile_bar = getCompanyContacts();
 
         <form class="modal-form-premium" id="engineerForm" data-form-type="engineer">
             <!-- Hidden поля для AJAX-обработчика -->
+            <input type="text" name="hp_email" class="form-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
             <input type="hidden" name="action" value="premium_form_submit">
             <input type="hidden" name="page_url" value="<?php echo esc_url($_SERVER['REQUEST_URI'] ?? ''); ?>">
 
@@ -271,6 +273,7 @@ $mobile_bar = getCompanyContacts();
         </div>
 
         <form class="modal-form-premium" id="orderForm" data-form-type="catalog_order">
+            <input type="text" name="hp_email" class="form-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
             <input type="hidden" name="action" value="premium_form_submit">
             <input type="hidden" name="product_name" class="js-order-product-field" value="">
             <input type="hidden" name="page_url" value="<?php echo esc_url($_SERVER['REQUEST_URI'] ?? ''); ?>">

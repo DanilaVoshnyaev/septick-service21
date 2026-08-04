@@ -579,6 +579,9 @@ $(function () {
     'use strict';
 
     const PremiumForms = {
+        // Момент загрузки — для анти-спам «временной ловушки» (мгновенная отправка = бот).
+        loadedAt: Date.now(),
+
         init: function() {
             this.bindEvents();
             this.initPhoneMask();
@@ -664,6 +667,9 @@ $(function () {
                 product_id: $form.find('[name="product_id"]').val() || 0,
                 product_name: $form.find('[name="product_name"]').val() || '',
                 consent: $consent.length ? ($consent.is(':checked') ? 1 : 0) : '',
+                // Анти-спам: honeypot (скрытое поле, заполняют боты) + время на форме.
+                hp_email: $form.find('[name="hp_email"]').val() || '',
+                elapsed: Date.now() - PremiumForms.loadedAt,
                 page_url: window.location.href
             };
 
@@ -689,6 +695,7 @@ $(function () {
                 success: function(response) {
                     if (response.success) {
                         PremiumForms.showToast('success', '✅ Заявка отправлена', response.data.message || premiumFormVars.messages.success);
+                        PremiumForms.reachGoal(formType);
                         $form[0].reset();
 
                         // Закрытие модального окна если есть
@@ -750,6 +757,20 @@ $(function () {
 
         clearConsentError: function($form) {
             $form.find('.form-consent').removeClass('error');
+        },
+
+        // Отправка цели в Яндекс.Метрику на успешную заявку (ТЗ 5.4).
+        // Общая цель form_submit + уточнённая form_<тип> для сегментации.
+        reachGoal: function(formType) {
+            if (typeof window.ym !== 'function') return;
+            var id = (window.premiumFormVars && premiumFormVars.metrikaId) ? premiumFormVars.metrikaId : null;
+            if (!id) return;
+            try {
+                window.ym(id, 'reachGoal', 'form_submit');
+                if (formType) {
+                    window.ym(id, 'reachGoal', 'form_' + formType);
+                }
+            } catch (e) {}
         },
 
         showToast: function(type, title, message) {

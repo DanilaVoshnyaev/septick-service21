@@ -1,4 +1,44 @@
 /* ===== Наши работы (ТЗ 4.3) ===== */
+
+/* Кнопки: фиксируем зелёный, т.к. .btn-premium.btn-primary задаётся только
+   в front-page.css (не грузится на архиве/странице работы → был голубой из catalog.css). */
+
+/* Отключаем ripple-оверлей .btn-premium::before — он рисуется поверх текста
+   и делает надпись нечитаемой на ховере. Обратная связь — через смену фона. */
+.works-block .btn-premium::before,
+.works-archive .btn-premium::before,
+.work-single .btn-premium::before {
+    display: none;
+}
+
+.works-block .btn-premium.btn-primary,
+.works-archive .btn-premium.btn-primary,
+.work-single .btn-premium.btn-primary {
+    background: #21b224;
+    color: #fff;
+    border: 1px solid #21b224;
+}
+
+.works-block .btn-premium.btn-primary:hover,
+.works-archive .btn-premium.btn-primary:hover,
+.work-single .btn-premium.btn-primary:hover {
+    background: #1a9420;
+    color: #fff;
+    border-color: #1a9420;
+}
+
+.work-single .btn-premium.btn-outline {
+    background: transparent;
+    color: #21b224;
+    border: 2px solid #21b224;
+}
+
+.work-single .btn-premium.btn-outline:hover {
+    background: #21b224;
+    color: #fff;
+    border-color: #21b224;
+}
+
 .works-block {
     padding: clamp(48px, 8vw, 88px) 0;
 }

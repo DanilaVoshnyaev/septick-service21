@@ -4267,3 +4267,14 @@ body {
         padding-bottom: 62px;
     }
 }
+
+/* ===== Honeypot антиспам-поле (ТЗ 5.4) — скрыто от людей, видно ботам ===== */
+.form-hp {
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}

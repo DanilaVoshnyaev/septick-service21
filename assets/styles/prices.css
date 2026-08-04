@@ -1,4 +1,23 @@
 /* ===== Страница «Цены» (ТЗ 4.4) ===== */
+
+/* Отключаем ripple-оверлей .btn-premium::before (перекрывает текст на ховере). */
+.prices-page .btn-premium::before {
+    display: none;
+}
+
+/* Кнопка CTA: фиксируем зелёный (см. пояснение в works.css). */
+.prices-page .btn-premium.btn-primary {
+    background: #21b224;
+    color: #fff;
+    border: 1px solid #21b224;
+}
+
+.prices-page .btn-premium.btn-primary:hover {
+    background: #1a9420;
+    color: #fff;
+    border-color: #1a9420;
+}
+
 .prices-page {
     padding: clamp(28px, 5vw, 56px) 0 clamp(48px, 8vw, 80px);
 }

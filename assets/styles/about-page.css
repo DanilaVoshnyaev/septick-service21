@@ -173,6 +173,13 @@
             box-shadow: 0 0 0 3px rgba(33, 178, 36, 0.25);
         }
         .about-cta__form .btn { white-space: nowrap; justify-content: center; }
+        .about-cta__form .form-consent {
+            grid-column: 1 / -1;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.85rem;
+        }
+        .about-cta__form .form-consent input { accent-color: var(--green); }
         .about-cta__note { grid-column: 1 / -1; }
         @media (max-width: 640px) {
             .about-cta__form { grid-template-columns: 1fr; }

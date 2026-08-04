@@ -104,7 +104,7 @@ $money = function ($v) {
         <div class="prices-cta">
             <h2 class="prices-cta__title">Нужен точный расчёт для вашего участка?</h2>
             <p class="prices-cta__text">Инженер бесплатно выезжает, замеряет и составляет смету без скрытых доплат.</p>
-            <button type="button" class="btn-premium btn-primary open-modal" data-modal="engineer">Вызвать инженера бесплатно</button>
+            <button type="button" class="btn-footer open-modal" data-modal="engineer">Вызвать инженера бесплатно</button>
         </div>
 
     </div>

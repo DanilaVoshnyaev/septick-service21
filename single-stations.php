@@ -338,6 +338,7 @@ $main_image = $gallery_images[0] ?? ['url' => get_template_directory_uri() . '/a
             <p>Перезвоним за 5 минут • Консультация бесплатна</p>
         </div>
         <form class="premium-contact-form modal__form" data-form-type="station_order">
+            <input type="text" name="hp_email" class="form-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
             <input type="hidden" name="action" value="premium_form_submit">
             <input type="hidden" name="product_id" value="<?php echo get_the_ID(); ?>">
             <input type="hidden" name="product_name" value="<?php the_title_attribute(); ?>">
