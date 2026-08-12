@@ -1,17 +1,9 @@
 /* ===== header.php ===== */
-/* Header Variables - Светлая тема */
-:root {
-    --header-bg: rgba(255, 255, 255, 0.95);
-    --header-bg-scrolled: rgba(255, 255, 255, 0.98);
-    --header-text: #1e293b;
-    --header-text-muted: #64748b;
-    --header-border: rgba(0, 0, 0, 0.08);
-    --header-green: #21b224;
-    --header-gold-hover: #f4d03f;
-    --header-blue: #2563eb;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
 
+/* Токены перенесены в tokens.css — единый источник значений.
+   Здесь блок :root удалён, чтобы не переопределять их задним числом. */
+
+/* Header Variables - Светлая тема */
 /* ===== FIXED HEADER BASE ===== */
 .site-header-premium {
     position: fixed; /* ✅ Всегда видим при скролле */
@@ -45,7 +37,7 @@
 .site-header-premium.scrolled {
     background: var(--header-bg-scrolled);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border-bottom-color: rgba(212, 175, 55, 0.3);
+    border-bottom-color: rgba(21, 128, 61, 0.3);
 }
 
 .site-header-premium.scrolled .header-top-premium {
@@ -198,7 +190,7 @@
 }
 
 .top-phones-dropdown a:hover {
-    background: rgba(212, 175, 55, 0.1);
+    background: rgba(21, 128, 61, 0.1);
     color: var(--header-green);
     padding-left: 20px;
 }
@@ -255,7 +247,7 @@
 }
 
 .btn-premium.btn-ghost:hover {
-    background: rgba(212, 175, 55, 0.1);
+    background: rgba(21, 128, 61, 0.1);
     border-color: var(--header-green);
     color: var(--header-green);
 
@@ -446,7 +438,7 @@
 }
 
 .nav-list-premium .sub-menu li a:hover {
-    background: rgba(212, 175, 55, 0.1);
+    background: rgba(21, 128, 61, 0.1);
     color: var(--header-green);
     padding-left: 24px;
 }
@@ -574,7 +566,7 @@
     outline: none;
     background: #fff;
     border-color: var(--header-green);
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+    box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.15);
 }
 
 .search-input-wrapper button[type="submit"] {
@@ -717,7 +709,7 @@
 
 .mobile-nav-list-premium li a:hover,
 .mobile-nav-list-premium li a.current-menu-item {
-    background: rgba(212, 175, 55, 0.12);
+    background: rgba(21, 128, 61, 0.12);
     color: var(--header-green);
     padding-left: 20px;
 }
@@ -910,8 +902,8 @@
     display: inline-block;
     padding: 6px 14px;
     border-radius: 999px;
-    background: rgba(33, 178, 36, 0.1);
-    color: var(--header-green, #21b224);
+    background: rgba(21, 128, 61, 0.1);
+    color: var(--header-green, var(--brand));
     font-size: 14px;
     font-weight: 600;
 }
@@ -945,7 +937,7 @@
     outline: none;
     background: #fff;
     border-color: var(--header-green);
-    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+    box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.15);
 }
 
 .form-privacy {
@@ -1051,19 +1043,6 @@ body {
 
 /* ===== footer.php ===== */
 /* Footer Variables - Единая схема с хедером */
-:root {
-    --footer-bg: rgba(255, 255, 255, 0.95);
-    --footer-bg-scrolled: rgba(255, 255, 255, 0.98);
-    --footer-bg-dark: rgba(255, 255, 255, 0.98);
-    --footer-text: #1e293b;
-    --footer-text-muted: #64748b;
-    --footer-border: rgba(0, 0, 0, 0.08);
-    --footer-green: #21b224; /* ✅ Основной акцентный цвет */
-    --footer-green-hover: #f4d03f; /* ✅ Ховер-эффект */
-    --footer-blue: #2563eb;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
 /* ===== FOOTER BASE ===== */
 .site-footer {
     background: var(--footer-bg);
@@ -1277,7 +1256,7 @@ body {
     background: #fff;
     color: #0f172a;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(33, 178, 36, 0.2);
+    box-shadow: 0 6px 20px rgba(21, 128, 61, 0.2);
 }
 
 /* ===== FOOTER BOTTOM ===== */
@@ -1410,7 +1389,7 @@ body {
     visibility: hidden;
     transform: translateY(20px);
     z-index: 100;
-    box-shadow: 0 4px 15px rgba(33, 178, 36, 0.3);
+    box-shadow: 0 4px 15px rgba(21, 128, 61, 0.3);
 }
 
 .back-to-top.visible {
@@ -1423,7 +1402,7 @@ body {
     background: #fff;
     color: #0f172a;
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(33, 178, 36, 0.4);
+    box-shadow: 0 10px 30px rgba(21, 128, 61, 0.4);
 }
 
 /* ===== MODAL (shared with header) ===== */
@@ -1543,7 +1522,7 @@ body {
     outline: none;
     background: #fff;
     border-color: var(--footer-green);
-    box-shadow: 0 0 0 3px rgba(33, 178, 36, 0.15);
+    box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.15);
 }
 
 .modal-form .btn-full, .form-privacy {
@@ -1588,22 +1567,6 @@ body {
 }
 
 /* ===== archive-stations.php ===== */
-:root {
-    /* ===== ЦВЕТОВАЯ СХЕМА ИЗ ХЕДЕРА ===== */
-    --green: #21b224; /* ✅ Основной акцент */
-    --green-hover: #f4d03f; /* ✅ Ховер-эффект (жёлтый) */
-    --blue: #2563eb; /* Вторичный акцент */
-    --blue-hover: #1d4ed8;
-    --text: #1e293b; /* Основной текст */
-    --text-muted: #64748b; /* Второстепенный текст */
-    --bg: rgba(255, 255, 255, 0.95); /* Фон с прозрачностью */
-    --card-bg: #ffffff;
-    --border: rgba(0, 0, 0, 0.08);
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    --radius: 12px;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
 .stations-archive {
     padding: 2rem 0;
     background: var(--bg);
@@ -1637,7 +1600,7 @@ body {
 }
 
 .stations-hero__promo {
-    background: linear-gradient(135deg, rgba(33, 178, 36, 0.12) 0%, rgba(37, 99, 235, 0.08) 100%);
+    background: linear-gradient(135deg, rgba(21, 128, 61, 0.12) 0%, rgba(21, 128, 61, 0.08) 100%);
     border-left: 4px solid var(--green); /* ✅ Было: var(--gold) */
     padding: 1rem 1.25rem;
     border-radius: 0 8px 8px 0;
@@ -1666,7 +1629,7 @@ body {
     background: #fff;
     color: #0f172a; /* ✅ Логика хедера: зелёный → белый с чёрным текстом */
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(33, 178, 36, 0.35);
+    box-shadow: 0 6px 20px rgba(21, 128, 61, 0.35);
 }
 
 .stations-hero__phone .icon {
@@ -1718,7 +1681,7 @@ body {
 .station-card:hover {
     transform: translateY(-4px);
     border-color: var(--green); /* ✅ Было: var(--gold) */
-    box-shadow: 0 10px 30px rgba(33, 178, 36, 0.15); /* ✅ Было: rgba(212, 175, 55, 0.15) */
+    box-shadow: 0 10px 30px rgba(21, 128, 61, 0.15); /* ✅ Было: rgba(21, 128, 61, 0.15) */
 }
 
 /* Бейдж */
@@ -1883,7 +1846,7 @@ body {
     background: #fff;
     color: #0f172a; /* ✅ Логика хедера: зелёный → белый с чёрным текстом */
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(33, 178, 36, 0.35);
+    box-shadow: 0 6px 20px rgba(21, 128, 61, 0.35);
 }
 
 /* Пагинация */
@@ -1968,22 +1931,6 @@ body {
 
 
 /* ===== archive-services.php ===== */
-:root {
-    /* ===== ЦВЕТОВАЯ СХЕМА ИЗ ХЕДЕРА ===== */
-    --green: #21b224; /* ✅ Основной акцент */
-    --green-hover: #f4d03f; /* ✅ Ховер-эффект */
-    --blue: #2563eb;
-    --blue-hover: #1d4ed8;
-    --text: #1e293b;
-    --text-muted: #64748b;
-    --bg: rgba(255, 255, 255, 0.95); /* ✅ Фон с прозрачностью */
-    --card-bg: #ffffff;
-    --border: rgba(0, 0, 0, 0.08); /* ✅ Границы как в хедере */
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    --radius: 12px;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* ✅ Анимации как в хедере */
-}
-
 .services-list-page {
     padding: 2rem 0;
     background: var(--bg);
@@ -2050,7 +1997,7 @@ body {
 .service-list-item:hover {
     transform: translateX(4px);
     border-color: var(--green); /* ✅ Было: var(--gold) */
-    box-shadow: 0 6px 24px rgba(33, 178, 36, 0.15); /* ✅ Было: rgba(212, 175, 55, 0.15) */
+    box-shadow: 0 6px 24px rgba(21, 128, 61, 0.15); /* ✅ Было: rgba(21, 128, 61, 0.15) */
 }
 
 /* Изображение — УВЕЛИЧЕНО */
@@ -2206,7 +2153,7 @@ body {
     background: #fff;
     color: #0f172a; /* ✅ Логика хедера: инверсия при ховере */
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(33, 178, 36, 0.35);
+    box-shadow: 0 6px 20px rgba(21, 128, 61, 0.35);
 }
 
 /* ✅ Кнопка с обводкой — зелёная вместо синей */
@@ -2353,22 +2300,6 @@ body {
 
 
 /* ===== single-stations.php ===== */
-:root {
-    /* ===== ЦВЕТОВАЯ СХЕМА ИЗ ХЕДЕРА ===== */
-    --green: #21b224; /* ✅ Основной акцент */
-    --green-hover: #f4d03f; /* ✅ Ховер-эффект */
-    --blue: #2563eb;
-    --blue-hover: #1d4ed8;
-    --text: #1e293b;
-    --text-muted: #64748b;
-    --bg: rgba(255, 255, 255, 0.95); /* ✅ Фон с прозрачностью */
-    --card-bg: #ffffff;
-    --border: rgba(0, 0, 0, 0.08); /* ✅ Границы как в хедере */
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    --radius: 12px;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* ✅ Анимации как в хедере */
-}
-
 .price-wrapper {
     display: flex;
     gap: 12px;
@@ -2625,7 +2556,7 @@ body {
     background: #fff;
     color: #0f172a; /* ✅ Логика хедера */
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(33, 178, 36, 0.35);
+    box-shadow: 0 6px 20px rgba(21, 128, 61, 0.35);
 }
 
 /* ✅ Кнопка с обводкой — зелёная вместо синей */
@@ -2825,12 +2756,12 @@ body {
 .equipment-item__qty {
     font-weight: 600;
     color: var(--green);
-    background: rgba(33, 178, 36, 0.1);
+    background: rgba(21, 128, 61, 0.1);
     padding: 0.2rem 0.6rem;
     border-radius: 6px;
 }
 
-/* ✅ Было: rgba(37,99,235,0.1) */
+/* ✅ Было: rgba(21, 128, 61, 0.1) */
 
 /* Преимущества */
 .features-grid {
@@ -3055,7 +2986,7 @@ body {
 .form-group input:focus, .form-group textarea:focus {
     outline: none;
     border-color: var(--green);
-    box-shadow: 0 0 0 3px rgba(33, 178, 36, 0.15); /* ✅ Было: rgba(212,175,55,0.15) */
+    box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.15); /* ✅ Было: rgba(21, 128, 61, 0.15) */
 }
 
 /* Видимые рамки полей в модалках (раньше были почти белые) */
@@ -3072,7 +3003,7 @@ body {
 .modal-panel .form-group-premium input:focus,
 .modal-content-premium .form-group-premium input:focus {
     border-color: var(--green);
-    box-shadow: 0 0 0 3px rgba(33, 178, 36, 0.15);
+    box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.15);
 }
 
 .form-consent {
@@ -3168,22 +3099,6 @@ body {
 
 
 /* ===== single-services.php ===== */
-:root {
-    /* ===== ЦВЕТОВАЯ СХЕМА ИЗ ХЕДЕРА ===== */
-    --green: #21b224; /* ✅ Основной акцент */
-    --green-hover: #f4d03f; /* ✅ Ховер-эффект */
-    --blue: #2563eb;
-    --blue-hover: #1d4ed8;
-    --text: #1e293b;
-    --text-muted: #64748b;
-    --bg: rgba(255, 255, 255, 0.95); /* ✅ Фон с прозрачностью */
-    --card-bg: #ffffff;
-    --border: rgba(0, 0, 0, 0.08); /* ✅ Границы как в хедере */
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    --radius: 12px;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* ✅ Анимации как в хедере */
-}
-
 .service-page {
     padding: 2rem 0;
     background: var(--bg);
@@ -3478,7 +3393,7 @@ body {
     background: #fff;
     color: #0f172a; /* ✅ Логика хедера: инверсия при ховере */
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(33, 178, 36, 0.35);
+    box-shadow: 0 6px 20px rgba(21, 128, 61, 0.35);
 }
 
 .btn-call .icon {
@@ -3654,7 +3569,7 @@ body {
 
 .toast {
     background: #fff;
-    border-left: 4px solid #21b224;
+    border-left: 4px solid var(--brand);
     border-radius: 8px;
     padding: 14px 18px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
@@ -3691,7 +3606,7 @@ body {
 }
 
 .toast-success .toast-icon {
-    color: #21b224;
+    color: var(--brand);
 }
 
 .toast-error .toast-icon {
@@ -3832,7 +3747,7 @@ body {
 .station-stock-pill {
     align-items: center;
     align-self: flex-start;
-    background: rgba(33, 178, 36, 0.12);
+    background: rgba(21, 128, 61, 0.12);
     border-radius: 999px;
     color: #15803d;
     display: inline-flex;
@@ -3886,13 +3801,13 @@ body {
 }
 
 .cookie-consent__text a {
-    color: var(--green, #21b224);
+    color: var(--green, var(--brand));
     text-decoration: underline;
 }
 
 .cookie-consent__btn {
     flex-shrink: 0;
-    background: var(--green, #21b224);
+    background: var(--green, var(--brand));
     color: #fff;
     border: none;
     border-radius: 999px;
@@ -4024,7 +3939,7 @@ body {
 
 .breadcrumbs-wrapper {
     background: linear-gradient(180deg, rgba(248, 250, 252, 0.95), rgba(255, 255, 255, 0.95));
-    border-bottom: 1px solid rgba(33, 178, 36, 0.12);
+    border-bottom: 1px solid rgba(21, 128, 61, 0.12);
     padding: 0.85rem 0;
 }
 
@@ -4049,8 +3964,8 @@ body {
 }
 
 .breadcrumbs-wrapper .yoast-breadcrumbs a:hover {
-    color: var(--header-green, #21b224);
-    background: rgba(33, 178, 36, 0.1);
+    color: var(--header-green, var(--brand));
+    background: rgba(21, 128, 61, 0.1);
 }
 
 /* Текущая страница (последний элемент Yoast) */
@@ -4111,14 +4026,14 @@ body {
     border: none;
     cursor: pointer;
     color: #fff;
-    background: var(--header-green, #21b224);
+    background: var(--header-green, var(--brand));
     border-radius: 8px 0 0 8px;
     box-shadow: -2px 2px 12px rgba(15, 23, 42, 0.18);
     transition: background 0.2s ease;
 }
 
 .social-float__toggle:hover {
-    background: #16a34a;
+    background: var(--brand-strong);
 }
 
 .social-float__toggle svg {
@@ -4156,7 +4071,7 @@ body {
 
 .social-float__item:hover {
     transform: translateX(-2px);
-    box-shadow: -6px 6px 22px rgba(33, 178, 36, 0.28);
+    box-shadow: -6px 6px 22px rgba(21, 128, 61, 0.28);
 }
 
 .social-float__icon,
@@ -4179,7 +4094,7 @@ body {
     font-weight: 700;
     font-size: 18px;
     color: #fff;
-    background: var(--header-green, #21b224);
+    background: var(--header-green, var(--brand));
 }
 
 .social-float__label {
@@ -4250,7 +4165,7 @@ body {
     }
 
     .mobile-action-bar__btn--call {
-        color: #21b224;
+        color: var(--brand);
     }
 
     .mobile-action-bar__btn--wa {
@@ -4258,7 +4173,7 @@ body {
     }
 
     .mobile-action-bar__btn--order {
-        background: #21b224;
+        background: var(--brand);
         color: #fff;
     }
 

@@ -16,7 +16,18 @@
 (function () {
     'use strict';
 
-    var PREVIEW_LIMIT = 8; // сколько карточек показываем до «Показать все»
+    var PREVIEW_LIMIT = 8; // сколько карточек показываем до «Показать все» (по умолчанию)
+
+    // Ограничение можно переопределить атрибутом data-catalog-limit:
+    // на главной это превью (8 карточек), в архиве каталога — 0, то есть все.
+    function limitFor(root) {
+        var raw = root.getAttribute('data-catalog-limit');
+        if (raw === null || raw === '') {
+            return PREVIEW_LIMIT;
+        }
+        var n = parseInt(raw, 10);
+        return isFinite(n) && n > 0 ? n : Infinity;
+    }
 
     function each(list, fn) {
         Array.prototype.forEach.call(list, fn);
@@ -36,6 +47,7 @@
 
         var state = { people: '', disposal: '', sort: '' };
         var expanded = false;
+        var previewLimit = limitFor(root);
 
         // Начальное состояние — из URL, чтобы совпасть с серверным рендером.
         var params = new URLSearchParams(window.location.search);
@@ -113,7 +125,7 @@
                 grid.appendChild(card);
             });
 
-            var limit = (expanded || hasFilter) ? visible.length : PREVIEW_LIMIT;
+            var limit = (expanded || hasFilter) ? visible.length : previewLimit;
             cards.forEach(function (card) {
                 var idx = visible.indexOf(card);
                 card.hidden = (idx === -1 || idx >= limit);

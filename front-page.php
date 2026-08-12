@@ -70,8 +70,10 @@ $company = getCompanyContacts();
                                 <path d="M5 12h14M12 5l7 7-7 7"/>
                             </svg>
                         </a>
-                        <button class="btn-premium btn-outline open-modal" data-modal="engineer">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <?php // Второе действие — тихой ссылкой: рядом с главной кнопкой две
+                              // равнозначные кнопки спорили за внимание (см. components.css, п.5). ?>
+                        <button class="btn-quiet open-modal" data-modal="engineer">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
                             </svg>
                             <span>Бесплатный выезд инженера</span>
@@ -222,71 +224,16 @@ $company = getCompanyContacts();
                 </svg>
 
                 <?php
-                // Чип-фильтр по прототипу. Чипы — обычные ссылки: без JS работает
-                // как раньше (перезагрузка + серверный фильтр, остальные параметры
-                // сохраняются), с JS catalog-instant.js фильтрует уже отрендеренные
-                // карточки мгновенно. Повторный клик по активному чипу снимает условие.
-                $capacity_chips = array(3, 4, 5, 6, 8, 10);
-                $base_args = array(
-                    'capacity' => $f_capacity ?: null,
-                    'drainage' => $f_drainage ?: null,
-                    'sort'     => $f_sort ?: null,
-                );
-                // Ссылка чипа: меняет одно условие, остальные оставляет как есть.
-                $chip_url = function ($key, $value) use ($base_args) {
-                    $args = $base_args;
-                    $args[$key] = ((string) $base_args[$key] === (string) $value) ? null : $value;
-                    $args = array_filter($args, function ($v) {
-                        return $v !== null && $v !== '';
-                    });
-                    return add_query_arg($args, home_url('/')) . '#catalog';
-                };
+                // Чип-фильтр — общий рендерер для главной и архива каталога
+                // (см. izex_render_catalog_filter в inc/pro-blocks.php).
+                izex_render_catalog_filter(array(
+                    'base_url' => home_url('/'),
+                    'capacity' => $f_capacity,
+                    'drainage' => $f_drainage,
+                    'sort'     => $f_sort,
+                    'count'    => count($all_stations),
+                ));
                 ?>
-                <div class="pro-filter">
-                    <div class="pro-filter__group">
-                        <span class="pro-eyebrow">Пользователей</span>
-                        <div class="pro-filter__chips">
-                            <?php foreach ($capacity_chips as $capacity) : ?>
-                                <a class="pro-chip<?php echo ((string) $f_capacity === (string) $capacity) ? ' is-active' : ''; ?>"
-                                   href="<?php echo esc_url($chip_url('capacity', $capacity)); ?>"
-                                   data-filter="people"
-                                   data-value="<?php echo esc_attr($capacity); ?>">до <?php echo esc_html($capacity); ?></a>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-
-                    <div class="pro-filter__group">
-                        <span class="pro-eyebrow">Отведение</span>
-                        <div class="pro-filter__chips">
-                            <?php foreach (array('Самотёк', 'Принудительное') as $drainage) : ?>
-                                <a class="pro-chip<?php echo ($f_drainage === $drainage) ? ' is-active' : ''; ?>"
-                                   href="<?php echo esc_url($chip_url('drainage', $drainage)); ?>"
-                                   data-filter="disposal"
-                                   data-value="<?php echo esc_attr($drainage); ?>"><?php echo esc_html($drainage); ?></a>
-                            <?php endforeach; ?>
-                        </div>
-                    </div>
-
-                    <div class="pro-filter__group">
-                        <span class="pro-eyebrow">Сортировка</span>
-                        <div class="pro-filter__chips">
-                            <a class="pro-chip<?php echo ($f_sort !== 'price_desc') ? ' is-active' : ''; ?>"
-                               href="<?php echo esc_url($chip_url('sort', 'price_asc')); ?>"
-                               data-filter="sort" data-value="">Сначала дешёвые</a>
-                            <a class="pro-chip<?php echo ($f_sort === 'price_desc') ? ' is-active' : ''; ?>"
-                               href="<?php echo esc_url($chip_url('sort', 'price_desc')); ?>"
-                               data-filter="sort" data-value="price_desc">Сначала дорогие</a>
-                        </div>
-                    </div>
-
-                    <div class="pro-filter__meta">
-                        <span class="pro-filter__count" data-catalog-count>Найдено: <?php echo count($all_stations); ?></span>
-                        <a class="pro-filter__reset"
-                           href="<?php echo esc_url(home_url('/')); ?>#catalog"
-                           data-catalog-reset
-                           <?php echo $has_filter ? '' : 'hidden'; ?>>Сбросить</a>
-                    </div>
-                </div>
 
                 <!-- Сетка карточек (вёрстка карточки — template-parts/station-card-pro.php) -->
                 <div class="pro-grid" data-catalog-grid>

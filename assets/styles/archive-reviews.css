@@ -1,9 +1,9 @@
 /* ===== Архив отзывов — единый премиум-стиль (зелёная гамма) ===== */
 .reviews-page {
     /* Привязываемся к общим токенам сайта (как services/about), фолбэки — те же значения */
-    --accent: var(--green, #21b224);
-    --accent-hover: #16a34a;
-    --accent-soft: rgba(33, 178, 36, 0.1);
+    --accent: var(--green, var(--brand));
+    --accent-hover: var(--brand-strong);
+    --accent-soft: rgba(21, 128, 61, 0.1);
     --star: #f59e0b;
     --rv-text: var(--text, #1e293b);
     --rv-text-muted: var(--text-muted, #64748b);
@@ -80,7 +80,7 @@
 
 .review-item:hover {
     transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(33, 178, 36, 0.12);
+    box-shadow: 0 12px 32px rgba(21, 128, 61, 0.12);
 }
 
 /* Шапка отзыва */

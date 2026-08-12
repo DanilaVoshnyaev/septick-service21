@@ -137,9 +137,12 @@ function crb_attach_theme_options()
                     Field::make('text', 'item', 'Пункт')->set_attribute('placeholder', 'Например: земляные работы, врезка трубы'),
                 )),
             Field::make('complex', 'crb_prices_extra', 'Оплачивается отдельно')
-                ->set_help_text('Что не входит в стандартный монтаж и оплачивается дополнительно.')
+                ->set_help_text('Что не входит в стандартный монтаж и оплачивается дополнительно. '
+                    . 'Цену указывайте диапазоном («от 5 000 ₽», «5 000–12 000 ₽»): пункт без цифр '
+                    . 'клиент достраивает по худшему сценарию и звонить не хочет.')
                 ->add_fields(array(
-                    Field::make('text', 'item', 'Пункт')->set_attribute('placeholder', 'Например: тяжёлый грунт, песок, длинные траншеи'),
+                    Field::make('text', 'item', 'Пункт')->set_attribute('placeholder', 'Например: тяжёлый грунт, песок, длинные траншеи')->set_width(60),
+                    Field::make('text', 'price', 'Цена / диапазон')->set_attribute('placeholder', 'от 5 000 ₽')->set_width(40),
                 )),
             Field::make('complex', 'crb_prices_maintenance', 'Прайс на обслуживание')
                 ->set_help_text('Стоимость разового сервисного обслуживания по моделям.')

@@ -1,9 +1,9 @@
         :root {
             /* ===== ЦВЕТОВАЯ СХЕМА ИЗ ХЕДЕРА ===== */
-            --green: #21b224;                    /* ✅ Основной акцент */
-            --green-hover: #f4d03f;              /* ✅ Ховер-эффект */
-            --blue: #2563eb;
-            --blue-hover: #1d4ed8;
+            --green: var(--brand);                    /* ✅ Основной акцент */
+            --green-hover: var(--brand-strong);              /* ✅ Ховер-эффект */
+            --blue: var(--brand);
+            --blue-hover: var(--brand-strong);
             --text: #1e293b;
             --text-muted: #64748b;
             --bg: rgba(255, 255, 255, 0.95);     /* ✅ Фон с прозрачностью */
@@ -45,7 +45,7 @@
         .about-hero__cta:hover {
             background: #fff; color: #0f172a;  /* ✅ Логика хедера: инверсия при ховере */
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(33, 178, 36, 0.35);
+            box-shadow: 0 6px 20px rgba(21, 128, 61, 0.35);
         }
         .about-hero__cta .icon { width: 18px; height: 18px; }
 
@@ -170,7 +170,7 @@
         .about-cta__form input:focus {
             outline: none;
             border-color: var(--green);
-            box-shadow: 0 0 0 3px rgba(33, 178, 36, 0.25);
+            box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.25);
         }
         .about-cta__form .btn { white-space: nowrap; justify-content: center; }
         .about-cta__form .form-consent {

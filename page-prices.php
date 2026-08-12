@@ -72,8 +72,13 @@ $money = function ($v) {
                 <div class="prices-col prices-col--out">
                     <h3 class="prices-col__title">Оплачивается отдельно</h3>
                     <ul class="prices-list prices-list--out">
-                        <?php foreach ($lists['extra'] as $item) : ?>
-                            <li><?php echo esc_html($item); ?></li>
+                        <?php foreach ($lists['extra'] as $row) : ?>
+                            <li>
+                                <?php echo esc_html($row['item']); ?>
+                                <?php if (!empty($row['price'])) : ?>
+                                    — <b><?php echo esc_html($row['price']); ?></b>
+                                <?php endif; ?>
+                            </li>
                         <?php endforeach; ?>
                     </ul>
                 </div>

@@ -14,29 +14,29 @@
 .works-block .btn-premium.btn-primary,
 .works-archive .btn-premium.btn-primary,
 .work-single .btn-premium.btn-primary {
-    background: #21b224;
+    background: var(--brand);
     color: #fff;
-    border: 1px solid #21b224;
+    border: 1px solid var(--brand);
 }
 
 .works-block .btn-premium.btn-primary:hover,
 .works-archive .btn-premium.btn-primary:hover,
 .work-single .btn-premium.btn-primary:hover {
-    background: #1a9420;
+    background: var(--brand-strong);
     color: #fff;
-    border-color: #1a9420;
+    border-color: var(--brand-strong);
 }
 
 .work-single .btn-premium.btn-outline {
     background: transparent;
-    color: #21b224;
-    border: 2px solid #21b224;
+    color: var(--brand);
+    border: 2px solid var(--brand);
 }
 
 .work-single .btn-premium.btn-outline:hover {
-    background: #21b224;
+    background: var(--brand);
     color: #fff;
-    border-color: #21b224;
+    border-color: var(--brand);
 }
 
 .works-block {
@@ -99,7 +99,7 @@
     left: 12px;
     top: 12px;
     padding: 0.3rem 0.7rem;
-    background: rgba(33, 178, 36, 0.95);
+    background: rgba(21, 128, 61, 0.95);
     color: #fff;
     font-size: 0.8rem;
     font-weight: 600;
@@ -126,7 +126,7 @@
 }
 
 .work-card__title a:hover {
-    color: #21b224;
+    color: var(--brand);
 }
 
 .work-card__loc {
@@ -205,7 +205,7 @@
 }
 
 .works-filter__btn.is-active {
-    background: #21b224;
+    background: var(--brand);
     color: #fff;
 }
 
@@ -230,7 +230,7 @@
 }
 
 .work-single__crumbs a:hover {
-    color: #21b224;
+    color: var(--brand);
 }
 
 .work-single__title {

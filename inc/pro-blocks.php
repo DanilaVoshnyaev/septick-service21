@@ -185,6 +185,99 @@ function render_topas_trust_marquee($atts)
 }
 
 /**
+ * ================= ЧИП-ФИЛЬТР КАТАЛОГА (общий для главной и архива) =================
+ *
+ * Раньше фильтр существовал в двух версиях: чипы на главной и форма из <select>
+ * в архиве станций. Теперь разметка одна — отличается только базовый адрес
+ * ссылок и подпись счётчика.
+ *
+ * Чипы — ссылки: без JS работает серверная фильтрация с перезагрузкой, с JS
+ * catalog-instant.js фильтрует уже отрендеренные карточки мгновенно.
+ *
+ * @param array{base_url:string,capacity:int|string,drainage:string,sort:string,count:int,anchor:string} $args
+ * @return void
+ */
+function izex_render_catalog_filter($args = array())
+{
+    $args = wp_parse_args($args, array(
+        'base_url' => home_url('/'),
+        'capacity' => 0,
+        'drainage' => '',
+        'sort'     => '',
+        'count'    => 0,
+        'anchor'   => '#catalog',
+    ));
+
+    $capacity_chips = array(3, 4, 5, 6, 8, 10);
+
+    $current = array(
+        'capacity' => $args['capacity'] ?: null,
+        'drainage' => $args['drainage'] ?: null,
+        'sort'     => $args['sort'] ?: null,
+    );
+
+    // Ссылка чипа: меняет одно условие, остальные оставляет как есть.
+    // Повторный клик по активному чипу снимает условие.
+    $chip_url = function ($key, $value) use ($current, $args) {
+        $q = $current;
+        $q[$key] = ((string) $current[$key] === (string) $value) ? null : $value;
+        $q = array_filter($q, function ($v) {
+            return $v !== null && $v !== '';
+        });
+        return add_query_arg($q, $args['base_url']) . $args['anchor'];
+    };
+
+    $has_filter = ($args['capacity'] || $args['drainage'] || $args['sort'] !== '');
+    ?>
+    <div class="pro-filter">
+        <div class="pro-filter__group">
+            <span class="pro-eyebrow">Пользователей</span>
+            <div class="pro-filter__chips">
+                <?php foreach ($capacity_chips as $capacity) : ?>
+                    <a class="pro-chip<?php echo ((string) $args['capacity'] === (string) $capacity) ? ' is-active' : ''; ?>"
+                       href="<?php echo esc_url($chip_url('capacity', $capacity)); ?>"
+                       data-filter="people"
+                       data-value="<?php echo esc_attr($capacity); ?>">до <?php echo esc_html($capacity); ?></a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <div class="pro-filter__group">
+            <span class="pro-eyebrow">Отведение</span>
+            <div class="pro-filter__chips">
+                <?php foreach (array('Самотёк', 'Принудительное') as $drainage) : ?>
+                    <a class="pro-chip<?php echo ($args['drainage'] === $drainage) ? ' is-active' : ''; ?>"
+                       href="<?php echo esc_url($chip_url('drainage', $drainage)); ?>"
+                       data-filter="disposal"
+                       data-value="<?php echo esc_attr($drainage); ?>"><?php echo esc_html($drainage); ?></a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <div class="pro-filter__group">
+            <span class="pro-eyebrow">Сортировка</span>
+            <div class="pro-filter__chips">
+                <a class="pro-chip<?php echo ($args['sort'] !== 'price_desc') ? ' is-active' : ''; ?>"
+                   href="<?php echo esc_url($chip_url('sort', 'price_asc')); ?>"
+                   data-filter="sort" data-value="">Сначала дешёвые</a>
+                <a class="pro-chip<?php echo ($args['sort'] === 'price_desc') ? ' is-active' : ''; ?>"
+                   href="<?php echo esc_url($chip_url('sort', 'price_desc')); ?>"
+                   data-filter="sort" data-value="price_desc">Сначала дорогие</a>
+            </div>
+        </div>
+
+        <div class="pro-filter__meta">
+            <span class="pro-filter__count" data-catalog-count>Найдено: <?php echo (int) $args['count']; ?></span>
+            <a class="pro-filter__reset"
+               href="<?php echo esc_url($args['base_url'] . $args['anchor']); ?>"
+               data-catalog-reset
+               <?php echo $has_filter ? '' : 'hidden'; ?>>Сбросить</a>
+        </div>
+    </div>
+    <?php
+}
+
+/**
  * ================= КАНАЛЫ СВЯЗИ (общий источник) =================
  *
  * Один список на два места вывода: боковой док на десктопе и нижняя панель на
@@ -373,8 +466,16 @@ function render_topas_estimate($atts)
                             Оплачивается отдельно
                         </h3>
                         <ul class="pro-estimate__list">
-                            <?php foreach ($extra as $item) : ?>
-                                <li><span class="pro-estimate__mark">+</span><span><?php echo esc_html($item); ?></span></li>
+                            <?php foreach ($extra as $row) : ?>
+                                <li>
+                                    <span class="pro-estimate__mark">+</span>
+                                    <span>
+                                        <?php echo esc_html($row['item']); ?>
+                                        <?php if (!empty($row['price'])) : ?>
+                                            <b class="pro-estimate__price"><?php echo esc_html($row['price']); ?></b>
+                                        <?php endif; ?>
+                                    </span>
+                                </li>
                             <?php endforeach; ?>
                         </ul>
                     </div>

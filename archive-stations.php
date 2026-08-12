@@ -38,45 +38,6 @@ $company = getCompanyContacts();
             <!-- ===== Калькулятор подбора и расчёта (4.1) ===== -->
             <?php echo do_shortcode('[topas_calculator]'); ?>
 
-            <?php $catalog_anchor = esc_url(get_post_type_archive_link('stations')) . '#catalog'; ?>
-            <form id="catalog" class="catalog-filter" method="get" action="<?php echo $catalog_anchor; ?>">
-                <div class="catalog-filter__field">
-                    <label for="station-capacity">Пользователей</label>
-                    <select id="station-capacity" name="capacity">
-                        <option value="">Любое количество</option>
-                        <?php foreach ([4, 5, 6, 8, 10, 12] as $capacity) : ?>
-                            <option value="<?php echo esc_attr($capacity); ?>" <?php selected($selected_capacity, $capacity); ?>>до <?php echo esc_html($capacity); ?> человек</option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="catalog-filter__field">
-                    <label for="station-drainage">Водоотведение</label>
-                    <select id="station-drainage" name="drainage">
-                        <option value="">Любое</option>
-                        <option value="Самотёк" <?php selected($selected_drainage, 'Самотёк'); ?>>Самотёк</option>
-                        <option value="Принудительное" <?php selected($selected_drainage, 'Принудительное'); ?>>Принудительное</option>
-                    </select>
-                </div>
-<!--                <div class="catalog-filter__field">
-                    <label for="station-stock">Наличие</label>
-                    <select id="station-stock" name="stock">
-                        <option value="">Все</option>
-                        <option value="1" <?php /*selected($selected_stock, '1'); */?>>В наличии</option>
-                    </select>
-                </div>-->
-                <div class="catalog-filter__field">
-                    <label for="station-sort">Сортировка</label>
-                    <select id="station-sort" name="sort">
-                        <option value="">Сначала дешёвые</option>
-                        <option value="price_desc" <?php selected($selected_sort, 'price_desc'); ?>>Сначала дорогие</option>
-                    </select>
-                </div>
-                <div class="catalog-filter__actions">
-                    <button class="btn-card btn-gold" type="submit">Показать</button>
-                    <a class="btn-card btn-outline" href="<?php echo esc_url(get_post_type_archive_link('stations')); ?>">Сбросить</a>
-                </div>
-            </form>
-
             <!-- ===== СЕТКА СТАНЦИЙ ===== -->
             <?php
             // Берём все станции одним запросом, дальше всё фильтруем и сортируем
@@ -148,41 +109,46 @@ $company = getCompanyContacts();
                 return $sort_desc ? ($pb <=> $pa) : ($pa <=> $pb);
             });
 
-            // Ручная пагинация
-            $per_page = 12;
-            $paged = max(1, (int) (get_query_var('paged') ?: 1));
-            $total_stations = count($all_stations);
-            $max_pages = max(1, (int) ceil($total_stations / $per_page));
-            $paged = min($paged, $max_pages);
-            $page_stations = array_slice($all_stations, ($paged - 1) * $per_page, $per_page);
+            // Пагинацию убрали: с мгновенным фильтром она мешала — результаты
+            // фильтрации разрезались по страницам. Моделей в каталоге около двух
+            // десятков, они спокойно выводятся одним списком. Если линейка вырастет
+            // за ~40 позиций, стоит вернуть постраничный вывод.
+            $page_stations = $all_stations;
+            ?>
+
+            <?php
+            // Тот же чип-фильтр, что на главной — общий рендерер
+            // (izex_render_catalog_filter в inc/pro-blocks.php). Раньше здесь была
+            // форма из трёх <select> с кнопкой «Показать»: выглядела иначе, чем на
+            // главной, и требовала лишнего клика.
+            // data-catalog-limit="0" — в каталоге показываем все карточки сразу,
+            // без ограничения «первые 8», которое действует на главной.
+            ?>
+            <div id="catalog" data-catalog data-catalog-limit="0">
+            <?php
+            izex_render_catalog_filter(array(
+                'base_url' => get_post_type_archive_link('stations'),
+                'capacity' => $selected_capacity,
+                'drainage' => $selected_drainage,
+                'sort'     => $selected_sort,
+                'count'    => count($all_stations),
+                'anchor'   => '#catalog',
+            ));
             ?>
 
             <?php if (!empty($page_stations)) : ?>
                 <?php // Карточка та же, что на главной — template-parts/station-card-pro.php. ?>
-                <div class="stations-grid pro-grid">
+                <div class="stations-grid pro-grid" data-catalog-grid>
                     <?php foreach ($page_stations as $station_post) : ?>
                         <?php get_template_part('template-parts/station-card-pro', null, array('id' => $station_post->ID)); ?>
                     <?php endforeach; ?>
+
+                    <div class="pro-empty" data-catalog-empty hidden>
+                        По заданным фильтрам станции не найдены — попробуйте изменить параметры.
+                    </div>
                 </div>
 
-                <!-- Пагинация -->
-                <?php if ($max_pages > 1) : ?>
-                    <nav class="pagination" aria-label="Навигация">
-                        <?php
-                        echo paginate_links(array(
-                            'base' => str_replace(999999999, '%#%', esc_url(get_pagenum_link(999999999))),
-                            'format' => '?paged=%#%',
-                            'current' => $paged,
-                            'total' => $max_pages,
-                            'prev_text' => '←',
-                            'next_text' => '→',
-                            'type' => 'list',
-                            'mid_size' => 2,
-                            'add_fragment' => '#catalog',
-                        ));
-                        ?>
-                    </nav>
-                <?php endif; ?>
+                <?php // Блок пагинации удалён вместе с постраничным выводом. ?>
 
             <?php else : ?>
                 <div class="no-results">
@@ -191,6 +157,7 @@ $company = getCompanyContacts();
                         : 'Станции пока не добавлены в каталог.'; ?></p>
                 </div>
             <?php endif; ?>
+            </div><?php // #catalog[data-catalog] ?>
 
             <!-- ===== ОПИСАНИЕ ЛИНЕЙКИ (было над каталогом) ===== -->
             <section class="stations-desc">

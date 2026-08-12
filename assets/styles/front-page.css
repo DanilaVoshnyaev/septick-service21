@@ -1,62 +1,8 @@
-        :root {
-            --premium-dark: #0f172a;
-            --premium-darker: #020617;
-            --premium-light: #f8fafc;
-            --premium-gray: #64748b;
-            --premium-gold: #21b224;
-            --premium-gold-light: #21b224;
-            --premium-blue: #2563eb;
-            --premium-blue-dark: #1d4ed8;
-            --premium-text: #1e293b;
-            --premium-border: #e2e8f0;
-            --transition: all 0.3s ease;
-            --color-primary: #22c55e;           /* Основной зелёный */
-            --color-primary-dark: #16a34a;      /* Тёмно-зелёный для ховера */
-            --color-primary-light: #4ade80;     /* Светло-зелёный для акцентов */
-            --color-primary-soft: #dcfce7;
-            --card-green: #22c55e;
-            --card-green-hover: #16a34a;
-            --card-blue: #2563eb;
-            --card-text: #1e293b;
-            --card-text-muted: #64748b;
-            --card-bg: #ffffff;
-            --card-border: rgba(0,0,0,0.08);
-            --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            --card-radius: 12px;
-            --card-transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+/* Base Reset */
 
-            /* 🔤 Текст */
-            --text-primary: #1e293b;            /* Тёмный текст */
-            --text-secondary: #64748b;          /* Вторичный текст */
-            --text-muted: #94a3b8;              /* Приглушённый */
-            --text-inverse: #ffffff;            /* Белый текст на тёмном */
+/* Токены перенесены в tokens.css — единый источник значений.
+   Здесь блок :root удалён, чтобы не переопределять их задним числом. */
 
-            /* 🖼️ Фоны — СВЕТЛЫЕ */
-            --bg-primary: #ffffff;              /* Белый для карточек */
-            --bg-secondary: #f8fafc;            /* Основной фон страницы */
-            --bg-tertiary: #f1f5f9;             /* Альтернативный фон */
-            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-
-            /* 📐 Границы и тени */
-            --border-color: #e2e8f0;
-            --shadow-sm: 0 1px 2px rgba(0,0,0,0.03);
-            --shadow: 0 4px 6px -1px rgba(0,0,0,0.06);
-            --shadow-md: 0 10px 15px -3px rgba(0,0,0,0.08);
-            --shadow-lg: 0 20px 25px -5px rgba(0,0,0,0.1);
-
-            /* ⭕ Радиусы */
-            --radius: 0.5rem;
-            --radius-md: 0.75rem;
-            --radius-lg: 1rem;
-            --radius-xl: 1.5rem;
-
-            /* ⏱️ Анимации */
-            --transition: all 0.25s ease;
-            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-
-        /* Base Reset */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
         body {
@@ -97,8 +43,8 @@
         }
         .hero-bg-overlay {
             position: absolute; inset: 0; z-index: 0; pointer-events: none;
-            background: radial-gradient(circle at 20% 50%, rgba(37,99,235,0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 80%, rgba(212,175,55,0.05) 0%, transparent 50%);
+            background: radial-gradient(circle at 20% 50%, rgba(21, 128, 61, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(21, 128, 61, 0.05) 0%, transparent 50%);
         }
         .hero-content { position: relative; z-index: 1; text-align: center; max-width: 900px; margin: 0 auto; }
 
@@ -201,7 +147,7 @@
         }
         .feature-icon-wrapper {
             width: 72px; height: 72px; margin: 0 auto 20px;
-            background: linear-gradient(135deg, rgba(37,99,235,0.1) 0%, rgba(212,175,55,0.1) 100%);
+            background: linear-gradient(135deg, rgba(21, 128, 61, 0.1) 0%, rgba(21, 128, 61, 0.1) 100%);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
             color: var(--premium-blue); transition: var(--transition);
         }
@@ -228,15 +174,15 @@
         }
         .advantage-card:hover {
             transform: translateY(-4px);
-            border-color: var(--header-green, #21b224);
-            box-shadow: 0 12px 30px rgba(33,178,36,0.12);
+            border-color: var(--header-green, var(--brand));
+            box-shadow: 0 12px 30px rgba(21, 128, 61, 0.12);
         }
         .advantage-card__icon {
             width: 56px; height: 56px;
             border-radius: 14px;
             display: flex; align-items: center; justify-content: center;
-            background: rgba(33,178,36,0.1);
-            color: var(--header-green, #21b224);
+            background: rgba(21, 128, 61, 0.1);
+            color: var(--header-green, var(--brand));
             margin-bottom: 16px;
         }
         .advantage-card__icon svg { width: 28px; height: 28px; }
@@ -249,7 +195,7 @@
         .section-label {
             display: inline-block; font-size: 12px; font-weight: 600; color: var(--premium-gold);
             text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px;
-            padding: 6px 16px; background: rgba(212,175,55,0.1); border-radius: 20px;
+            padding: 6px 16px; background: rgba(21, 128, 61, 0.1); border-radius: 20px;
         }
         .section-title {
             font-size: clamp(28px, 4vw, 40px); font-weight: 300; color: var(--premium-text);
@@ -378,15 +324,15 @@
             border-radius: 14px; transition: var(--transition);
         }
         .advantage-item:hover {
-            box-shadow: 0 10px 28px rgba(33,178,36,0.1);
+            box-shadow: 0 10px 28px rgba(21, 128, 61, 0.1);
             transform: translateY(-3px);
-            border-color: var(--header-green, #21b224);
+            border-color: var(--header-green, var(--brand));
         }
         .advantage-check {
             width: 36px; height: 36px;
-            background: rgba(33,178,36,0.12);
+            background: rgba(21, 128, 61, 0.12);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            color: var(--header-green, #21b224); font-weight: 700; font-size: 18px; flex-shrink: 0;
+            color: var(--header-green, var(--brand)); font-weight: 700; font-size: 18px; flex-shrink: 0;
         }
         .advantage-content h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: var(--premium-text); }
         .advantage-content p { font-size: 14px; color: var(--premium-gray); line-height: 1.5; margin: 0; }
@@ -402,12 +348,12 @@
 
         .step-item { flex: 1; text-align: center; position: relative; padding: 0 8px; }
         .step-number {
-            font-size: 56px; font-weight: 300; color: rgba(37,99,235,0.12);
+            font-size: 56px; font-weight: 300; color: rgba(21, 128, 61, 0.12);
             line-height: 1; margin-bottom: 12px; position: relative; z-index: 1;
         }
         .step-number::after {
             content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 90px; height: 90px; background: linear-gradient(135deg, rgba(37,99,235,0.06) 0%, rgba(212,175,55,0.06) 100%);
+            width: 90px; height: 90px; background: linear-gradient(135deg, rgba(21, 128, 61, 0.06) 0%, rgba(21, 128, 61, 0.06) 100%);
             border-radius: 50%; z-index: -1;
         }
         .step-content h4 { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: var(--premium-text); }
@@ -476,7 +422,7 @@
         .cta-bg-pattern {
             position: absolute; inset: 0; pointer-events: none;
             background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.12) 0%, transparent 50%),
-            radial-gradient(circle at 80% 80%, rgba(212,175,55,0.12) 0%, transparent 50%);
+            radial-gradient(circle at 80% 80%, rgba(21, 128, 61, 0.12) 0%, transparent 50%);
         }
         .cta-content { position: relative; z-index: 1; text-align: center; max-width: 650px; margin: 0 auto; }
         .cta-title {
@@ -492,7 +438,7 @@
             width: 100%; padding: 16px 20px; border: none; border-radius: 10px;
             background: rgba(255,255,255,0.96); font-size: 15px; transition: var(--transition);
         }
-        .form-group input:focus { outline: none; box-shadow: 0 0 0 3px rgba(212,175,55,0.35); }
+        .form-group input:focus { outline: none; box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.35); }
         .form-note { font-size: 12px; color: rgba(255,255,255,0.75); }
         .form-note a { color: var(--premium-gold); text-decoration: none; }
         .form-note a:hover { text-decoration: underline; }
@@ -543,7 +489,7 @@
         }
         .modal-form input:focus, .modal-form textarea:focus {
             outline: none; border-color: var(--premium-gold);
-            box-shadow: 0 0 0 3px rgba(212,175,55,0.15);
+            box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.15);
         }
         .modal-form textarea { resize: vertical; min-height: 90px; }
 
@@ -588,7 +534,7 @@
         .station-card-home:hover {
             transform: translateY(-4px);
             border-color: var(--card-green);
-            box-shadow: 0 10px 30px rgba(34,197,94,0.15);
+            box-shadow: 0 10px 30px rgba(21, 128, 61, 0.15);
         }
         .station-badge-home {
             position: absolute; top: 1rem; left: 1rem; z-index: 2;
@@ -640,7 +586,7 @@
         }
         .btn-card-home.btn-green:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(34,197,94,0.35);
+            box-shadow: 0 6px 20px rgba(21, 128, 61, 0.35);
         }
         @media (max-width: 768px) {
             .station-card-home__actions { grid-template-columns: 1fr; }

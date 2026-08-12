@@ -179,6 +179,9 @@ function izex_scripts()
 {
 //    wp_enqueue_style('izex-style', get_stylesheet_uri(), array(), _S_VERSION);
 //    wp_style_add_data('izex-style', 'rtl', 'replace');
+    // Токены дизайн-системы — первым файлом: остальные CSS обращаются к ним.
+    izex_enqueue_theme_style('tokens', '/assets/styles/tokens.css', array());
+
     wp_enqueue_style('Montserrat-font', get_template_directory_uri() . '/assets/fonts/montserrat.css');
     wp_enqueue_style('normalize', get_template_directory_uri() . '/assets/styles/normalize.css');
     // enqueue_versioned_style('global-style', '/assets/styles/styles.min.css');
@@ -236,7 +239,10 @@ function izex_scripts()
     }
 
     if ($needs_catalog_ui) {
-        izex_enqueue_theme_style('calculator', '/assets/styles/calculator.css');
+        // calculator.css больше не подключаем: он описывает разметку прежнего
+        // пошагового визарда, а шорткод рендерит одноэкранную версию (её стили
+        // лежат в pro-blocks.css). При откате на render_topas_calculator()
+        // нужно вернуть и эту строку.
         wp_enqueue_script('topas-calculator', get_template_directory_uri() . '/assets/js/calculator.js', array(), filemtime(get_template_directory() . '/assets/js/calculator.js'), true);
         wp_localize_script('topas-calculator', 'topasCalc', array(
             'stations' => izex_get_calculator_stations(),
@@ -292,6 +298,19 @@ function izex_scripts()
 
 
 add_action('wp_enqueue_scripts', 'izex_scripts');
+
+/**
+ * Слой согласования компонентов — подключается последним.
+ *
+ * Приоритет 20 важен: файл должен идти после premium-components.css,
+ * front-page.css и pro-blocks.css, иначе legacy-правила перебьют его по
+ * порядку каскада (селекторы одинаковой специфичности).
+ */
+function izex_components_style()
+{
+    izex_enqueue_theme_style('components', '/assets/styles/components.css', array('premium-components'));
+}
+add_action('wp_enqueue_scripts', 'izex_components_style', 20);
 
 /**
  * ================= ПРОИЗВОДИТЕЛЬНОСТЬ ФРОНТА =================
@@ -440,6 +459,12 @@ require get_template_directory() . '/inc/pro-blocks.php';
  * LocalBusiness, Product для станций, ItemList для каталога.
  */
 require get_template_directory() . '/inc/seo-schema.php';
+
+/**
+ * Техническое SEO по итогам аудита: дубли отфильтрованного каталога,
+ * архивы авторов и рубрик, robots.txt, транслитерация ярлыков.
+ */
+require get_template_directory() . '/inc/seo-tech.php';
 
 /**
  * SEO: meta-теги, Open Graph, canonical, Schema.org, robots.txt.
@@ -1580,21 +1605,39 @@ function render_topas_works_block($atts)
  */
 function izex_get_prices_table()
 {
-    $stations = izex_get_calculator_stations();
+    // Раньше таблица строилась из izex_get_calculator_stations(), а та отбрасывает
+    // станции без crb_model_number (для подбора модели номер обязателен). Из-за
+    // этого в прайс попадали только базовые модели — 11 из 23, а модификации
+    // Лонг/Пр оставались в каталоге без цены. Здесь берём все опубликованные
+    // станции и отбрасываем только те, у которых не заполнена цена.
     $settings = izex_get_calculator_settings();
     $install = (int) $settings['installBase'];
 
+    $query = new WP_Query(array(
+        'post_type'      => 'stations',
+        'posts_per_page' => -1,
+        'post_status'    => 'publish',
+        'orderby'        => 'menu_order',
+        'order'          => 'ASC',
+        'no_found_rows'  => true,
+    ));
+
     $rows = array();
-    foreach ($stations as $st) {
-        $equip = (int) $st['price'];
+    foreach ($query->posts as $post) {
+        $d = izex_pro_station_data($post->ID);
+        if (empty($d['price'])) {
+            continue; // без цены строка в прайсе бессмысленна
+        }
         $rows[] = array(
-            'title'     => $st['title'],
-            'url'       => $st['url'],
-            'equipment' => $equip,
+            'title'     => $d['title'],
+            'url'       => $d['url'],
+            'equipment' => $d['price'],
             'install'   => $install,
-            'turnkey'   => $equip > 0 ? $equip + $install : 0,
+            'turnkey'   => $d['turnkey'],
         );
     }
+    wp_reset_postdata();
+
     return $rows;
 }
 
@@ -1603,7 +1646,11 @@ function izex_get_prices_table()
  * Берутся из настроек темы (вкладка «Цены»); для «входит/отдельно» —
  * разумные значения по умолчанию, чтобы страница не была пустой до заполнения.
  *
- * @return array{included:string[],extra:string[],maintenance:array<int,array{model:string,price:string}>}
+ * «Оплачивается отдельно» отдаётся списком пар item + price: цену можно указать
+ * диапазоном («от 5 000 ₽»), и тогда она выводится рядом с пунктом. Пункт без
+ * цены выводится как раньше — просто текстом.
+ *
+ * @return array{included:string[],extra:array<int,array{item:string,price:string}>,maintenance:array<int,array{model:string,price:string}>}
  */
 function izex_get_prices_lists()
 {
@@ -1620,7 +1667,19 @@ function izex_get_prices_lists()
     };
 
     $included = $pluck(carbon_get_theme_option('crb_prices_included'), 'item');
-    $extra = $pluck(carbon_get_theme_option('crb_prices_extra'), 'item');
+
+    $extra = array();
+    $raw_extra = carbon_get_theme_option('crb_prices_extra');
+    if (!empty($raw_extra) && is_array($raw_extra)) {
+        foreach ($raw_extra as $row) {
+            if (!empty($row['item'])) {
+                $extra[] = array(
+                    'item'  => $row['item'],
+                    'price' => isset($row['price']) ? (string) $row['price'] : '',
+                );
+            }
+        }
+    }
 
     if (empty($included)) {
         $included = array(
@@ -1632,11 +1691,13 @@ function izex_get_prices_lists()
         );
     }
     if (empty($extra)) {
+        // Значения по умолчанию — с ориентировочными диапазонами: пункт «оплачивается
+        // отдельно» без цифр клиент достраивает по худшему сценарию.
         $extra = array(
-            'Разработка тяжёлого/скального грунта',
-            'Обратная засыпка песком (при необходимости)',
-            'Прокладка длинных траншей отвода',
-            'Обустройство точки сброса на большом удалении',
+            array('item' => 'Разработка тяжёлого или скального грунта', 'price' => 'уточняется на выезде'),
+            array('item' => 'Обратная засыпка песком (при необходимости)', 'price' => 'уточняется на выезде'),
+            array('item' => 'Прокладка длинных траншей отвода', 'price' => 'уточняется на выезде'),
+            array('item' => 'Обустройство точки сброса на большом удалении', 'price' => 'уточняется на выезде'),
         );
     }
 
