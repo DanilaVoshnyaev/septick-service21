@@ -30,25 +30,9 @@ $company = getCompanyContacts();
                     Получите персональное предложение: <?php echo esc_html($company['phone']); ?>
                 </a>
 
-                <div class="stations-hero__desc">
-                    <p>Аэрационная станция глубокой очистки <strong>«ТОПАС»</strong> — проверенное временем решение премиум-класса для устройства автономной канализации. В системе очистки используются специальные микроорганизмы — анаэробные бактерии, которые питаются поступающими органическими соединениями. В результате их работы степень очистки стоков достигает <strong>98%</strong>, обеспечивая полную экологическую безопасность и отсутствие неприятных запахов. В отличие от обычных септиков, ТОПАС не требует откачки ассенизаторами.</p>
-
-                    <p>Ассортимент станций «ТОПАС» включает множество моделей, которые различаются по мощности переработки. Цифра около названия означает максимальное количество постоянно проживающих людей, которые могут пользоваться данной системой канализации.</p>
-
-                    <p><strong>Кроме различий в объёме перерабатываемых стоков, существует ещё три модельные опции:</strong></p>
-
-                    <ul class="stations-hero__options">
-                        <li>
-                            <strong>Количество компрессоров.</strong> В стандартной модификации установлено два компрессора, которые работают попеременно. Модификации «ТОПАС-С» (версии от 4 до 12) оснащены одним компрессором — производительность и качество очистки не изменяются.
-                        </li>
-                        <li>
-                            <strong>Способ водоотведения.</strong> Стандартная модификация — самотёком. Станции с дренажным насосом для принудительного отвода обозначаются суффиксом <strong>«Пр»</strong>.
-                        </li>
-                        <li>
-                            <strong>Глубина входящей трубы.</strong> Базовое ограничение — до 80 см. Версии <strong>«Лонг»</strong> (80-140 см) и <strong>«Лонг Ус»</strong> (до 240 см) доступны для моделей от 5 пользователей.
-                        </li>
-                    </ul>
-                </div>
+                <?php // Описание линейки перенесено под каталог (см. .stations-desc ниже):
+                      // выше остаются только заголовок, промо и телефон, чтобы карточки
+                      // и калькулятор были видны сразу, без длинной простыни текста. ?>
             </section>
 
             <!-- ===== Калькулятор подбора и расчёта (4.1) ===== -->
@@ -174,94 +158,10 @@ $company = getCompanyContacts();
             ?>
 
             <?php if (!empty($page_stations)) : ?>
-                <div class="stations-grid">
-                    <?php foreach ($page_stations as $station_post) :
-                        $GLOBALS['post'] = $station_post;
-                        setup_postdata($station_post);
-
-                        $price = carbon_get_post_meta(get_the_ID(), 'crb_price');
-                        $price_topas_s = carbon_get_post_meta(get_the_ID(), 'crb_price_topas_s');
-                        $old_price = carbon_get_post_meta(get_the_ID(), 'crb_old_price');
-                        $people = carbon_get_post_meta(get_the_ID(), 'crb_people_count_text');
-                        $is_hit = carbon_get_post_meta(get_the_ID(), 'crb_is_hit');
-                        $in_stock = station_is_in_stock(get_the_ID());
-                        $daily_volume = carbon_get_post_meta(get_the_ID(), 'crb_daily_volume');
-                        $peak_discharge = carbon_get_post_meta(get_the_ID(), 'crb_peak_discharge');
-                        $power_consumption = carbon_get_post_meta(get_the_ID(), 'crb_power_consumption');
-                        $water_disposal = carbon_get_post_meta(get_the_ID(), 'crb_water_disposal');
-                        ?>
-
-                        <article class="station-card">
-
-
-                            <!-- Изображение -->
-                            <div class="station-card__image">
-                                <a href="<?php the_permalink(); ?>">
-                                    <?php if (has_post_thumbnail()) : ?>
-                                        <?php the_post_thumbnail('medium_large', array('loading' => 'lazy', 'decoding' => 'async')); ?>
-                                    <?php else : ?>
-                                        <div class="station-placeholder">
-                                            <svg class="icon"><use href="#icon-tool"/></svg>
-                                        </div>
-                                    <?php endif; ?>
-                                </a>
-                            </div>
-                            <!-- Контент -->
-                            <div class="station-card__content">
-                                <?php if (true) : ?>
-                                    <span class="station-stock-pill">
-                                        <svg class="icon" width="14" height="14"><use href="#icon-check"/></svg> В наличии
-                                    </span>
-                                <?php endif; ?>
-
-                                <h3 class="station-card__title">
-                                    <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-                                </h3>
-
-                                <?php if ($people) : ?>
-                                    <p class="station-card__people">
-                                        <svg class="icon"><use href="#icon-people"/></svg>
-                                        <?php echo esc_html($people); ?>
-                                    </p>
-                                <?php endif; ?>
-
-                                <!-- Краткие характеристики -->
-                                <?php if ($daily_volume || $peak_discharge || $power_consumption || $water_disposal) : ?>
-                                    <ul class="station-card__specs">
-                                        <?php if ($daily_volume) : ?>
-                                            <li><span>Производительность</span><strong><?php echo esc_html(izex_format_station_spec($daily_volume, 'м³/сут')); ?></strong></li>
-                                        <?php endif; ?>
-                                        <?php if ($peak_discharge) : ?>
-                                            <li><span>Залповый сброс</span><strong><?php echo esc_html(izex_format_station_spec($peak_discharge, 'л')); ?></strong></li>
-                                        <?php endif; ?>
-                                        <?php if ($power_consumption) : ?>
-                                            <li><span>Потребление</span><strong><?php echo esc_html(izex_format_station_spec($power_consumption, 'кВт·ч/сут')); ?></strong></li>
-                                        <?php endif; ?>
-                                        <?php if ($water_disposal) : ?>
-                                            <li><span>Водоотведение</span><strong><?php echo esc_html($water_disposal); ?></strong></li>
-                                        <?php endif; ?>
-                                    </ul>
-                                <?php endif; ?>
-
-                                <!-- Цена (показываем ТОПАС-С — она ниже) -->
-                                <?php $display_price = $price_topas_s ?: $price; ?>
-                                <div class="station-card__price">
-                                    <span class="station-card__price-label">ТОПАС-С</span>
-                                    <?php if ($old_price && $old_price > $display_price) : ?>
-                                        <span class="price-old"><?php echo number_format($old_price, 0, '.', ' '); ?> ₽</span>
-                                    <?php endif; ?>
-                                    <span class="price-current"><?php echo $display_price ? number_format($display_price, 0, '.', ' ') . ' ₽' : 'По запросу'; ?></span>
-                                </div>
-
-                                <!-- Кнопки -->
-                                <div class="station-card__actions">
-                                    <a href="<?php the_permalink(); ?>" class="btn-card btn-outline">Подробнее</a>
-                                    <button type="button" class="btn-card btn-gold open-modal" data-modal="order" data-product="<?php the_title_attribute(); ?>">Заказать</button>
-                                </div>
-                                <?php izex_compare_button(get_the_ID()); ?>
-                            </div>
-                        </article>
-
+                <?php // Карточка та же, что на главной — template-parts/station-card-pro.php. ?>
+                <div class="stations-grid pro-grid">
+                    <?php foreach ($page_stations as $station_post) : ?>
+                        <?php get_template_part('template-parts/station-card-pro', null, array('id' => $station_post->ID)); ?>
                     <?php endforeach; ?>
                 </div>
 
@@ -291,6 +191,31 @@ $company = getCompanyContacts();
                         : 'Станции пока не добавлены в каталог.'; ?></p>
                 </div>
             <?php endif; ?>
+
+            <!-- ===== ОПИСАНИЕ ЛИНЕЙКИ (было над каталогом) ===== -->
+            <section class="stations-desc">
+                <h2 class="stations-desc__title">О станциях ТОПАС и модельных опциях</h2>
+
+                <div class="stations-hero__desc">
+                    <p>Аэрационная станция глубокой очистки <strong>«ТОПАС»</strong> — проверенное временем решение премиум-класса для устройства автономной канализации. В системе очистки используются специальные микроорганизмы — анаэробные бактерии, которые питаются поступающими органическими соединениями. В результате их работы степень очистки стоков достигает <strong>98%</strong>, обеспечивая полную экологическую безопасность и отсутствие неприятных запахов. В отличие от обычных септиков, ТОПАС не требует откачки ассенизаторами.</p>
+
+                    <p>Ассортимент станций «ТОПАС» включает множество моделей, которые различаются по мощности переработки. Цифра около названия означает максимальное количество постоянно проживающих людей, которые могут пользоваться данной системой канализации.</p>
+
+                    <p><strong>Кроме различий в объёме перерабатываемых стоков, существует ещё три модельные опции:</strong></p>
+
+                    <ul class="stations-hero__options">
+                        <li>
+                            <strong>Количество компрессоров.</strong> В стандартной модификации установлено два компрессора, которые работают попеременно. Модификации «ТОПАС-С» (версии от 4 до 12) оснащены одним компрессором — производительность и качество очистки не изменяются.
+                        </li>
+                        <li>
+                            <strong>Способ водоотведения.</strong> Стандартная модификация — самотёком. Станции с дренажным насосом для принудительного отвода обозначаются суффиксом <strong>«Пр»</strong>.
+                        </li>
+                        <li>
+                            <strong>Глубина входящей трубы.</strong> Базовое ограничение — до 80 см. Версии <strong>«Лонг»</strong> (80-140 см) и <strong>«Лонг Ус»</strong> (до 240 см) доступны для моделей от 5 пользователей.
+                        </li>
+                    </ul>
+                </div>
+            </section>
 
             <?php wp_reset_postdata(); ?>
         </div>

@@ -62,6 +62,7 @@
         save(selected);
         syncToggles();
         renderBar();
+        renderInline();
     }
 
     function clearAll() {
@@ -69,6 +70,7 @@
         save(selected);
         syncToggles();
         renderBar();
+        renderInline();
         closeOverlay();
     }
 
@@ -209,6 +211,69 @@
             .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
+    // ===== Инлайн-таблица на странице (секция «Сравнение моделей») =====
+    // Пока пользователь ничего не отметил — показываем первые N моделей,
+    // чтобы блок не выглядел пустым; как только выбор появился, таблица
+    // следует за ним и рядом включается кнопка «Очистить выбор».
+    function defaultCols(limit) {
+        var ids = Object.keys(stations);
+        return ids.slice(0, Math.max(2, limit)).map(function (id) { return stations[id]; });
+    }
+
+    function renderInline() {
+        each(document.querySelectorAll('[data-compare-inline]'), function (host) {
+            var limit = parseInt(host.getAttribute('data-compare-default'), 10) || 3;
+            var isChoice = selected.length >= 2;
+            var cols = isChoice
+                ? selected.map(function (id) { return stations[id]; }).filter(Boolean)
+                : defaultCols(limit);
+
+            if (cols.length < 2) {
+                host.innerHTML = '<div class="pro-compare__empty">Недостаточно моделей для сравнения.</div>';
+                return;
+            }
+
+            var head = '<tr><th></th>';
+            cols.forEach(function (st) {
+                var price = '';
+                (st.specs || []).forEach(function (row) {
+                    if (!price && row.label === 'Цена ТОПАС-С' && row.value !== '—') price = row.value;
+                });
+                head += '<th>' +
+                    '<a class="pro-compare__model" href="' + st.url + '">' + esc(st.title) + '</a>' +
+                    (price ? '<span class="pro-compare__price">' + esc(price) + '</span>' : '') +
+                    (isChoice ? '<button type="button" class="pro-compare__rm" data-remove="' + st.id + '">× убрать</button>' : '') +
+                    '</th>';
+            });
+            head += '</tr>';
+
+            var specs = cols[0].specs || [];
+            var body = '';
+            specs.forEach(function (row, i) {
+                var values = cols.map(function (st) {
+                    return (st.specs && st.specs[i]) ? st.specs[i].value : '—';
+                });
+                var allSame = values.every(function (v) { return v === values[0]; });
+                body += '<tr class="' + (allSame ? '' : 'is-diff') + '">' +
+                    '<th>' + esc(row.label) + '</th>' +
+                    values.map(function (v) { return '<td>' + esc(v) + '</td>'; }).join('') +
+                    '</tr>';
+            });
+
+            host.innerHTML = '<table class="pro-compare__table"><thead>' + head + '</thead><tbody>' + body + '</tbody></table>';
+        });
+
+        // Подсказка и кнопка сброса — общие для секции.
+        each(document.querySelectorAll('[data-compare-hint]'), function (el) {
+            el.textContent = selected.length >= 2
+                ? 'Сравниваются отмеченные модели: ' + selected.length + ' из 4.'
+                : 'Отметьте «Сравнить» на карточках выше — до 4 моделей. Пока показаны популярные.';
+        });
+        each(document.querySelectorAll('[data-compare-clear]'), function (el) {
+            el.hidden = selected.length === 0;
+        });
+    }
+
     // ===== Инициализация =====
     document.addEventListener('DOMContentLoaded', function () {
         document.addEventListener('click', function (e) {
@@ -216,9 +281,22 @@
             if (t) {
                 e.preventDefault();
                 toggle(t.getAttribute('data-compare-id'));
+                return;
+            }
+            // Убрать модель из инлайн-таблицы / очистить весь выбор.
+            var rm = e.target.closest('.pro-compare__rm');
+            if (rm) {
+                e.preventDefault();
+                toggle(rm.getAttribute('data-remove'));
+                return;
+            }
+            if (e.target.closest('[data-compare-clear]')) {
+                e.preventDefault();
+                clearAll();
             }
         });
         syncToggles();
         renderBar();
+        renderInline();
     });
 })();

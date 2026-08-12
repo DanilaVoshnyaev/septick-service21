@@ -164,6 +164,11 @@ function izex_enqueue_theme_style($handle, $rel_path, $deps = array('global-styl
     if (!file_exists($abs)) {
         return;
     }
+    // Пустые файлы-заготовки (0 байт или одна строка sourceMappingURL) не
+    // подключаем: правил в них нет, а запрос блокирует рендер.
+    if (filesize($abs) < 64) {
+        return;
+    }
     wp_enqueue_style($handle, get_template_directory_uri() . $rel_path, $deps, filemtime($abs));
 }
 
@@ -176,46 +181,82 @@ function izex_scripts()
 //    wp_style_add_data('izex-style', 'rtl', 'replace');
     wp_enqueue_style('Montserrat-font', get_template_directory_uri() . '/assets/fonts/montserrat.css');
     wp_enqueue_style('normalize', get_template_directory_uri() . '/assets/styles/normalize.css');
-    wp_enqueue_style('swiper-css', get_template_directory_uri() . '/assets/styles/swiper-bundle.min.css');
     // enqueue_versioned_style('global-style', '/assets/styles/styles.min.css');
     wp_enqueue_style('global-style', get_template_directory_uri() . '/assets/styles/styles.css');
-    wp_enqueue_style('staty-style', get_template_directory_uri() . '/assets/styles/page-staty.css');
-    wp_enqueue_style('mobile-style', get_template_directory_uri() . '/assets/styles/mobile.css');
-    wp_enqueue_style('sidebar-style', get_template_directory_uri() . '/assets/styles/sidebar.css');
+    // Убраны page-staty.css, mobile.css и sidebar.css: в файлах нет ни одного
+    // правила, только строка «/*# sourceMappingURL=… */» — это были три
+    // блокирующих рендер запроса на каждой странице впустую.
     wp_enqueue_style('catalog-style', get_template_directory_uri() . '/assets/styles/catalog.css', array('global-style'), filemtime(get_template_directory() . '/assets/styles/catalog.css'));
     wp_enqueue_style('premium-components', get_template_directory_uri() . '/assets/styles/premium-components.css', array('global-style'), filemtime(get_template_directory() . '/assets/styles/premium-components.css'));
 
     wp_deregister_script('jquery');
-    wp_register_script('jquery', get_template_directory_uri() . '/assets/js/jquery-3.7.0.min.js');
+    wp_register_script('jquery', get_template_directory_uri() . '/assets/js/jquery-3.7.0.min.js', array(), '3.7.0', true);
     wp_enqueue_script('jquery');
-    wp_enqueue_script('swiper', get_template_directory_uri() . '/assets/js/swiper-bundle.min.js', array('jquery'), '', true);
-    wp_enqueue_script('ya-map', 'https://api-maps.yandex.ru/2.1/?lang=ru_RU&amp;apikey=b14c454d-b28c-418a-8f62-e7f2244905fc&amp;ver=6.2.2', array('jquery'), '', true);
-    //wp_enqueue_script('global',get_template_direcory_uri(). '/assets(/js/globaljs)',array('jquery'),'',true);
-    //enqueue_versioned_script('global-scripts', '/assets/js/scripts.js');
+
+    $template = $GLOBALS['izex_current_template'] ?? '';
+
+    // Swiper (160 КБ CSS+JS) грузился на каждой странице, хотя слайдера на сайте
+    // нет: разметки swiper-* в шаблонах не осталось, а инициализация (new Swiper)
+    // лежит в неподключаемом assets/js/scripts.js. Оставляем только на старой
+    // странице «О компании» — там вставлен сторонний виджет со своей вёрсткой.
+    if ($template === 'page-o_companii.php') {
+        wp_enqueue_style('swiper-css', get_template_directory_uri() . '/assets/styles/swiper-bundle.min.css');
+        wp_enqueue_script('swiper', get_template_directory_uri() . '/assets/js/swiper-bundle.min.js', array('jquery'), '', true);
+    }
+
+    // API Яндекс.Карт отключён: ничего его не вызывает (инициализация лежит в
+    // assets/js/scripts.js, который не подключается, а страница контактов
+    // показывает карту через <iframe>). Это ~250 КБ внешнего JS на каждой странице.
+    // Понадобится снова — подключать точечно на нужном шаблоне.
+
     wp_enqueue_script('global-scripts', get_template_directory_uri() . '/assets/js/global.js', array('jquery'), filemtime(get_template_directory() . '/assets/js/global.js'), true);
-    wp_enqueue_script('premium-ui', get_template_directory_uri() . '/assets/js/premium-ui.js', array('jquery'), filemtime(get_template_directory() . '/assets/js/premium-ui.js'), true);
-    wp_enqueue_script('station-single', get_template_directory_uri() . '/assets/js/station-single.js', array(), filemtime(get_template_directory() . '/assets/js/station-single.js'), true);
-    wp_enqueue_script('station-1-data', get_template_directory_uri() . '/assets/js/1-id.js', array('jquery'), '', true);
-    wp_enqueue_script('station-112-data', get_template_directory_uri() . '/assets/js/112-id.js', array('jquery'), '', true);
-    //wp_enqueue_script('izex-navigation', get_template_directory_uri() . '/js/navigation.js', array(), _S_VERSION, true);
+    wp_enqueue_script('premium-ui', get_template_directory_uri() . '/assets/js/premium-ui.js', array(), filemtime(get_template_directory() . '/assets/js/premium-ui.js'), true);
 
-    // ===== Калькулятор подбора (4.1) =====
-    izex_enqueue_theme_style('calculator', '/assets/styles/calculator.css');
-    wp_enqueue_script('topas-calculator', get_template_directory_uri() . '/assets/js/calculator.js', array(), filemtime(get_template_directory() . '/assets/js/calculator.js'), true);
-    wp_localize_script('topas-calculator', 'topasCalc', array(
-        'stations' => izex_get_calculator_stations(),
-        'settings' => izex_get_calculator_settings(),
-    ));
+    // Скрипт страницы станции — только на самой странице станции.
+    if (is_singular('stations')) {
+        wp_enqueue_script('station-single', get_template_directory_uri() . '/assets/js/station-single.js', array(), filemtime(get_template_directory() . '/assets/js/station-single.js'), true);
+    }
+    // Убраны station-1-data / station-112-data: файлов assets/js/1-id.js и
+    // 112-id.js в теме нет, каждая страница получала по два ответа 404.
 
-    // ===== Сравнение моделей (4.2) =====
-    izex_enqueue_theme_style('compare', '/assets/styles/compare.css');
-    wp_enqueue_script('topas-compare', get_template_directory_uri() . '/assets/js/compare.js', array(), filemtime(get_template_directory() . '/assets/js/compare.js'), true);
-    wp_localize_script('topas-compare', 'topasCompare', array(
-        'stations' => izex_get_compare_stations(),
-    ));
+    // ===== Каталог, калькулятор, сравнение =====
+    // Нужны на главной, в архиве станций и на странице станции. Плюс страховка:
+    // если шорткод калькулятора или сравнения вставили в контент произвольной
+    // страницы через редактор, ассеты всё равно подключатся.
+    $needs_catalog_ui = is_front_page() || is_post_type_archive('stations') || is_singular('stations');
+
+    if (!$needs_catalog_ui && is_singular()) {
+        $content = (string) get_post_field('post_content', get_queried_object_id());
+        foreach (array('topas_calculator', 'topas_compare_inline', 'topas_estimate') as $shortcode) {
+            if (has_shortcode($content, $shortcode)) {
+                $needs_catalog_ui = true;
+                break;
+            }
+        }
+    }
+
+    if ($needs_catalog_ui) {
+        izex_enqueue_theme_style('calculator', '/assets/styles/calculator.css');
+        wp_enqueue_script('topas-calculator', get_template_directory_uri() . '/assets/js/calculator.js', array(), filemtime(get_template_directory() . '/assets/js/calculator.js'), true);
+        wp_localize_script('topas-calculator', 'topasCalc', array(
+            'stations' => izex_get_calculator_stations(),
+            'settings' => izex_get_calculator_settings(),
+        ));
+
+        wp_enqueue_script('catalog-instant', get_template_directory_uri() . '/assets/js/catalog-instant.js', array(), filemtime(get_template_directory() . '/assets/js/catalog-instant.js'), true);
+
+        izex_enqueue_theme_style('compare', '/assets/styles/compare.css');
+        wp_enqueue_script('topas-compare', get_template_directory_uri() . '/assets/js/compare.js', array(), filemtime(get_template_directory() . '/assets/js/compare.js'), true);
+        wp_localize_script('topas-compare', 'topasCompare', array(
+            'stations' => izex_get_compare_stations(),
+        ));
+    }
+
+    // Стили новых блоков нужны везде: карточка/каталог — на страницах каталога,
+    // а док связи и нижняя панель есть на всём сайте.
+    izex_enqueue_theme_style('pro-blocks', '/assets/styles/pro-blocks.css', array('premium-components'));
 
     // ===== Постраничные стили (вынесены из <style> в шаблонах) =====
-    $template = $GLOBALS['izex_current_template'] ?? '';
 
     if (is_front_page()) {
         izex_enqueue_theme_style('page-front', '/assets/styles/front-page.css');
@@ -251,6 +292,86 @@ function izex_scripts()
 
 
 add_action('wp_enqueue_scripts', 'izex_scripts');
+
+/**
+ * ================= ПРОИЗВОДИТЕЛЬНОСТЬ ФРОНТА =================
+ */
+
+/**
+ * Ранние подсказки браузеру: свой шрифт и хост картинки в hero.
+ *
+ * Шрифт грузится через @font-face внутри montserrat.css, то есть браузер узнаёт
+ * о нём только после разбора CSS — preload убирает эту задержку. Фон hero лежит
+ * на внешнем хосте (userapi.com), поэтому для него нужен preconnect: это LCP
+ * главной страницы.
+ */
+function izex_resource_hints()
+{
+    $font = get_template_directory_uri() . '/assets/fonts/Montserrat-subset.woff2';
+    echo '<link rel="preload" href="' . esc_url($font) . '" as="font" type="font/woff2" crossorigin>' . "\n";
+
+    if (is_front_page()) {
+        echo '<link rel="preconnect" href="https://sun9-56.userapi.com" crossorigin>' . "\n";
+    }
+}
+add_action('wp_head', 'izex_resource_hints', 1);
+
+/**
+ * Убираем то, что WordPress отдаёт по умолчанию, но сайту не нужно:
+ * inline-скрипт эмодзи (~10 КБ + внешний запрос), wp-embed.js (встраивание чужих
+ * постов WP), стили Gutenberg-блоков и dashicons для незалогиненных.
+ */
+function izex_dequeue_unused()
+{
+    remove_action('wp_head', 'print_emoji_detection_script', 7);
+    remove_action('wp_print_styles', 'print_emoji_styles');
+    remove_action('admin_print_scripts', 'print_emoji_detection_script');
+    remove_action('admin_print_styles', 'print_emoji_styles');
+
+    wp_dequeue_script('wp-embed');
+    wp_deregister_script('wp-embed');
+
+    // Стили блочного редактора убираем только там, где блоков в контенте нет:
+    // на страницах и в статьях, свёрстанных блоками, они нужны для вёрстки.
+    $has_blocks = false;
+    if (is_singular()) {
+        $has_blocks = has_blocks(get_queried_object_id());
+    }
+    if (!$has_blocks) {
+        wp_dequeue_style('wp-block-library');
+        wp_dequeue_style('wp-block-library-theme');
+        wp_dequeue_style('global-styles');
+        wp_dequeue_style('classic-theme-styles');
+    }
+
+    if (!is_user_logged_in()) {
+        wp_dequeue_style('dashicons');
+    }
+}
+add_action('wp_enqueue_scripts', 'izex_dequeue_unused', 100);
+
+/**
+ * Отложенная загрузка некритичного JS.
+ *
+ * Всё перечисленное не участвует в первой отрисовке: defer снимает их с
+ * критического пути, но сохраняет порядок выполнения (в отличие от async).
+ */
+function izex_defer_scripts($tag, $handle)
+{
+    // jQuery сознательно НЕ откладываем: скрипты плагинов зависят от него и сами
+    // не отложены — они выполнились бы раньше загрузки jQuery и упали с ошибкой.
+    // Из критического пути он уже выведен переносом в футер.
+    $defer = array(
+        'global-scripts', 'premium-ui', 'station-single',
+        'topas-calculator', 'topas-compare', 'catalog-instant',
+    );
+
+    if (in_array($handle, $defer, true) && strpos($tag, ' defer') === false) {
+        $tag = str_replace(' src=', ' defer src=', $tag);
+    }
+    return $tag;
+}
+add_filter('script_loader_tag', 'izex_defer_scripts', 10, 2);
 
 /**
  * Implement the Custom Header feature.
@@ -307,6 +428,18 @@ require get_template_directory() . '/inc/carbon-fields.php';
  * carbon fields.
  */
 require get_template_directory() . '/inc/install-theme.php';
+
+/**
+ * Блоки по прототипу заказчика: карточка станции, смета «входит/отдельно»,
+ * инлайн-сравнение, бегущая строка, одноэкранный калькулятор.
+ */
+require get_template_directory() . '/inc/pro-blocks.php';
+
+/**
+ * Микроразметка Schema.org, которую не покрывает Yoast:
+ * LocalBusiness, Product для станций, ItemList для каталога.
+ */
+require get_template_directory() . '/inc/seo-schema.php';
 
 /**
  * SEO: meta-теги, Open Graph, canonical, Schema.org, robots.txt.
@@ -634,16 +767,18 @@ add_action('wp_ajax_nopriv_premium_form_submit', 'handle_premium_form_submit');
 function handle_premium_form_submit() {
     // Проверка nonce (безопасность)
     if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'premium_form_nonce')) {
+        error_log('[servis-diag] ОТКАЗ nonce (403). form_type=' . ($_POST['form_type'] ?? '?') . ' name=' . ($_POST['name'] ?? '?'));
         wp_send_json_error(['message' => 'Ошибка безопасности'], 403);
     }
 
-    // ===== Анти-спам (ТЗ 5.4) =====
-    // 1) Honeypot: скрытое поле hp_email заполняют только боты.
-    // 2) Временная ловушка: заявка быстрее 2 сек после загрузки — почти всегда бот.
-    // В обоих случаях возвращаем «успех» без отправки письма, чтобы не подсказывать боту.
+    // ===== Анти-спам =====
+    // Только honeypot: скрытое поле hp_email заполняют лишь боты — для реальных
+    // клиентов оно невидимо и никак не мешает.
+    // Прежнюю «временную ловушку» (отправка < 2 сек) УБРАЛИ: она молча теряла
+    // настоящие заявки (показывала «Спасибо», но ничего не сохраняла и не слала).
     $hp = isset($_POST['hp_email']) ? trim((string) $_POST['hp_email']) : '';
-    $elapsed = isset($_POST['elapsed']) ? (int) $_POST['elapsed'] : 0;
-    if ($hp !== '' || ($elapsed > 0 && $elapsed < 2000)) {
+    if ($hp !== '') {
+        error_log('[servis-diag] honeypot сработал (бот): name=' . ($_POST['name'] ?? '?'));
         wp_send_json_success(['message' => 'Спасибо! Мы свяжемся с вами в течение 15 минут.']);
     }
 
@@ -674,6 +809,7 @@ function handle_premium_form_submit() {
     }
 
     if (!empty($errors)) {
+        error_log('[servis-diag] ВАЛИДАЦИЯ не прошла: ' . implode('; ', $errors) . ' name="' . ($_POST['name'] ?? '') . '" phone="' . ($_POST['phone'] ?? '') . '"');
         wp_send_json_error(['errors' => $errors], 400);
     }
 
@@ -748,10 +884,13 @@ function handle_premium_form_submit() {
     $recipients = array_values(array_unique(array_filter($recipients, 'is_email')));
 
     // ===== ЗАГОЛОВКИ =====
-    $domain = preg_replace('#^www\.#', '', parse_url(home_url(), PHP_URL_HOST));
+    // Адрес отправителя ДОЛЖЕН совпадать с ящиком, под которым авторизуется
+    // WP Mail SMTP (smtp.mail.ru → gogle20023202@mail.ru). Иначе mail.ru
+    // отклоняет письмо как спам с ошибкой «550 spam message rejected».
+    $from_email = 'gogle20023202@mail.ru';
     $headers = array(
         'Content-Type: text/html; charset=UTF-8',
-        'From: ' . $site_name . ' <noreply@' . $domain . '>',
+        'From: ' . $site_name . ' <' . $from_email . '>',
     );
     // Reply-To на основной email компании (чтобы ответ уходил владельцу).
     $owner_email = function_exists('getCarbonEmail') ? getCarbonEmail() : '';
@@ -759,9 +898,56 @@ function handle_premium_form_submit() {
         $headers[] = 'Reply-To: ' . $owner_email;
     }
 
-    // ===== ОТПРАВКА ПИСЬМА =====
+    // ===== СОХРАНЕНИЕ ЗАЯВКИ В БАЗУ (видно в админке → «Заявки») =====
+    // Сохраняем ДО отправки письма, чтобы заявка не потерялась даже при сбое почты.
+    $lead_id = wp_insert_post(array(
+        'post_type'   => 'lead',
+        'post_status' => 'publish',
+        'post_title'  => ($name !== '' ? $name : 'Без имени') . ' — ' . $phone,
+    ), true);
 
+    if (is_wp_error($lead_id) || !$lead_id) {
+        // База недоступна — это критично, сообщаем об ошибке.
+        error_log('[servis-septik] Не удалось сохранить заявку: ' . (is_wp_error($lead_id) ? $lead_id->get_error_message() : 'unknown'));
+        wp_send_json_error(array('message' => 'Ошибка отправки. Попробуйте позвонить нам.'), 500);
+    }
+
+    update_post_meta($lead_id, '_lead_name', $name);
+    update_post_meta($lead_id, '_lead_phone', $phone);
+    update_post_meta($lead_id, '_lead_form_type', $form_label);
+    update_post_meta($lead_id, '_lead_address', $address);
+    update_post_meta($lead_id, '_lead_comment', $comment);
+    update_post_meta($lead_id, '_lead_email', $email_lead);
+    update_post_meta($lead_id, '_lead_product', trim($product_name . ($product_id ? " (ID {$product_id})" : '')));
+    update_post_meta($lead_id, '_lead_page_url', $page_url);
+    update_post_meta($lead_id, '_lead_ip', $ip);
+    update_post_meta($lead_id, '_lead_ua', $user_agent);
+    update_post_meta($lead_id, '_lead_consent', $consent === '0' ? 'Нет' : 'Да');
+
+    // ===== УВЕДОМЛЕНИЕ В MAX (best-effort: заявка уже сохранена) =====
+    $max_text  = "🔔 *Новая заявка с сайта*\n";
+    $max_text .= "Тип: " . $form_label . "\n";
+    $max_text .= "Имя: " . $name . "\n";
+    $max_text .= "Телефон: " . $phone . "\n";
+    if ($product_name || $product_id) {
+        $max_text .= "Товар/услуга: " . trim($product_name . ($product_id ? " (ID {$product_id})" : '')) . "\n";
+    }
+    if ($comment) {
+        $max_text .= "Комментарий: " . $comment . "\n";
+    }
+    if ($page_url) {
+        $max_text .= "Страница: " . $page_url . "\n";
+    }
+    $max_text .= "Время: " . $datetime;
+    servis_notify_max($max_text);
+
+    // ===== ОТПРАВКА ПИСЬМА (best-effort: заявка уже сохранена) =====
     $sent = wp_mail($recipients, $subject, $message, $headers);
+    update_post_meta($lead_id, '_lead_mail_sent', $sent ? '1' : '0');
+    if (!$sent) {
+        error_log("[servis-septik] Письмо по заявке #{$lead_id} не отправлено (заявка сохранена в БД).");
+    }
+
     // ===== ДОПОЛНИТЕЛЬНО: Отправка в Telegram (опционально) =====
     // Раскомментируй и настрой, если нужно
     /*
@@ -784,57 +970,226 @@ function handle_premium_form_submit() {
     ]);
     */
 
-    // ===== ЛОГИРОВАНИЕ (опционально) =====
-    // error_log("Premium Form [$form_type]: $name, $phone");
-    if ($sent) {
-        wp_send_json_success([
-            'message' => 'Спасибо! Мы свяжемся с вами в течение 15 минут.',
-            'redirect' => get_permalink($product_id) // опционально: редирект после отправки
-        ]);
-    } else {
-        wp_send_json_error(['message' => 'Ошибка отправки. Попробуйте позвонить нам.'], 500);
+    error_log("Premium Form [{$form_type}] #{$lead_id}: {$name}, {$phone}, mail=" . ($sent ? 'ok' : 'FAIL'));
+
+    // Заявка сохранена в базе — визитёру всегда показываем успех,
+    // даже если письмо не ушло (заявку менеджер увидит в админке).
+    wp_send_json_success(array(
+        'message'  => 'Спасибо! Мы свяжемся с вами в течение 15 минут.',
+        'redirect' => $product_id ? get_permalink($product_id) : '',
+    ));
+}
+
+// ===== НАСТРОЙКА ОТПРАВКИ ПОЧТЫ ЧЕРЕЗ SMTP (без плагина) =====
+// Аутентифицированная отправка через SMTP — надёжный способ доставки во «Входящие».
+// Логин/пароль/сервер задаются КОНСТАНТАМИ в wp-config.php (не в теме и не в git!):
+//
+//   define('TOPAS_SMTP_HOST', 'smtp.mail.ru');
+//   define('TOPAS_SMTP_USER', 'gogle20023202@mail.ru');
+//   define('TOPAS_SMTP_PASS', 'пароль-приложения-mail.ru');
+//   define('TOPAS_SMTP_PORT', 465);
+//   define('TOPAS_SMTP_SECURE', 'ssl');            // ssl (порт 465) | tls (порт 587)
+//   define('TOPAS_SMTP_FROM', 'gogle20023202@mail.ru');   // ДОЛЖЕН совпадать с USER
+//   define('TOPAS_SMTP_FROM_NAME', 'Сервис Септик');
+//
+// ВАЖНО: плагин WP Mail SMTP при этом нужно ОТКЛЮЧИТЬ, иначе он перебьёт настройки.
+add_action('phpmailer_init', 'servis_configure_smtp');
+function servis_configure_smtp($phpmailer)
+{
+    // Без заданного хоста ничего не делаем — письма уйдут стандартным способом.
+    if (!defined('TOPAS_SMTP_HOST') || !TOPAS_SMTP_HOST) {
+        // Всё равно выравниваем Return-Path с From — помогает против спам-фильтров.
+        if (!empty($phpmailer->From)) {
+            $phpmailer->Sender = $phpmailer->From;
+        }
+        return;
+    }
+
+    $phpmailer->isSMTP();
+    $phpmailer->Host       = TOPAS_SMTP_HOST;
+    $phpmailer->SMTPAuth   = true;
+    $phpmailer->Username   = defined('TOPAS_SMTP_USER') ? TOPAS_SMTP_USER : '';
+    $phpmailer->Password   = defined('TOPAS_SMTP_PASS') ? TOPAS_SMTP_PASS : '';
+    $phpmailer->Port       = defined('TOPAS_SMTP_PORT') ? (int) TOPAS_SMTP_PORT : 465;
+    $phpmailer->SMTPSecure = defined('TOPAS_SMTP_SECURE') ? TOPAS_SMTP_SECURE : 'ssl';
+    $phpmailer->SMTPAutoTLS = false; // не навязывать TLS поверх SSL — как было в плагине
+    $phpmailer->CharSet     = 'UTF-8';
+
+    // From обязан совпадать с авторизованным ящиком, иначе mail.ru отклонит письмо (550).
+    $from = defined('TOPAS_SMTP_FROM') && TOPAS_SMTP_FROM ? TOPAS_SMTP_FROM : (defined('TOPAS_SMTP_USER') ? TOPAS_SMTP_USER : '');
+    if ($from) {
+        $phpmailer->From   = $from;
+        $phpmailer->Sender = $from; // Return-Path
+    }
+    if (defined('TOPAS_SMTP_FROM_NAME') && TOPAS_SMTP_FROM_NAME) {
+        $phpmailer->FromName = TOPAS_SMTP_FROM_NAME;
     }
 }
 
-// ===== НАСТРОЙКА ОТПРАВКИ ПОЧТЫ (борьба со спамом) =====
-/*add_action('phpmailer_init', 'topas_configure_phpmailer');
-function topas_configure_phpmailer($phpmailer) {
-    // Выравниваем конверт-отправителя (Return-Path) с адресом From —
-    // без этого почтовые сервисы (mail.ru, yandex) чаще кидают письмо в спам.
-    if (!empty($phpmailer->From)) {
-        $phpmailer->Sender = $phpmailer->From;
+// Логируем причину, если письмо не удалось отправить (видно в логах хостинга).
+add_action('wp_mail_failed', 'servis_log_mail_failed');
+function servis_log_mail_failed($wp_error)
+{
+    if (is_wp_error($wp_error)) {
+        error_log('[servis-septik] wp_mail failed: ' . $wp_error->get_error_message());
     }
+}
 
-    // Аутентифицированная отправка через SMTP — самый надёжный способ
-    // доставлять письма во «Входящие». Включается, если в wp-config.php
-    // заданы константы (логин/пароль ящика заказчика или транзакционного сервиса):
-    //
-    //   define('TOPAS_SMTP_HOST', 'smtp.yandex.ru');
-    //   define('TOPAS_SMTP_USER', 'box@domain.ru');
-    //   define('TOPAS_SMTP_PASS', 'app-password');
-    //   define('TOPAS_SMTP_PORT', 465);
-    //   define('TOPAS_SMTP_SECURE', 'ssl');      // ssl | tls
-    //   define('TOPAS_SMTP_FROM', 'box@domain.ru');
-    //   define('TOPAS_SMTP_FROM_NAME', 'Сервис Септик');
-    if (defined('TOPAS_SMTP_HOST') && TOPAS_SMTP_HOST) {
-        $phpmailer->isSMTP();
-        $phpmailer->Host       = TOPAS_SMTP_HOST;
-        $phpmailer->SMTPAuth   = true;
-        $phpmailer->Username   = defined('TOPAS_SMTP_USER') ? TOPAS_SMTP_USER : '';
-        $phpmailer->Password   = defined('TOPAS_SMTP_PASS') ? TOPAS_SMTP_PASS : '';
-        $phpmailer->Port       = defined('TOPAS_SMTP_PORT') ? (int) TOPAS_SMTP_PORT : 465;
-        $phpmailer->SMTPSecure = defined('TOPAS_SMTP_SECURE') ? TOPAS_SMTP_SECURE : 'ssl';
-
-        // From обязан совпадать с авторизованным ящиком, иначе SMTP отклонит письмо.
-        if (defined('TOPAS_SMTP_FROM') && TOPAS_SMTP_FROM) {
-            $phpmailer->From   = TOPAS_SMTP_FROM;
-            $phpmailer->Sender = TOPAS_SMTP_FROM;
-        }
-        if (defined('TOPAS_SMTP_FROM_NAME') && TOPAS_SMTP_FROM_NAME) {
-            $phpmailer->FromName = TOPAS_SMTP_FROM_NAME;
-        }
+// ===== УВЕДОМЛЕНИЕ О ЗАЯВКЕ В МЕССЕНДЖЕР MAX =====
+// Надёжный канал уведомлений (не зависит от почтовой репутации домена).
+// Токен бота и chat_id задаются КОНСТАНТАМИ в wp-config.php:
+//
+//   define('MAX_BOT_TOKEN', 'токен-бота-из-MAX');
+//   define('MAX_CHAT_ID', '123456');   // id чата/диалога с ботом
+//
+// (необязательно) базовый адрес API можно переопределить:
+//   define('MAX_API_BASE', 'https://platform-api.max.ru');
+//
+// Ответ MAX пишется в debug.log с меткой [max] — по нему видно, доставлено ли.
+function servis_notify_max($text)
+{
+    if (!defined('MAX_BOT_TOKEN') || !MAX_BOT_TOKEN || !defined('MAX_CHAT_ID') || !MAX_CHAT_ID) {
+        return; // не настроено — тихо выходим
     }
-}*/
+    $base = defined('MAX_API_BASE') && MAX_API_BASE ? MAX_API_BASE : 'https://platform-api.max.ru';
+
+    // MAX_CHAT_ID может содержать несколько id через запятую/пробел/точку с запятой —
+    // отправим каждому (личные чаты и/или группы).
+    $chat_ids = array_filter(array_map('trim', preg_split('/[,;\s]+/', (string) MAX_CHAT_ID)));
+
+    $payload = wp_json_encode(array(
+        'text'   => mb_substr($text, 0, 3900),
+        'format' => 'markdown',
+    ));
+
+    foreach ($chat_ids as $chat_id) {
+        $response = wp_remote_post($base . '/messages?chat_id=' . rawurlencode($chat_id), array(
+            'timeout' => 15,
+            'headers' => array(
+                'Authorization' => MAX_BOT_TOKEN,
+                'Content-Type'  => 'application/json; charset=utf-8',
+            ),
+            'body' => $payload,
+        ));
+
+        if (is_wp_error($response)) {
+            error_log('[max] chat ' . $chat_id . ' ошибка запроса: ' . $response->get_error_message());
+            continue;
+        }
+        $code = wp_remote_retrieve_response_code($response);
+        $body = wp_remote_retrieve_body($response);
+        error_log('[max] chat ' . $chat_id . ' HTTP ' . $code . ' resp: ' . mb_substr((string) $body, 0, 400));
+    }
+}
+
+// ===== ТИП ЗАПИСИ «ЗАЯВКИ» (для просмотра заявок в админке) =====
+add_action('init', 'servis_register_lead_cpt');
+function servis_register_lead_cpt()
+{
+    register_post_type('lead', array(
+        'labels' => array(
+            'name'          => 'Заявки',
+            'singular_name' => 'Заявка',
+            'menu_name'     => 'Заявки',
+            'all_items'     => 'Все заявки',
+            'edit_item'     => 'Просмотр заявки',
+            'search_items'  => 'Искать заявки',
+            'not_found'     => 'Заявок пока нет',
+        ),
+        'public'             => false,   // не показывать на сайте
+        'show_ui'            => true,    // но показывать в админке
+        'show_in_menu'       => true,
+        'menu_position'      => 26,
+        'menu_icon'          => 'dashicons-email-alt',
+        'supports'           => array('title'),
+        'capability_type'    => 'post',
+        'map_meta_cap'       => true,
+        'exclude_from_search'=> true,
+        'has_archive'        => false,
+        'rewrite'            => false,
+    ));
+}
+
+// Колонки в списке заявок.
+add_filter('manage_lead_posts_columns', 'servis_lead_columns');
+function servis_lead_columns($columns)
+{
+    return array(
+        'cb'           => isset($columns['cb']) ? $columns['cb'] : '<input type="checkbox" />',
+        'title'        => 'Имя',
+        'lead_phone'   => 'Телефон',
+        'lead_type'    => 'Тип заявки',
+        'lead_product' => 'Товар/Услуга',
+        'lead_page'    => 'Страница',
+        'lead_mail'    => 'Письмо',
+        'date'         => 'Дата',
+    );
+}
+
+add_action('manage_lead_posts_custom_column', 'servis_lead_column_content', 10, 2);
+function servis_lead_column_content($column, $post_id)
+{
+    switch ($column) {
+        case 'lead_phone':
+            $phone = get_post_meta($post_id, '_lead_phone', true);
+            echo $phone ? '<a href="tel:' . esc_attr(preg_replace('/[^\d+]/', '', $phone)) . '">' . esc_html($phone) . '</a>' : '—';
+            break;
+        case 'lead_type':
+            echo esc_html(get_post_meta($post_id, '_lead_form_type', true) ?: '—');
+            break;
+        case 'lead_product':
+            echo esc_html(get_post_meta($post_id, '_lead_product', true) ?: '—');
+            break;
+        case 'lead_page':
+            $url = get_post_meta($post_id, '_lead_page_url', true);
+            echo $url ? '<a href="' . esc_url($url) . '" target="_blank" rel="noopener">открыть</a>' : '—';
+            break;
+        case 'lead_mail':
+            $sent = get_post_meta($post_id, '_lead_mail_sent', true);
+            if ($sent === '1') {
+                echo '<span style="color:#21b224;">✓ отправлено</span>';
+            } elseif ($sent === '0') {
+                echo '<span style="color:#d63638;">✗ не ушло</span>';
+            } else {
+                echo '—';
+            }
+            break;
+    }
+}
+
+// Метабокс с полной информацией на странице просмотра заявки.
+add_action('add_meta_boxes', 'servis_lead_metabox');
+function servis_lead_metabox()
+{
+    add_meta_box('lead_details', 'Данные заявки', 'servis_lead_metabox_render', 'lead', 'normal', 'high');
+}
+
+function servis_lead_metabox_render($post)
+{
+    $fields = array(
+        '_lead_name'      => 'Имя',
+        '_lead_phone'     => 'Телефон',
+        '_lead_email'     => 'Email',
+        '_lead_form_type' => 'Тип заявки',
+        '_lead_product'   => 'Товар/Услуга',
+        '_lead_address'   => 'Адрес',
+        '_lead_comment'   => 'Комментарий',
+        '_lead_page_url'  => 'Страница заявки',
+        '_lead_consent'   => 'Согласие на обработку ПД',
+        '_lead_ip'        => 'IP-адрес',
+        '_lead_ua'        => 'Устройство',
+        '_lead_mail_sent' => 'Письмо отправлено',
+    );
+    echo '<table class="widefat striped"><tbody>';
+    foreach ($fields as $key => $label) {
+        $val = get_post_meta($post->ID, $key, true);
+        if ($key === '_lead_mail_sent') {
+            $val = $val === '1' ? 'Да' : ($val === '0' ? 'Нет' : '—');
+        }
+        echo '<tr><td style="width:200px;font-weight:600;">' . esc_html($label) . '</td><td>' . nl2br(esc_html($val !== '' ? $val : '—')) . '</td></tr>';
+    }
+    echo '</tbody></table>';
+}
 
 // ===== ШОРТКОД ДЛЯ ФОРМЫ (опционально) =====
 add_shortcode('premium_contact_form', 'render_premium_contact_form');
@@ -895,12 +1250,18 @@ function izex_get_calculator_stations()
         if ($price <= 0) {
             $price = (int) preg_replace('/[^\d]/', '', (string) carbon_get_post_meta($id, 'crb_price'));
         }
+        // peopleStr/specs нужны карточке результата одноэкранного калькулятора
+        // (см. calculator.js) — данные те же, что в карточке каталога.
+        $pro = function_exists('izex_pro_station_data') ? izex_pro_station_data($id) : array();
+
         $stations[] = array(
-            'number' => $number,
-            'title'  => get_the_title($id),
-            'url'    => get_permalink($id),
-            'price'  => $price,
-            'img'    => get_the_post_thumbnail_url($id, 'medium') ?: '',
+            'number'    => $number,
+            'title'     => get_the_title($id),
+            'url'       => get_permalink($id),
+            'price'     => $price,
+            'img'       => get_the_post_thumbnail_url($id, 'medium') ?: '',
+            'peopleStr' => isset($pro['people_text']) ? $pro['people_text'] : '',
+            'specs'     => isset($pro['specs']) ? $pro['specs'] : array(),
         );
     }
     wp_reset_postdata();
@@ -936,13 +1297,19 @@ function izex_get_calculator_settings()
         'remotenessCoeff' => $num('crb_calc_remoteness_coeff', 10),
         'note'            => carbon_get_theme_option('crb_calc_note')
             ?: 'Это ориентировочный расчёт. Точная смета — после бесплатного выезда инженера.',
+        // Ссылка «Весь каталог» в карточке результата калькулятора.
+        'catalogUrl'      => get_post_type_archive_link('stations') ?: '',
     );
 }
 
 /**
  * Шорткод калькулятора: [topas_calculator]
+ *
+ * Рендерит одноэкранную версию (inc/pro-blocks.php): вопросы слева, живая
+ * карточка расчёта справа. Прежний пошаговый визард остался ниже в виде
+ * render_topas_calculator() — на случай откката достаточно поменять коллбэк.
  */
-add_shortcode('topas_calculator', 'render_topas_calculator');
+add_shortcode('topas_calculator', 'render_topas_calculator_live');
 function render_topas_calculator($atts)
 {
     ob_start(); ?>
@@ -1117,12 +1484,20 @@ function izex_render_work_card($post_id)
     $post_id = (int) $post_id;
     $model = carbon_get_post_meta($post_id, 'crb_work_model');
     $location = carbon_get_post_meta($post_id, 'crb_work_location');
-    $img = get_the_post_thumbnail_url($post_id, 'medium_large');
+    $img = has_post_thumbnail($post_id);
     ?>
     <article class="work-card" data-model="<?php echo esc_attr($model); ?>">
         <a class="work-card__media" href="<?php echo esc_url(get_permalink($post_id)); ?>">
             <?php if ($img) : ?>
-                <img src="<?php echo esc_url($img); ?>" alt="<?php echo esc_attr(get_the_title($post_id)); ?>" loading="lazy">
+                <?php
+                // srcset + width/height от WordPress: в блоке 8 фото, на мобильных
+                // раньше грузились полноразмерные medium_large для каждой карточки.
+                echo get_the_post_thumbnail($post_id, 'medium_large', array(
+                    'loading'  => 'lazy',
+                    'decoding' => 'async',
+                    'alt'      => trim(get_the_title($post_id) . ($location ? ', ' . $location : '')),
+                ));
+                ?>
             <?php else : ?>
                 <span class="work-card__noimg">Фото объекта</span>
             <?php endif; ?>

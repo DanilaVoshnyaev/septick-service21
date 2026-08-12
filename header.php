@@ -78,11 +78,11 @@ $company = getCompanyContacts();
 
                     <!-- Logo -->
                     <a href="<?php echo esc_url(home_url('/')); ?>" class="header-logo-premium">
-                        <?php if (true) : ?>
-                            <img src="<?=assets('/images/logo-transparent.png')?>" alt="" width="108">
-                        <?php else : ?>
-                            <span class="header-logo-text">ТОПАС</span>
-                        <?php endif; ?>
+                        <?php // Логотип: файл 216px под показ в 108px (retina). Прежний
+                              // logo-transparent.png весил 532 КБ и грузился на каждой странице. ?>
+                        <img src="<?=assets('/images/logo-transparent-216.png')?>"
+                             alt="Сервис Септик21 — септики ТОПАС в Чебоксарах"
+                             width="108" height="49" fetchpriority="high" decoding="async">
                     </a>
 
                     <!-- Desktop Navigation -->

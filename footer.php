@@ -35,11 +35,9 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
                 <!-- Company Column -->
                 <div class="footer-col footer-col-company">
                     <a href="<?php echo esc_url(home_url('/')); ?>" class="footer-logo">
-                        <?php if (true) : ?>
-                            <img src="<?=assets('/images/logo-transparent.png')?>" alt="" width="108">
-                        <?php else : ?>
-                            <span>ТОПАС</span>
-                        <?php endif; ?>
+                        <img src="<?=assets('/images/logo-transparent-216.png')?>"
+                             alt="Сервис Септик21 — септики ТОПАС в Чебоксарах"
+                             width="108" height="49" loading="lazy" decoding="async">
                     </a>
                     <p class="footer-description">
                         Официальный дилер автономных канализаций ТОПАС.
@@ -156,24 +154,15 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
 </footer>
 
 <?php
-// Плавающая панель действий на мобильных (ТЗ 5.3) + мессенджеры (ТЗ 4.6).
-$mobile_bar = getCompanyContacts();
+// Быстрые контакты: нижняя панель на мобильных и боковой док на десктопе.
+// Оба берут каналы из одного списка — izex_pro_contact_items().
+if (function_exists('izex_pro_render_mobile_bar')) {
+    izex_pro_render_mobile_bar();
+}
+if (function_exists('izex_pro_render_dock')) {
+    izex_pro_render_dock();
+}
 ?>
-<nav class="mobile-action-bar" aria-label="Быстрые действия">
-    <a class="mobile-action-bar__btn mobile-action-bar__btn--call" href="tel:<?php echo esc_attr($mobile_bar['phone_clean']); ?>">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        <span>Позвонить</span>
-    </a>
-    <?php if (!empty($mobile_bar['whatsapp'])) : ?>
-        <a href="https://max.ru/u/f9LHodD0cOI_AGyWf9AKcrl72RIFsKRL7vOApMiqwT37En8F81IprazW1ro" class="mobile-action-bar__btn mobile-action-bar__btn--wa" target="_blank" rel="noopener nofollow" aria-label="MAX">
-            <img src="https://maxicons.ru/icons/MAX.svg" alt="Иконка MAX" width="32" height="32">
-        </a>
-    <?php endif; ?>
-    <button type="button" class="mobile-action-bar__btn mobile-action-bar__btn--order open-modal" data-modal="order">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15h6M9 11h2"/></svg>
-        <span>Заявка</span>
-    </button>
-</nav>
 
 <div class="modal-premium" id="modal-callback">
     <div class="modal-backdrop"></div>
@@ -351,7 +340,11 @@ $mobile_bar = getCompanyContacts();
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/109479860" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
-<?php if (function_exists('printSocialFloat')) { printSocialFloat(); } ?>
+<?php
+// printSocialFloat() отключён: прежний блок соцсетей висел по центру справа и
+// дублировал ссылки, которые теперь выводит .pro-dock (см. izex_pro_render_dock()).
+// Сами ссылки по-прежнему берутся из настроек «Соцсети» — ничего не потеряно.
+?>
 <?php wp_footer(); ?>
 </body>
 </html>
