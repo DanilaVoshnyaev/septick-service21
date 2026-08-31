@@ -253,6 +253,15 @@
                 var values = cols.map(function (st) {
                     return (st.specs && st.specs[i]) ? st.specs[i].value : '—';
                 });
+
+                // Строку, где ни у одной модели нет значения, не показываем: раньше
+                // так в таблице висела пустая «Габариты (монтаж)» — поле не заполнено
+                // ни у одной станции (задача #22).
+                var hasValue = values.some(function (v) {
+                    return v !== '' && v !== '—' && v != null;
+                });
+                if (!hasValue) return;
+
                 var allSame = values.every(function (v) { return v === values[0]; });
                 body += '<tr class="' + (allSame ? '' : 'is-diff') + '">' +
                     '<th>' + esc(row.label) + '</th>' +
@@ -260,7 +269,17 @@
                     '</tr>';
             });
 
-            host.innerHTML = '<table class="pro-compare__table"><thead>' + head + '</thead><tbody>' + body + '</tbody></table>';
+            // Из таблицы должен быть выход в заявку: кнопка «Выбрать» в каждой
+            // колонке открывает модалку заказа с этой моделью (задача #22).
+            var foot = '<tr class="pro-compare__pick-row"><th></th>' + cols.map(function (st) {
+                return '<td>' +
+                    '<button type="button" class="pro-btn pro-btn--solid pro-compare__pick" ' +
+                    'data-product="' + esc(st.title) + '">Выбрать</button>' +
+                    '</td>';
+            }).join('') + '</tr>';
+
+            host.innerHTML = '<table class="pro-compare__table"><thead>' + head + '</thead><tbody>' +
+                body + foot + '</tbody></table>';
         });
 
         // Подсказка и кнопка сброса — общие для секции.
@@ -274,9 +293,35 @@
         });
     }
 
+    // Кнопка «Выбрать» в колонке таблицы: заполняем модалку заказа моделью и
+    // открываем её. Обработчики .open-modal в premium-ui.js навешиваются один
+    // раз на элементы, существующие при загрузке, а таблица рисуется динамически,
+    // поэтому открываем сами — так же, как это делает калькулятор.
+    function openOrderModal(product) {
+        var modal = document.getElementById('modal-order');
+        if (!modal) return;
+
+        var field = modal.querySelector('.js-order-product-field');
+        var label = modal.querySelector('.js-order-product');
+        if (field) field.value = product || '';
+        if (label && product) {
+            label.textContent = 'Товар: ' + product;
+            label.hidden = false;
+        }
+
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
     // ===== Инициализация =====
     document.addEventListener('DOMContentLoaded', function () {
         document.addEventListener('click', function (e) {
+            var pick = e.target.closest('.pro-compare__pick');
+            if (pick) {
+                e.preventDefault();
+                openOrderModal(pick.getAttribute('data-product'));
+                return;
+            }
             var t = e.target.closest('.js-compare-toggle');
             if (t) {
                 e.preventDefault();

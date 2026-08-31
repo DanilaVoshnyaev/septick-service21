@@ -1464,3 +1464,126 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* =====================================================================
+   ЛИПКАЯ ПАНЕЛЬ С ПОДОБРАННОЙ МОДЕЛЬЮ (задача #26)
+   Появляется, когда калькулятор ушёл из видимой области, и держит при себе
+   модель, цену «под ключ» и кнопку заявки. На мобильных скрыта — там снизу
+   стоит .mobile-action-bar. Ширину ограничиваем так, чтобы панель не залезала
+   под боковой док связи (.pro-dock: 54 px + 22 px отступа).
+   ===================================================================== */
+.calc-sticky {
+    position: fixed;
+    z-index: 940;
+    left: 0;
+    right: 0;
+    bottom: 18px;
+    width: min(1040px, calc(100% - 180px));
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 2vw, 24px);
+    padding: 12px 14px 12px 20px;
+    background: #fff;
+    border: 1px solid var(--pro-line);
+    border-radius: 16px;
+    box-shadow: 0 14px 40px rgba(15, 23, 42, 0.16);
+}
+
+.calc-sticky[hidden] {
+    display: none;
+}
+
+.calc-sticky__info {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: grid;
+    gap: 2px;
+}
+
+.calc-sticky__price {
+    flex: 0 0 auto;
+    display: grid;
+    gap: 2px;
+    padding-left: clamp(12px, 2vw, 24px);
+    border-left: 1px solid var(--pro-line-soft);
+}
+
+.calc-sticky__eyebrow {
+    font-family: var(--pro-mono);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--pro-faint);
+    line-height: 1.2;
+}
+
+.calc-sticky__model {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.calc-sticky__value {
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--brand-ink);
+    white-space: nowrap;
+}
+
+.calc-sticky__cta {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 11px;
+    background: var(--brand);
+    color: var(--on-brand);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.calc-sticky__cta:hover {
+    background: var(--brand-strong);
+}
+
+.calc-sticky__close {
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    border: none;
+    background: none;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--pro-faint);
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.calc-sticky__close:hover {
+    background: var(--pro-line-soft);
+    color: var(--ink);
+}
+
+@media (max-width: 900px) {
+    .calc-sticky {
+        width: calc(100% - 32px);
+    }
+
+    .calc-sticky__price {
+        padding-left: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .calc-sticky {
+        display: none;
+    }
+}

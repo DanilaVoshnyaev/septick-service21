@@ -352,3 +352,25 @@
         font-size: 0.85rem;
     }
 }
+
+/* ===== Блок сравнения внутри секции каталога (bare) =====
+   Выводится сразу под карточками, поэтому без своей .container: отступы
+   задаёт секция каталога (задача #22). */
+.pro-compare--bare {
+    margin-top: clamp(28px, 4vw, 44px);
+}
+
+.pro-compare--bare .section-header {
+    margin-bottom: 12px;
+}
+
+/* Ряд кнопок «Выбрать» — последняя строка таблицы сравнения. */
+.pro-compare__pick-row th,
+.pro-compare__pick-row td {
+    padding-top: 14px;
+    border-bottom: none;
+}
+
+.pro-compare__pick {
+    width: 100%;
+}

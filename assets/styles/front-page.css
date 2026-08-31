@@ -732,3 +732,13 @@
         display: none;
     }
 }
+
+/* Фон CTA каталога (задача #25): WebP 1200 px — 89 КБ против 179 КБ jpg.
+   Первая строка — фолбэк для браузеров без image-set. */
+.catalog-premium .catalog-cta-premium {
+    background-image: url('../images/cta-opt.jpg');
+    background-image: image-set(
+        url('../images/cta-opt.webp') type('image/webp'),
+        url('../images/cta-opt.jpg') type('image/jpeg')
+    );
+}

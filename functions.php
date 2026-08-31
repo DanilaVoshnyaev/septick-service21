@@ -317,6 +317,63 @@ add_action('wp_enqueue_scripts', 'izex_components_style', 20);
  */
 
 /**
+ * Кэш тяжёлых выборок каталога (задача #25, TTFB).
+ *
+ * Главная страница собирает каталог трижды: данные калькулятора, данные
+ * сравнения и сами карточки. Каждая станция — это ещё десяток
+ * carbon_get_post_meta(), то есть сотни обращений к метаданным на один ответ
+ * сервера. Здесь общий кэш на транзиентах с версией: любое сохранение станции,
+ * работы или настроек темы поднимает версию, и кэш считается заново.
+ *
+ * Редакторам кэш не отдаём — иначе правки в админке «не видны» на сайте.
+ *
+ * @param string   $key   ключ выборки
+ * @param int      $ttl   срок жизни в секундах
+ * @param callable $build как посчитать значение
+ * @return mixed
+ */
+function izex_cache_remember($key, $ttl, callable $build)
+{
+    if (is_user_logged_in() && current_user_can('edit_posts')) {
+        return $build();
+    }
+
+    $version = (int) get_option('izex_catalog_cache_version', 1);
+    $name = 'izex_' . $key . '_v' . $version;
+
+    $cached = get_transient($name);
+    if ($cached !== false) {
+        return $cached;
+    }
+
+    $data = $build();
+    set_transient($name, $data, $ttl);
+
+    return $data;
+}
+
+/**
+ * Сбрасывает кэш каталога, поднимая версию ключей.
+ */
+function izex_bump_catalog_cache()
+{
+    update_option('izex_catalog_cache_version', (int) get_option('izex_catalog_cache_version', 1) + 1, false);
+}
+
+add_action('save_post', 'izex_bump_catalog_cache_on_save', 10, 2);
+function izex_bump_catalog_cache_on_save($post_id, $post)
+{
+    if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
+        return;
+    }
+    if (in_array($post->post_type, array('stations', 'works', 'reviews'), true)) {
+        izex_bump_catalog_cache();
+    }
+}
+add_action('deleted_post', 'izex_bump_catalog_cache');
+add_action('carbon_fields_theme_options_container_saved', 'izex_bump_catalog_cache');
+
+/**
  * Ранние подсказки браузеру: свой шрифт и картинка hero.
  *
  * Шрифт грузится через @font-face внутри montserrat.css, то есть браузер узнаёт
@@ -1264,6 +1321,11 @@ function render_premium_contact_form($atts) {
  */
 function izex_get_calculator_stations()
 {
+    return izex_cache_remember('calc_stations', 6 * HOUR_IN_SECONDS, 'izex_build_calculator_stations');
+}
+
+function izex_build_calculator_stations()
+{
     $query = new WP_Query(array(
         'post_type'      => 'stations',
         'posts_per_page' => -1,
@@ -1443,6 +1505,11 @@ function render_topas_calculator($atts)
  */
 function izex_get_compare_stations()
 {
+    return izex_cache_remember('compare_stations', 6 * HOUR_IN_SECONDS, 'izex_build_compare_stations');
+}
+
+function izex_build_compare_stations()
+{
     $query = new WP_Query(array(
         'post_type'      => 'stations',
         'posts_per_page' => -1,
@@ -1529,6 +1596,9 @@ function izex_render_work_card($post_id)
                     'loading'  => 'lazy',
                     'decoding' => 'async',
                     'alt'      => trim(get_the_title($post_id) . ($location ? ', ' . $location : '')),
+                    // Слот карточки работы — 300–380 px, а sizes по умолчанию
+                    // говорит браузеру «768px» (задача #25).
+                    'sizes'    => '(max-width: 600px) 92vw, (max-width: 1024px) 45vw, 380px',
                 ));
                 ?>
             <?php else : ?>
@@ -1685,6 +1755,13 @@ function render_topas_works_block($atts)
  * @return array<int,array{title:string,url:string,equipment:int,install:int,turnkey:int}>
  */
 function izex_get_prices_table()
+{
+    // Страница /prices отвечала ~2 с: та же выборка каталога с десятком
+    // carbon_get_post_meta() на модель (задача #25).
+    return izex_cache_remember('prices_table', 6 * HOUR_IN_SECONDS, 'izex_build_prices_table');
+}
+
+function izex_build_prices_table()
 {
     // Раньше таблица строилась из izex_get_calculator_stations(), а та отбрасывает
     // станции без crb_model_number (для подбора модели номер обязателен). Из-за

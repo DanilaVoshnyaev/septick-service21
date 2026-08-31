@@ -98,10 +98,17 @@ $company = getCompanyContacts();
 
             // Сортировка по цене (берём цену ТОПАС-С, иначе обычную ТОПАС).
             // По умолчанию — от дешёвых к дорогим. Товары без цены («По запросу») — в конце.
+            // Цены считаем один раз: внутри usort() каждое сравнение дёргало
+            // carbon_get_post_meta() дважды (задача #25).
+            $price_map = array();
+            foreach ($all_stations as $p) {
+                $price_map[$p->ID] = (float) (carbon_get_post_meta($p->ID, 'crb_price_topas_s') ?: carbon_get_post_meta($p->ID, 'crb_price'));
+            }
+
             $sort_desc = ($selected_sort === 'price_desc');
-            usort($all_stations, function ($a, $b) use ($sort_desc) {
-                $pa = (float) (carbon_get_post_meta($a->ID, 'crb_price_topas_s') ?: carbon_get_post_meta($a->ID, 'crb_price'));
-                $pb = (float) (carbon_get_post_meta($b->ID, 'crb_price_topas_s') ?: carbon_get_post_meta($b->ID, 'crb_price'));
+            usort($all_stations, function ($a, $b) use ($sort_desc, $price_map) {
+                $pa = $price_map[$a->ID];
+                $pb = $price_map[$b->ID];
                 if ($pa <= 0 && $pb <= 0) {
                     return 0;
                 }

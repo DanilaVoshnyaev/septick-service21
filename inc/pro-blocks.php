@@ -45,6 +45,13 @@ function izex_pro_station_data($post_id)
 {
     $post_id = (int) $post_id;
 
+    // Одну и ту же станцию за запрос спрашивают карточка каталога, карточка
+    // в hero и данные калькулятора — считаем один раз (задача #25).
+    static $cache = array();
+    if (isset($cache[$post_id])) {
+        return $cache[$post_id];
+    }
+
     $to_int = function ($raw) {
         return (int) preg_replace('/[^\d]/', '', (string) $raw);
     };
@@ -86,7 +93,7 @@ function izex_pro_station_data($post_id)
         $specs[] = array('label' => 'Водоотведение', 'value' => $disposal);
     }
 
-    return array(
+    $data = array(
         'id'          => $post_id,
         'title'       => get_the_title($post_id),
         'url'         => get_permalink($post_id),
@@ -104,6 +111,10 @@ function izex_pro_station_data($post_id)
         'is_hit'      => (bool) carbon_get_post_meta($post_id, 'crb_is_hit'),
         'specs'       => $specs,
     );
+
+    $cache[$post_id] = $data;
+
+    return $data;
 }
 
 /**
@@ -113,6 +124,20 @@ function izex_pro_station_data($post_id)
  * @return array<string,mixed>|null
  */
 function izex_pro_hero_station()
+{
+    // Считаем один раз за запрос: карточку в hero спрашивает и главная,
+    // и (при откате) прежние шаблоны. false — «ещё не считали», null —
+    // «станций нет» (задача #25).
+    static $hero = false;
+    if ($hero !== false) {
+        return $hero;
+    }
+    $hero = izex_pro_find_hero_station();
+
+    return $hero;
+}
+
+function izex_pro_find_hero_station()
 {
     $query = new WP_Query(array(
         'post_type'      => 'stations',
@@ -514,7 +539,12 @@ function render_topas_estimate($atts)
 add_shortcode('topas_compare_inline', 'render_topas_compare_inline');
 function render_topas_compare_inline($atts)
 {
-    $atts = shortcode_atts(array('default' => 3), $atts, 'topas_compare_inline');
+    // bare="1" — вывод без <section> и .container: так блок вставляется прямо
+    // в контейнер каталога, сразу под карточками, без двойных отступов
+    // (задача #22 — раньше до таблицы нужно было проскроллить CTA и вернуться
+    // обратно к карточкам, чтобы отметить модели).
+    $atts = shortcode_atts(array('default' => 3, 'bare' => 0), $atts, 'topas_compare_inline');
+    $bare = !empty($atts['bare']);
 
     // Без данных таблица не построится — не выводим пустую секцию.
     $stations = izex_get_compare_stations();
@@ -523,8 +553,12 @@ function render_topas_compare_inline($atts)
     }
 
     ob_start(); ?>
+    <?php if (!$bare) : ?>
     <section class="pro-compare" id="compare">
         <div class="container">
+    <?php else : ?>
+        <div class="pro-compare pro-compare--bare" id="compare">
+    <?php endif; ?>
             <div class="section-header">
                 <span class="section-label">Сравнение</span>
                 <h2 class="section-title">Сравнение моделей</h2>
@@ -540,8 +574,12 @@ function render_topas_compare_inline($atts)
             <div class="pro-compare__scroll" data-compare-inline data-compare-default="<?php echo esc_attr((int) $atts['default']); ?>">
                 <div class="pro-compare__empty">Загружаем характеристики…</div>
             </div>
+    <?php if (!$bare) : ?>
         </div>
     </section>
+    <?php else : ?>
+        </div>
+    <?php endif; ?>
     <?php
     return ob_get_clean();
 }

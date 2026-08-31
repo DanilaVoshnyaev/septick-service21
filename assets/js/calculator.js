@@ -245,6 +245,8 @@
         // человек не выбран, остальное — самый частый случай.
         var answers = { people: '', disposal: 'gravity', depth: 'standard', ugv: 'no' };
 
+        var sticky = initStickyBar(root);
+
         function compute() {
             return computeEstimate(answers);
         }
@@ -301,6 +303,7 @@
                 : '';
 
             var range = money(r.low) + ' – ' + money(r.high);
+            sticky.set(r.modelName, range, r.params);
 
             resultBox.innerHTML =
                 '<span class="calc-live__result-eyebrow">✦ Рекомендуем вам</span>' +
@@ -326,10 +329,12 @@
         function render() {
             var people = parseInt(answers.people, 10) || 0;
             if (!people) {
+                sticky.clear();
                 renderPlaceholder();
                 return;
             }
             if (people >= BIG_HOUSE_FROM) {
+                sticky.clear();
                 renderIndividual(
                     'Большой дом на 7+ человек',
                     'Для такого объёма подойдут ТОПАС-С 8 или ТОПАС-С 10. Подберём и рассчитаем ' +
@@ -342,6 +347,7 @@
 
             var st = pickStation(people, answers);
             if (!st) {
+                sticky.clear();
                 renderIndividual(
                     'Подберём модель вручную',
                     'Каталог сейчас обновляется. Оставьте заявку — инженер подберёт станцию и назовёт цену.',
@@ -353,6 +359,7 @@
             // Ёмкости 6 и 8 в каталоге нет: показывать вместо них станцию на
             // 9–10 человек нельзя — это другая модель и +42 % к цене.
             if (capacityTooBig(st, people)) {
+                sticky.clear();
                 renderIndividual(
                     'Дом на ' + people + ' человек',
                     'Для этого объёма нужна ТОПАС-С ' + people + ' — её цену инженер назовёт ' +
@@ -382,7 +389,9 @@
         });
 
         // CTA «Получить точный расчёт» — предзаполняем и открываем модалку заказа.
-        root.addEventListener('click', function (e) {
+        // Слушаем на document: та же кнопка есть в липкой панели, а она лежит
+        // в <body>, а не внутри калькулятора.
+        document.addEventListener('click', function (e) {
             var cta = e.target.closest('[data-calc-cta]');
             if (!cta) return;
             openOrderModal(
@@ -393,6 +402,87 @@
         });
 
         render();
+    }
+
+    // ===== Липкая панель с подобранной моделью (задача #26) =====
+    //
+    // После расчёта пользователь уходит вниз по странице и теряет результат:
+    // модель и цену приходится искать заново. Панель закрепляется внизу, когда
+    // калькулятор ушёл из виду, и держит при себе кнопку заявки — выбранная
+    // модель и параметры уезжают в форму и дальше в CRM тем же путём, что и из
+    // самого калькулятора. На мобильных не показываем: там снизу уже стоит
+    // .mobile-action-bar.
+    function createStickyBar() {
+        var el = document.createElement('div');
+        el.className = 'calc-sticky';
+        el.setAttribute('aria-live', 'polite');
+        el.hidden = true;
+        el.innerHTML =
+            '<div class="calc-sticky__info">' +
+                '<span class="calc-sticky__eyebrow">Ваш подбор</span>' +
+                '<span class="calc-sticky__model" data-sticky-model></span>' +
+            '</div>' +
+            '<div class="calc-sticky__price">' +
+                '<span class="calc-sticky__eyebrow">Под ключ</span>' +
+                '<span class="calc-sticky__value" data-sticky-price></span>' +
+            '</div>' +
+            '<button type="button" class="calc-sticky__cta" data-calc-cta ' +
+                'data-product="" data-params="" data-range="">Получить точный расчёт</button>' +
+            '<button type="button" class="calc-sticky__close" aria-label="Скрыть панель">×</button>';
+        document.body.appendChild(el);
+
+        el.querySelector('.calc-sticky__close').addEventListener('click', function () {
+            el.hidden = true;
+            el.dataset.dismissed = '1';
+        });
+
+        return el;
+    }
+
+    function initStickyBar(root) {
+        var bar = null;
+        var state = null;   // последний расчёт или null
+
+        // Панель нужна, только когда калькулятор уехал из видимой области.
+        var outOfView = false;
+        if ('IntersectionObserver' in window) {
+            new IntersectionObserver(function (entries) {
+                outOfView = !entries[0].isIntersecting;
+                sync();
+            }, { threshold: 0 }).observe(root);
+        }
+
+        function sync() {
+            if (!state) {
+                if (bar) bar.hidden = true;
+                return;
+            }
+            if (!bar) bar = createStickyBar();
+            if (bar.dataset.dismissed === '1') return;
+
+            bar.querySelector('[data-sticky-model]').textContent = state.model;
+            bar.querySelector('[data-sticky-price]').textContent = state.range;
+            var cta = bar.querySelector('[data-calc-cta]');
+            cta.setAttribute('data-product', state.model);
+            cta.setAttribute('data-params', state.params);
+            cta.setAttribute('data-range', state.range);
+            bar.hidden = !outOfView;
+        }
+
+        return {
+            // Расчёт готов: модель, вилка цены, параметры.
+            set: function (model, range, params) {
+                state = { model: model, range: range, params: params };
+                // Новый расчёт — панель снова актуальна, даже если её закрывали.
+                if (bar) delete bar.dataset.dismissed;
+                sync();
+            },
+            // Числа человек не выбрано или ушли на индивидуальный подбор.
+            clear: function () {
+                state = null;
+                sync();
+            }
+        };
     }
 
     // Открытие существующей модалки заказа с предзаполнением выбранных параметров.

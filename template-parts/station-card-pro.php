@@ -35,11 +35,15 @@ $server_hidden = !empty($args['server_hidden']);
             <?php
             // the_post_thumbnail вместо <img src>: WordPress сам добавит srcset и
             // width/height — браузер возьмёт подходящий размер и не «прыгнет» вёрсткой.
+            // sizes по фактической ширине слота: карточка в сетке — это 300–360 px,
+            // а по умолчанию WordPress пишет sizes="… 768px" и браузер тянет
+            // самый большой файл srcset (задача #25).
             echo get_the_post_thumbnail($station_id, 'medium_large', array(
                 'loading'  => 'lazy',
                 'decoding' => 'async',
                 'alt'      => $d['title'] . ' — септик ТОПАС',
                 'itemprop' => 'image',
+                'sizes'    => '(max-width: 600px) 92vw, (max-width: 1024px) 45vw, 360px',
             ));
             ?>
         </a>

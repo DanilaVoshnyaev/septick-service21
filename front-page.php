@@ -199,10 +199,18 @@ $company = getCompanyContacts();
         }
 
         // Сортировка по цене: по умолчанию от дешёвых к дорогим, «По запросу» — в конец.
+        // Цены считаем один раз в массив: внутри usort() каждое сравнение дёргало
+        // carbon_get_post_meta() ещё дважды — на 22 моделях это ~180 лишних
+        // обращений к метаданным на запрос (задача #25).
+        $price_map = array();
+        foreach ($all_stations as $p) {
+            $price_map[$p->ID] = (float) (carbon_get_post_meta($p->ID, 'crb_price_topas_s') ?: carbon_get_post_meta($p->ID, 'crb_price'));
+        }
+
         $sort_desc = ($f_sort === 'price_desc');
-        usort($all_stations, function ($a, $b) use ($sort_desc) {
-            $pa = (float) (carbon_get_post_meta($a->ID, 'crb_price_topas_s') ?: carbon_get_post_meta($a->ID, 'crb_price'));
-            $pb = (float) (carbon_get_post_meta($b->ID, 'crb_price_topas_s') ?: carbon_get_post_meta($b->ID, 'crb_price'));
+        usort($all_stations, function ($a, $b) use ($sort_desc, $price_map) {
+            $pa = $price_map[$a->ID];
+            $pb = $price_map[$b->ID];
             if ($pa <= 0 && $pb <= 0) {
                 return 0;
             }
@@ -284,7 +292,13 @@ $company = getCompanyContacts();
                     </div>
                 <?php endif; ?>
 
-                <div class="catalog-cta-premium" style="margin-top: 20px;background-image: url('<?=assets('/images/cta-opt.jpg')?>');">
+                <?php // Сравнение моделей — сразу под карточками: отсюда видно, какие
+                      // модели отмечены, и не нужно скроллить назад к каталогу (задача #22). ?>
+                <?php echo do_shortcode('[topas_compare_inline default="3" bare="1"]'); ?>
+
+                <?php // Фон вынесен в front-page.css: там WebP через image-set (89 КБ
+                      // вместо 179 КБ jpg) с jpg-фолбэком — задача #25. ?>
+                <div class="catalog-cta-premium" style="margin-top: 20px;">
                     <div class="catalog-cta-premium--block">
                         <p>Не нашли подходящую модель? <strong>Мы поставляем всю линейку ТОПАС</strong></p>
                         <a href="tel:<?php echo $company['phone_clean']; ?>" class="phone-link-premium"><?php echo $company['phone']; ?></a>
@@ -295,8 +309,8 @@ $company = getCompanyContacts();
             </div>
         </section>
 
-        <?php // Сравнение моделей и смета — блоки из прототипа, данные общие со /prices. ?>
-        <?php echo do_shortcode('[topas_compare_inline default="3"]'); ?>
+        <?php // Смета — данные общие со /prices. Сравнение переехало в секцию
+              // каталога, сразу под карточки. ?>
         <?php echo do_shortcode('[topas_estimate]'); ?>
 
         <?php // Преимущества оборудования: перенесены из-под hero — там они
