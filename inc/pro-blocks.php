@@ -93,6 +93,9 @@ function izex_pro_station_data($post_id)
         'img'         => get_the_post_thumbnail_url($post_id, 'medium_large') ?: '',
         'price'       => $display,
         'old_price'   => ($old > $display) ? $old : 0,
+        // «Под ключ» — главная цифра в карточке и hero (задача #10),
+        // поэтому отдаём и слагаемые: станция + базовый монтаж.
+        'install'     => izex_pro_install_base(),
         'turnkey'     => $display > 0 ? $display + izex_pro_install_base() : 0,
         'people_text' => $people_text,
         'people_min'  => $people_min,

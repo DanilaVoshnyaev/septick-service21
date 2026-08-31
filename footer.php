@@ -48,7 +48,7 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
                         <span class="social-label">Мы в соцсетях:</span>
                         <div class="social-links">
                             <a href="https://max.ru/u/f9LHodD0cOI_AGyWf9AKcrl72RIFsKRL7vOApMiqwT37En8F81IprazW1ro" class="social-link" aria-label="MAX">
-                                <img src="https://maxicons.ru/icons/MAX.svg" alt="Иконка MAX" width="32" height="32">
+                                <img src="<?=assets('/images/social/max.svg')?>" alt="Иконка MAX" width="32" height="32" loading="lazy" decoding="async">
                             </a>
                         </div>
                     </div>
@@ -296,11 +296,12 @@ if (function_exists('izex_pro_render_dock')) {
 
 <div class="cookie-consent" id="cookieConsent" role="dialog" aria-live="polite" aria-label="Уведомление об использовании cookie" hidden>
     <div class="cookie-consent__inner">
+        <?php // Текст сокращён до одной строки: на 375 px прежние четыре строки
+              // занимали 239 px — треть первого экрана (задача #7). Полное описание
+              // обработки данных — на странице политики. ?>
         <p class="cookie-consent__text">
-            Мы используем файлы cookie и обрабатываем пользовательские данные (IP-адрес, сведения о действиях
-            на сайте) для работы сайта, аналитики и улучшения сервиса. Продолжая пользоваться сайтом, вы
-            соглашаетесь с этим в соответствии с
-            <a href="/privacy/">Политикой конфиденциальности</a>.
+            Мы используем cookie и данные о посещении. Продолжая, вы принимаете
+            <a href="/privacy/">политику конфиденциальности</a>.
         </p>
         <button type="button" class="cookie-consent__btn" id="cookieConsentAccept">Принять</button>
     </div>

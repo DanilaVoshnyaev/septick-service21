@@ -33,43 +33,10 @@ $company = getCompanyContacts();
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?><header class="site-header-premium" id="site-header-premium">
 
-        <div class="header-top-premium">
-            <div class="container">
-                <div class="header-top-inner">
-
-                    <div class="header-top-left">
-                        <div class="top-info-item">
-                            <svg class="top-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
-                            </svg>
-                            <span><?php echo esc_html($company['work_time']); ?></span>
-                        </div>
-                    </div>
-
-                    <!-- Right: Contacts & CTA -->
-                    <div class="header-top-right">
-                        <a href="mailto:<?php echo antispambot($company['email']); ?>" class="top-contact-link">
-                            <svg class="top-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22,6 -10,7L2,6"/>
-                            </svg>
-                            <?php echo antispambot($company['email']); ?>
-                        </a>
-
-                        <div class="top-phones-wrapper">
-                            <a href="tel:<?php echo $company['phone_clean']; ?>" class="top-phone-primary"><?php echo esc_html($company['phone']); ?></a>
-
-                        </div>
-
-                        <button class="btn-premium btn-sm btn-ghost open-modal" data-modal="callback">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                            </svg>
-                            <span>Заказать звонок</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <?php // Верхняя полоса (часы работы, email, «Заказать звонок») убрана: она
+              // занимала ~40 px и вместе с ней главная кнопка hero уходила за первый
+              // экран на 1440×900 (задача #6). Телефон и «Вызвать инженера» остались
+              // в основной строке шапки, email — в футере и на странице контактов. ?>
 
         <!-- Main Header Premium -->
         <div class="header-main-premium">
@@ -114,11 +81,14 @@ $company = getCompanyContacts();
 
                         <!-- Search Toggle -->
 
-                        <!-- Phone (tablet) -->
-                        <a href="tel:<?php echo $company['phone_clean']; ?>" class="header-action-btn-premium phone-tablet">
+                        <?php // Телефон в шапке: на десктопе — номером (раньше он был только
+                              // в убранной верхней полосе), на планшете и мобильном — иконкой.
+                              // Зона нажатия не меньше 44 px (задача #18). ?>
+                        <a href="tel:<?php echo $company['phone_clean']; ?>" class="header-phone-premium" aria-label="Позвонить: <?php echo esc_attr($company['phone']); ?>">
                             <svg class="action-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
                             </svg>
+                            <span class="header-phone-premium__num"><?php echo esc_html($company['phone']); ?></span>
                         </a>
 
                         <!-- CTA Button -->
@@ -221,7 +191,7 @@ $company = getCompanyContacts();
                 <span class="social-label">Мы в соцсетях:</span>
                 <div class="social-links-premium">
                     <a href="https://max.ru/u/f9LHodD0cOI_AGyWf9AKcrl72RIFsKRL7vOApMiqwT37En8F81IprazW1ro" class="social-link-premium" aria-label="MAX">
-                        <img src="https://maxicons.ru/icons/MAX.svg" alt="Иконка MAX" width="32" height="32">
+                        <img src="<?=assets('/images/social/max.svg')?>" alt="Иконка MAX" width="32" height="32" loading="lazy" decoding="async">
                     </a>
                 </div>
             </div>

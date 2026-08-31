@@ -2,7 +2,6 @@
 // ===== header.php =====
         document.addEventListener('DOMContentLoaded', function() {
             const header = document.getElementById('site-header-premium');
-            const headerTop = document.querySelector('.header-top-premium');
             let lastScrollY = window.scrollY;
 
             // Sticky header logic
@@ -10,10 +9,8 @@
                 const currentScrollY = window.scrollY;
                 if (currentScrollY > 30) {
                     header.classList.add('scrolled');
-                    headerTop?.classList.add('hidden');
                 } else {
                     header.classList.remove('scrolled');
-                    headerTop?.classList.remove('hidden');
                 }
                 lastScrollY = currentScrollY;
             }

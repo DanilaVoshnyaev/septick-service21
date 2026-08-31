@@ -40,15 +40,6 @@
     border-bottom-color: rgba(21, 128, 61, 0.3);
 }
 
-.site-header-premium.scrolled .header-top-premium {
-    opacity: 0;
-    height: 0;
-    padding: 0;
-    border: none;
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
-
 /* Container */
 .container {
     width: 100%;
@@ -57,14 +48,7 @@
     padding: 0 clamp(16px, 4vw, 32px);
 }
 
-/* ===== TOP BAR (светлый) ===== */
-.header-top-premium {
-    background: rgba(248, 250, 252, 0.9);
-    border-bottom: 1px solid var(--header-border);
-    padding: 6px 0;
-    font-size: 13px;
-    transition: var(--transition);
-}
+/* Верхняя полоса (.header-top-premium) убрана из шапки — задача #6. */
 
 .header-top-inner {
     display: flex;
@@ -300,11 +284,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 24px;
+    flex-wrap: nowrap;
+    gap: 16px;
 }
 
 /* ===== LOGO ===== */
 .header-logo-premium {
+    flex: 0 0 auto;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -331,7 +317,7 @@
 }
 
 .logo-tagline {
-    font-size: 10px;
+    font-size: 13px;
     color: var(--header-text-muted);
     text-transform: uppercase;
     letter-spacing: 1.5px;
@@ -341,7 +327,8 @@
 
 /* ===== NAVIGATION ===== */
 .header-nav-premium {
-    flex: 1;
+    flex: 1 1 auto;
+    min-width: 0;
     display: flex;
     justify-content: center;
 }
@@ -350,7 +337,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    flex-wrap: nowrap;
+    gap: 0;
     list-style: none;
     padding: 0;
     margin: 0;
@@ -367,9 +355,13 @@
     position: relative;
 }
 
+/* padding 12px вместо 10px — пункт меню становится 44 px по высоте (задача #18).
+   nowrap — иначе при узком окне «Наши работы» ломалось на две строки и шапка
+   визуально становилась двухэтажной. */
 .nav-list-premium > li > a {
     display: block;
-    padding: 10px 14px;
+    white-space: nowrap;
+    padding: 12px 11px;
     color: var(--header-text-muted);
     text-decoration: none;
     font-weight: 500;
@@ -445,8 +437,10 @@
 
 /* ===== HEADER ACTIONS ===== */
 .header-actions-premium {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
+    flex-wrap: nowrap;
     gap: 6px;
 }
 
@@ -477,8 +471,39 @@
     transform: scale(1.1);
 }
 
-.header-action-btn-premium.phone-tablet {
-    display: none;
+/* Телефон в шапке: номером на десктопе, иконкой на планшете и мобильном.
+   min-height 44 px — минимальная зона нажатия (задача #18). */
+.header-phone-premium {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 12px;
+    border-radius: 10px;
+    color: var(--header-text);
+    font-weight: 600;
+    font-size: 15px;
+    white-space: nowrap;
+    transition: var(--transition);
+}
+
+.header-phone-premium:hover {
+    background: rgba(21, 128, 61, 0.08);
+    color: var(--header-green);
+}
+
+/* Номер рядом с меню и кнопкой влезает только на широких окнах: ниже 1280 px
+   оставляем иконку, иначе шапка перестаёт держаться в одну строку. */
+@media (max-width: 1279px) {
+    .header-phone-premium {
+        min-width: 44px;
+        padding: 0 8px;
+    }
+
+    .header-phone-premium__num {
+        display: none;
+    }
 }
 
 /* ===== HAMBURGER ===== */
@@ -600,7 +625,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 12px;
+    font-size: 13px;
     padding: 8px 12px;
     border-radius: 6px;
     transition: all 0.2s ease;
@@ -731,7 +756,7 @@
 }
 
 .mobile-section-title {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--header-green);
     text-transform: uppercase;
     letter-spacing: 1.5px;
@@ -773,7 +798,7 @@
 
 .mobile-menu-social .social-label {
     display: block;
-    font-size: 11px;
+    font-size: 13px;
     color: var(--header-text-muted);
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -941,7 +966,7 @@
 }
 
 .form-privacy {
-    font-size: 11px;
+    font-size: 13px;
     color: var(--header-text-muted);
     text-align: center;
     margin-top: 4px;
@@ -954,6 +979,19 @@
 
 .form-privacy a:hover {
     text-decoration: underline;
+}
+
+/* Промежуточная ширина: меню из 7 пунктов + логотип + телефон + кнопка почти
+   упираются в 1200 px — поджимаем меню, а не переносим шапку на вторую строку. */
+@media (max-width: 1199px) and (min-width: 1025px) {
+    .nav-list-premium > li > a {
+        padding: 12px 8px;
+        font-size: 13.5px;
+    }
+
+    .header-main-inner {
+        gap: 10px;
+    }
 }
 
 /* ===== RESPONSIVE ===== */
@@ -1023,20 +1061,25 @@
     }
 }
 
-/* ===== SPACE FOR FIXED HEADER ===== */
+/* ===== SPACE FOR FIXED HEADER =====
+   После удаления верхней полосы шапка стала ~78 px на десктопе и ~64 px
+   на мобильном (логотип 40 px + отступы 12 px) — задачи #6 и #7. */
 body {
-    padding-top: 120px;
-}
-
-@media (max-width: 1024px) {
-    body {
-        padding-top: 100px;
-    }
+    padding-top: 82px;
 }
 
 @media (max-width: 768px) {
     body {
-        padding-top: 80px;
+        padding-top: 66px;
+    }
+
+    .header-main-premium {
+        padding: 12px 0;
+    }
+
+    .header-logo-premium img {
+        height: 40px;
+        width: auto;
     }
 }
 
@@ -1120,7 +1163,7 @@ body {
 /* Social Links */
 .footer-social .social-label {
     display: block;
-    font-size: 12px;
+    font-size: 13px;
     color: var(--footer-green);
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -1171,10 +1214,14 @@ body {
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0;
 }
 
+/* Ссылки футера были ~22 px по высоте — доводим до 44 px (задача #18). */
 .footer-menu li a, .footer-list li a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
     color: var(--footer-text-muted);
     text-decoration: none;
     transition: var(--transition);
@@ -1221,6 +1268,9 @@ body {
 }
 
 .contact-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     color: var(--footer-text);
     font-weight: 500;
     text-decoration: none;
@@ -1530,7 +1580,7 @@ body {
 }
 
 .form-note, .form-privacy {
-    font-size: 11px;
+    font-size: 13px;
     color: var(--footer-text-muted);
     text-align: center;
 }
@@ -1694,7 +1744,7 @@ body {
     color: white; /* ✅ Было: color: #0f172a */
     padding: 0.35rem 0.85rem;
     border-radius: 20px;
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     font-weight: 700;
     text-transform: uppercase;
     display: inline-flex;
@@ -2087,7 +2137,7 @@ body {
     gap: 0.3rem;
     padding: 0.25rem 0.6rem;
     border-radius: 12px;
-    font-size: 0.7rem;
+    font-size: 0.8125rem;
     font-weight: 600;
     color: #fff;
     text-transform: uppercase;
@@ -2333,7 +2383,7 @@ body {
     gap: 0.4rem;
     padding: 0.4rem 0.9rem;
     border-radius: 20px;
-    font-size: 0.8rem;
+    font-size: 0.8125rem;
     font-weight: 600;
     color: #fff;
 }
@@ -2511,7 +2561,7 @@ body {
     color: #fff;
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
@@ -3032,7 +3082,7 @@ body {
 }
 
 .modal__note {
-    font-size: 0.8rem;
+    font-size: 0.8125rem;
     color: var(--text-muted);
     text-align: center;
     margin-top: 1rem;
@@ -3123,7 +3173,7 @@ body {
 .badge {
     padding: 0.35rem 0.8rem;
     border-radius: 20px;
-    font-size: 0.8rem;
+    font-size: 0.8125rem;
     font-weight: 600;
     color: #fff;
 }
@@ -3241,7 +3291,7 @@ body {
     color: #fff;
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
@@ -3655,7 +3705,7 @@ body {
 
 .premium-contact-form .form-error {
     color: #ef4444;
-    font-size: 12px;
+    font-size: 13px;
     margin-top: 4px;
     display: none;
 }
@@ -3730,7 +3780,7 @@ body {
 .station-card__price-label {
     color: var(--text-muted);
     display: block;
-    font-size: 0.8rem;
+    font-size: 0.8125rem;
     font-weight: 600;
     margin-bottom: 0.3rem;
     text-transform: uppercase;
@@ -3739,7 +3789,7 @@ body {
 .station-price-compressors {
     color: var(--text-muted);
     display: block;
-    font-size: 0.78rem;
+    font-size: 0.8125rem;
     margin-bottom: 0.4rem;
 }
 
@@ -3751,7 +3801,7 @@ body {
     border-radius: 999px;
     color: #15803d;
     display: inline-flex;
-    font-size: 0.78rem;
+    font-size: 0.8125rem;
     font-weight: 600;
     gap: 0.35rem;
     margin-bottom: 0.6rem;
@@ -3822,11 +3872,40 @@ body {
     opacity: 0.9;
 }
 
+/* Нижняя панель действий (.mobile-action-bar) стоит на bottom: 0 и высотой
+   ~59 px — поднимаем баннер над ней, иначе кнопка «Принять» под панелью. */
+@media (max-width: 768px) {
+    .cookie-consent {
+        bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+    }
+}
+
+/* Баннер занимал 239 px на 375×812 — треть первого экрана. Держим его
+   в одну строку: короткий текст + кнопка, ~56 px по высоте (задача #7). */
 @media (max-width: 640px) {
+    .cookie-consent {
+        left: 8px;
+        right: 8px;
+        padding: 8px 10px;
+        border-radius: 12px;
+    }
+
     .cookie-consent__inner {
-        flex-direction: column;
-        align-items: stretch;
-        text-align: center;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        text-align: left;
+    }
+
+    .cookie-consent__text {
+        font-size: 13px;
+        line-height: 1.35;
+    }
+
+    .cookie-consent__btn {
+        padding: 0.5rem 1rem;
+        font-size: 13px;
+        min-height: 36px;
     }
 }
 
@@ -3863,7 +3942,7 @@ body {
     border-radius: 999px;
     color: #fff;
     display: inline-flex;
-    font-size: 0.78rem;
+    font-size: 0.8125rem;
     font-weight: 700;
     gap: 0.35rem;
     margin-bottom: 0.75rem;
@@ -3918,7 +3997,7 @@ body {
 
 .catalog-filter__field label {
     color: var(--text-muted);
-    font-size: 0.8rem;
+    font-size: 0.8125rem;
     font-weight: 600;
 }
 
@@ -4153,7 +4232,7 @@ body {
         border: none;
         color: #1e293b;
         font-family: inherit;
-        font-size: 0.72rem;
+        font-size: 0.8125rem;
         font-weight: 600;
         text-decoration: none;
         cursor: pointer;

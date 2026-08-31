@@ -18,24 +18,19 @@ $company = getCompanyContacts();
     <main class="main-content">
 
         <section class="hero-premium">
-            <div class="hero-bg-image" style="background-image: url('https://sun9-56.userapi.com/s/v1/ig2/kbikJlm6FecDGc7rQ2y4nLt1d_CnM77y-rFvuDia8OG9XFQWu9PPrVRs-TWwpSV223IrJLI-IwP-QDFyB20lbQCZ.jpg?quality=95&as=32x24,48x36,72x54,108x81,160x120,240x180,360x270,480x360,540x405,640x480,720x540,1080x810,1280x960,1440x1080,1448x1086&from=bu&u=dSfrTf5fBdqBF5EfR4h6Xq0IypKt2NkMsitYpkqpHv8&cs=1448x0');"></div>
+            <?php // Фон hero лежит в теме (assets/images/hero) — раньше он тянулся
+                  // с sun9-56.userapi.com по ссылке со служебными параметрами и мог
+                  // отвалиться в любой момент. Сам файл подключён в front-page.css,
+                  // preload — в izex_resource_hints() (задача #9). ?>
+            <div class="hero-bg-image"></div>
             <div class="hero-bg-overlay"></div>
 
             <div class="container hero-layout">
                 <div class="hero-content">
 
-                    <!-- Телефон + кнопка -->
-                    <div class="hero-contacts-top animate-fade-up">
-                        <a href="tel:<?php echo $company['phone_clean']; ?>" class="hero-phone-link">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                            </svg>
-                            <span><?php echo $company['phone']; ?></span>
-                        </a>
-                        <button class="btn-premium btn-sm btn-outline open-modal" data-modal="callback">
-                            Заказать звонок
-                        </button>
-                    </div>
+                    <?php // Строка «телефон + Заказать звонок» из hero убрана: телефон есть
+                          // в шапке и в нижней панели на мобильных, а «Заказать звонок» был
+                          // третьим конкурирующим действием в первом экране (задачи #7, #17). ?>
 
                     <!-- Заголовок -->
                     <h1 class="hero-title animate-fade-up delay-1">
@@ -49,6 +44,23 @@ $company = getCompanyContacts();
                         выезд инженера и официальная гарантия на оборудование и работы.
                     </p>
 
+                    <!-- Кнопки -->
+                    <div class="hero-buttons animate-fade-up delay-4">
+                        <a href="#calc" class="btn-premium btn-primary">
+                            <span class="btn-text">Подобрать станцию за 30 секунд</span>
+                            <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                        <?php // Второе действие — тихой ссылкой: рядом с главной кнопкой две
+                              // равнозначные кнопки спорили за внимание (см. components.css, п.5). ?>
+                        <button class="btn-quiet open-modal" data-modal="engineer">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+                            </svg>
+                            <span>Вызвать инженера бесплатно</span>
+                        </button>
+                    </div>
                     <!-- Статистика -->
                     <div class="hero-stats animate-fade-up delay-3">
                         <div class="stat-item">
@@ -62,23 +74,6 @@ $company = getCompanyContacts();
                         </div>
                     </div>
 
-                    <!-- Кнопки -->
-                    <div class="hero-buttons animate-fade-up delay-4">
-                        <a href="#catalog" class="btn-premium btn-primary">
-                            <span class="btn-text">Подобрать станцию</span>
-                            <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </a>
-                        <?php // Второе действие — тихой ссылкой: рядом с главной кнопкой две
-                              // равнозначные кнопки спорили за внимание (см. components.css, п.5). ?>
-                        <button class="btn-quiet open-modal" data-modal="engineer">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
-                            </svg>
-                            <span>Бесплатный выезд инженера</span>
-                        </button>
-                    </div>
                 </div>
 
                 <?php
@@ -104,10 +99,17 @@ $company = getCompanyContacts();
                             <a href="<?php echo esc_url($hero_station['url']); ?>"><?php echo esc_html($hero_station['title']); ?></a>
                         </div>
 
-                        <?php if ($hero_station['price']) : ?>
+                        <?php // Крупно — цена «под ключ», мелко — из чего она складывается
+                              // (задача #10): раньше в hero крупно стояла цена станции без
+                              // монтажа, и её сравнивали с ценами конкурентов «под ключ». ?>
+                        <?php if ($hero_station['turnkey']) : ?>
                             <div class="pro-herocard__price">
-                                <span class="pro-herocard__price-label">станция от</span>
-                                <span class="pro-herocard__price-value"><?php echo esc_html(izex_pro_money($hero_station['price'])); ?></span>
+                                <span class="pro-herocard__price-label">под ключ от</span>
+                                <span class="pro-herocard__price-value"><?php echo esc_html(izex_pro_money($hero_station['turnkey'])); ?></span>
+                                <span class="pro-herocard__price-parts">
+                                    станция <?php echo esc_html(izex_pro_money($hero_station['price'])); ?>
+                                    + монтаж <?php echo esc_html(izex_pro_money($hero_station['install'])); ?>
+                                </span>
                             </div>
                         <?php endif; ?>
 
@@ -126,8 +128,9 @@ $company = getCompanyContacts();
             </div>
         </section>
 
-        <?php // Бегущая строка доверия — сразу под hero, как в прототипе. ?>
-        <?php echo do_shortcode('[topas_trust_marquee]'); ?>
+        <?php // Бегущая строка доверия убрана (задача #27): она повторяла те же шесть
+              // тезисов, что и блок «Почему мы», бесконечно анимировалась и имела
+              // контраст 2,25–3,62:1. Шорткод [topas_trust_marquee] остался в теме. ?>
         <?php
         // Здесь был второй SEO-блок с display:none — полная копия текста и того же
         // <h2>, что в видимом блоке внизу страницы. Скрытый текст с дублем заголовка
@@ -152,8 +155,11 @@ $company = getCompanyContacts();
         $all_stations = $stations_query->posts;
 
         // Фильтр по пользователям: число из текста (или из названия), учитываем диапазон.
-        if ($f_capacity) {
-            $all_stations = array_values(array_filter($all_stations, function ($p) use ($f_capacity) {
+        // Раньше несовпавшие станции просто выбрасывались из выборки, и смена фильтра
+        // требовала перезагрузки страницы. Теперь сервер отдаёт весь каталог, а
+        // совпадение помечает у карточки — фильтрует и сортирует клиент (задача #14).
+        $matches_filter = function ($p) use ($f_capacity, $f_drainage) {
+            if ($f_capacity) {
                 $text = (string) carbon_get_post_meta($p->ID, 'crb_people_count_text');
                 preg_match_all('/\d+/', $text, $m);
                 $nums = $m[0];
@@ -165,20 +171,31 @@ $company = getCompanyContacts();
                     return false;
                 }
                 $nums = array_map('intval', $nums);
-                return $f_capacity >= min($nums) && $f_capacity <= max($nums);
-            }));
-        }
+                if ($f_capacity < min($nums) || $f_capacity > max($nums)) {
+                    return false;
+                }
+            }
 
-        // Фильтр по водоотведению: основа слова «самот» / «принуд».
-        if ($f_drainage) {
-            $drainage_stem = (stripos($f_drainage, 'принуд') !== false) ? 'принуд' : 'самот';
-            $all_stations = array_values(array_filter($all_stations, function ($p) use ($drainage_stem) {
+            // Водоотведение: основа слова «самот» / «принуд».
+            if ($f_drainage) {
+                $stem = (stripos($f_drainage, 'принуд') !== false) ? 'принуд' : 'самот';
                 $haystack = mb_strtolower(
                     (string) carbon_get_post_meta($p->ID, 'crb_water_disposal') . ' ' .
                     (string) carbon_get_post_meta($p->ID, 'crb_mounting_dimensions')
                 );
-                return mb_strpos($haystack, $drainage_stem) !== false;
-            }));
+                if (mb_strpos($haystack, $stem) === false) {
+                    return false;
+                }
+            }
+
+            return true;
+        };
+
+        $matched_ids = array();
+        foreach ($all_stations as $p) {
+            if ($matches_filter($p)) {
+                $matched_ids[] = (int) $p->ID;
+            }
         }
 
         // Сортировка по цене: по умолчанию от дешёвых к дорогим, «По запросу» — в конец.
@@ -198,9 +215,8 @@ $company = getCompanyContacts();
             return $sort_desc ? ($pb <=> $pa) : ($pa <=> $pb);
         });
 
-        // На главной показываем превью: до 12 при активном фильтре, иначе 8.
-        // Рендерим весь каталог: мгновенный фильтр работает по уже отданным
-        // карточкам, а видимую часть до «Показать все» ограничивает catalog-instant.js.
+        // Показываем весь каталог: видимую часть до «Показать все» и фильтрацию
+        // берёт на себя catalog-instant.js, без JS работает атрибут ниже.
         $page_stations = $all_stations;
         ?>
         <?php // Нижний отступ вернули: дальше идёт секция сравнения, а не блок работ,
@@ -231,24 +247,36 @@ $company = getCompanyContacts();
                     'capacity' => $f_capacity,
                     'drainage' => $f_drainage,
                     'sort'     => $f_sort,
-                    'count'    => count($all_stations),
+                    'count'    => count($matched_ids),
                 ));
                 ?>
+
+                <?php // Без JS фильтр всё равно работает: сервер помечает несовпавшие
+                      // карточки атрибутом, а этот стиль их скрывает. С JS атрибут
+                      // игнорируется — видимость считает catalog-instant.js. ?>
+                <noscript>
+                    <style>.pro-grid .pro-card[data-server-hidden]{display:none}</style>
+                </noscript>
 
                 <!-- Сетка карточек (вёрстка карточки — template-parts/station-card-pro.php) -->
                 <div class="pro-grid" data-catalog-grid>
                     <?php foreach ($page_stations as $station_post) : ?>
-                        <?php get_template_part('template-parts/station-card-pro', null, array('id' => $station_post->ID)); ?>
+                        <?php get_template_part('template-parts/station-card-pro', null, array(
+                            'id'            => $station_post->ID,
+                            'server_hidden' => $has_filter && !in_array((int) $station_post->ID, $matched_ids, true),
+                        )); ?>
                     <?php endforeach; ?>
 
-                    <div class="pro-empty" data-catalog-empty <?php echo !empty($page_stations) ? 'hidden' : ''; ?>>
+                    <div class="pro-empty" data-catalog-empty <?php echo !empty($matched_ids) ? 'hidden' : ''; ?>>
                         <?php echo !empty($page_stations)
                             ? 'По заданным фильтрам станции не найдены — попробуйте изменить параметры.'
                             : 'Станции пока не добавлены в каталог.'; ?>
                     </div>
                 </div>
 
-                <?php if (count($page_stations) > 8) : ?>
+                <?php // Превью каталога — 6 карточек (было 8): выше вероятность
+                      // дойти до кнопки, а не утонуть в сетке (задача #14). ?>
+                <?php if (count($page_stations) > 6) : ?>
                     <div style="text-align:center;margin-top:24px">
                         <a class="pro-btn pro-btn--ghost"
                            href="<?php echo esc_url(get_post_type_archive_link('stations')); ?>"
@@ -667,7 +695,8 @@ $company = getCompanyContacts();
         // ссылки. Осмысленные анкоры передают вес на каталог, цены и работы и дают
         // поисковику понять, о чём эти страницы.
         $link_catalog = get_post_type_archive_link('stations');
-        $link_works   = get_post_type_archive_link('works');
+        // Ссылку на архив работ даём только когда там что-то есть (задача #5).
+        $link_works   = izex_has_published_works() ? get_post_type_archive_link('works') : '';
         $prices_page  = get_page_by_path('prices');
         $link_prices  = $prices_page ? get_permalink($prices_page) : '';
         ?>

@@ -317,12 +317,15 @@ add_action('wp_enqueue_scripts', 'izex_components_style', 20);
  */
 
 /**
- * Ранние подсказки браузеру: свой шрифт и хост картинки в hero.
+ * Ранние подсказки браузеру: свой шрифт и картинка hero.
  *
  * Шрифт грузится через @font-face внутри montserrat.css, то есть браузер узнаёт
- * о нём только после разбора CSS — preload убирает эту задержку. Фон hero лежит
- * на внешнем хосте (userapi.com), поэтому для него нужен preconnect: это LCP
- * главной страницы.
+ * о нём только после разбора CSS — preload убирает эту задержку.
+ *
+ * Фон hero — это LCP главной. Раньше он тянулся с sun9-56.userapi.com (ссылка
+ * со служебными параметрами, могла перестать работать в любой момент) и здесь
+ * стоял preconnect к чужому хосту. Теперь файл лежит в теме, поэтому это полный
+ * preload с imagesrcset — тем же набором, что в .hero-bg-image (задача #9).
  */
 function izex_resource_hints()
 {
@@ -330,7 +333,12 @@ function izex_resource_hints()
     echo '<link rel="preload" href="' . esc_url($font) . '" as="font" type="font/woff2" crossorigin>' . "\n";
 
     if (is_front_page()) {
-        echo '<link rel="preconnect" href="https://sun9-56.userapi.com" crossorigin>' . "\n";
+        $base = get_template_directory_uri() . '/assets/images/hero/';
+        printf(
+            '<link rel="preload" as="image" href="%s" imagesrcset="%s" imagesizes="100vw" fetchpriority="high">' . PHP_EOL,
+            esc_url($base . 'hero-bg-1448.webp'),
+            esc_attr($base . 'hero-bg-768.webp 768w, ' . $base . 'hero-bg-1448.webp 1448w')
+        );
     }
 }
 add_action('wp_head', 'izex_resource_hints', 1);
@@ -1547,6 +1555,79 @@ function izex_render_work_card($post_id)
         </div>
     </article>
     <?php
+}
+
+/**
+ * Есть ли опубликованные работы.
+ *
+ * Пока работ нет, страница /works/ показывает «Работы скоро появятся», а пункт
+ * «Наши работы» висит в меню — при заявленных 1000+ монтажей это бьёт по
+ * доверию сильнее, чем отсутствие раздела. Поэтому пункт меню, внутренние
+ * ссылки на архив и сам архив в индексе скрываем до наполнения (задача #5).
+ *
+ * @return bool
+ */
+function izex_has_published_works()
+{
+    static $has = null;
+    if ($has !== null) {
+        return $has;
+    }
+    $query = new WP_Query(array(
+        'post_type'              => 'works',
+        'post_status'            => 'publish',
+        'posts_per_page'         => 1,
+        'fields'                 => 'ids',
+        'no_found_rows'          => true,
+        'update_post_meta_cache' => false,
+        'update_post_term_cache' => false,
+    ));
+    $has = !empty($query->posts);
+    wp_reset_postdata();
+
+    return $has;
+}
+
+/**
+ * Убираем из меню пункты, ведущие на пустой архив работ.
+ */
+add_filter('wp_nav_menu_objects', 'izex_hide_empty_works_menu_item');
+function izex_hide_empty_works_menu_item($items)
+{
+    if (izex_has_published_works()) {
+        return $items;
+    }
+
+    $archive = get_post_type_archive_link('works');
+    if (!$archive) {
+        return $items;
+    }
+    $archive_path = trailingslashit(wp_parse_url($archive, PHP_URL_PATH));
+
+    foreach ($items as $key => $item) {
+        $is_works_archive = ($item->type === 'post_type_archive' && $item->object === 'works');
+        if (!$is_works_archive && !empty($item->url)) {
+            $is_works_archive = trailingslashit((string) wp_parse_url($item->url, PHP_URL_PATH)) === $archive_path;
+        }
+        if ($is_works_archive) {
+            unset($items[$key]);
+        }
+    }
+
+    return $items;
+}
+
+/**
+ * Пустой архив работ не отдаём в индекс — иначе в выдаче страница «Работы
+ * скоро появятся».
+ */
+add_action('wp_head', 'izex_noindex_empty_works_archive', 1);
+function izex_noindex_empty_works_archive()
+{
+    if (is_post_type_archive('works') && !izex_has_published_works()) {
+        echo '<meta name="robots" content="noindex, follow">' . "
+";
+    }
 }
 
 /**

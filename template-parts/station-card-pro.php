@@ -15,6 +15,9 @@
 
 $station_id = isset($args['id']) ? (int) $args['id'] : get_the_ID();
 $d = izex_pro_station_data($station_id);
+// Карточка не совпала с фильтром в URL. С JS атрибут игнорируется (видимость
+// считает catalog-instant.js), без JS — скрывается стилем в <noscript>.
+$server_hidden = !empty($args['server_hidden']);
 ?>
 
 <article class="pro-card"
@@ -23,6 +26,7 @@ $d = izex_pro_station_data($station_id);
          data-people-max="<?php echo esc_attr($d['people_max']); ?>"
          data-disposal="<?php echo esc_attr($d['disposal']); ?>"
          data-price="<?php echo esc_attr($d['price']); ?>"
+         <?php echo $server_hidden ? 'data-server-hidden="1"' : ''; ?>
          itemscope itemtype="https://schema.org/Product">
 
     <div class="pro-card__media">
@@ -81,19 +85,29 @@ $d = izex_pro_station_data($station_id);
             <meta itemprop="priceCurrency" content="RUB">
             <meta itemprop="price" content="<?php echo esc_attr($d['price']); ?>">
             <link itemprop="availability" href="https://schema.org/InStock">
-            <div>
-                <div class="pro-eyebrow">Станция ТОПАС-С</div>
-                <?php if ($d['old_price']) : ?>
-                    <span class="pro-card__price-old"><?php echo esc_html(izex_pro_money($d['old_price'])); ?></span>
+            <?php
+            // Ценовое якорение перевёрнуто (задача #10): крупно — итог «под ключ»,
+            // мелко и серым — из чего он складывается. Раньше 23 px занимала цена
+            // станции, а «под ключ» стояло 13,5 px справа — и посетитель сравнивал
+            // цену оборудования с ценами конкурентов «под ключ».
+            ?>
+            <div class="pro-card__price-main">
+                <?php if ($d['turnkey']) : ?>
+                    <div class="pro-eyebrow">Под ключ</div>
+                    <?php if ($d['old_price']) : ?>
+                        <span class="pro-card__price-old"><?php echo esc_html(izex_pro_money($d['old_price'] + $d['install'])); ?></span>
+                    <?php endif; ?>
+                    <div class="pro-card__price-value"><?php echo esc_html(izex_pro_money($d['turnkey'])); ?></div>
+                    <div class="pro-card__price-parts">
+                        станция <?php echo esc_html(izex_pro_money($d['price'])); ?>
+                        + монтаж <?php echo esc_html(izex_pro_money($d['install'])); ?>
+                    </div>
+                <?php else : ?>
+                    <div class="pro-eyebrow">Цена</div>
+                    <div class="pro-card__price-value">по запросу</div>
+                    <div class="pro-card__price-parts">рассчитаем после бесплатного выезда инженера</div>
                 <?php endif; ?>
-                <div class="pro-card__price-value"><?php echo esc_html(izex_pro_money($d['price'])); ?></div>
             </div>
-            <?php if ($d['turnkey']) : ?>
-                <div class="pro-card__turnkey">
-                    ≈ станция + монтаж
-                    <b><?php echo esc_html(izex_pro_money($d['turnkey'])); ?></b>
-                </div>
-            <?php endif; ?>
         </div>
 
         <div class="pro-card__actions">

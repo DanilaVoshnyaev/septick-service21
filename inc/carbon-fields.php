@@ -583,7 +583,7 @@ function getSocialLinks()
         $links[] = array(
             'caption' => 'MAX',
             'url'     => 'https://max.ru/u/f9LHodD0cOI_AGyWf9AKcrl72RIFsKRL7vOApMiqwT37En8F81IprazW1ro',
-            'icon'    => 'https://maxicons.ru/icons/MAX.svg',
+            'icon'    => assets('/images/social/max.svg'),
         );
     }
 

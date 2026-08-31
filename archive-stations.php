@@ -52,10 +52,11 @@ $company = getCompanyContacts();
             ));
             $all_stations = $catalog_query->posts;
 
-            // Фильтр по пользователям: вытаскиваем числа из текста (или из заголовка),
-            // понимаем диапазон min-max и одиночное значение.
-            if ($selected_capacity) {
-                $all_stations = array_values(array_filter($all_stations, function ($p) use ($selected_capacity) {
+            // Совпадение с чип-фильтром (ёмкость + водоотведение) считаем, но карточки
+            // из выборки НЕ убираем: сервер отдаёт весь каталог, а фильтрует клиент —
+            // иначе смена условия требовала перезагрузки страницы (задача #14).
+            $matches_filter = function ($p) use ($selected_capacity, $selected_drainage) {
+                if ($selected_capacity) {
                     $text = (string) carbon_get_post_meta($p->ID, 'crb_people_count_text');
                     preg_match_all('/\d+/', $text, $m);
                     $nums = $m[0];
@@ -67,22 +68,26 @@ $company = getCompanyContacts();
                         return false;
                     }
                     $nums = array_map('intval', $nums);
-                    return $selected_capacity >= min($nums) && $selected_capacity <= max($nums);
-                }));
-            }
+                    if ($selected_capacity < min($nums) || $selected_capacity > max($nums)) {
+                        return false;
+                    }
+                }
 
-            // Фильтр по водоотведению: ищем основу слова «самот» / «принуд»
-            // в полях водоотведения и габаритов монтажа.
-            if ($selected_drainage) {
-                $drainage_stem = (stripos($selected_drainage, 'принуд') !== false) ? 'принуд' : 'самот';
-                $all_stations = array_values(array_filter($all_stations, function ($p) use ($drainage_stem) {
+                // Водоотведение: основа слова «самот» / «принуд» в полях
+                // водоотведения и габаритов монтажа.
+                if ($selected_drainage) {
+                    $stem = (stripos($selected_drainage, 'принуд') !== false) ? 'принуд' : 'самот';
                     $haystack = mb_strtolower(
                         (string) carbon_get_post_meta($p->ID, 'crb_water_disposal') . ' ' .
                         (string) carbon_get_post_meta($p->ID, 'crb_mounting_dimensions')
                     );
-                    return mb_strpos($haystack, $drainage_stem) !== false;
-                }));
-            }
+                    if (mb_strpos($haystack, $stem) === false) {
+                        return false;
+                    }
+                }
+
+                return true;
+            };
 
             // Фильтр по наличию (по умолчанию все товары в наличии).
             if ($selected_stock === '1') {
@@ -114,6 +119,14 @@ $company = getCompanyContacts();
             // десятков, они спокойно выводятся одним списком. Если линейка вырастет
             // за ~40 позиций, стоит вернуть постраничный вывод.
             $page_stations = $all_stations;
+
+            $matched_ids = array();
+            foreach ($page_stations as $p) {
+                if ($matches_filter($p)) {
+                    $matched_ids[] = (int) $p->ID;
+                }
+            }
+            $has_chip_filter = ($selected_capacity || $selected_drainage);
             ?>
 
             <?php
@@ -131,19 +144,28 @@ $company = getCompanyContacts();
                 'capacity' => $selected_capacity,
                 'drainage' => $selected_drainage,
                 'sort'     => $selected_sort,
-                'count'    => count($all_stations),
+                'count'    => count($matched_ids),
                 'anchor'   => '#catalog',
             ));
             ?>
 
             <?php if (!empty($page_stations)) : ?>
                 <?php // Карточка та же, что на главной — template-parts/station-card-pro.php. ?>
+                <?php // Без JS несовпавшие карточки скрывает этот стиль (с JS атрибут
+                      // игнорируется — видимость считает catalog-instant.js). ?>
+                <noscript>
+                    <style>.pro-grid .pro-card[data-server-hidden]{display:none}</style>
+                </noscript>
+
                 <div class="stations-grid pro-grid" data-catalog-grid>
                     <?php foreach ($page_stations as $station_post) : ?>
-                        <?php get_template_part('template-parts/station-card-pro', null, array('id' => $station_post->ID)); ?>
+                        <?php get_template_part('template-parts/station-card-pro', null, array(
+                            'id'            => $station_post->ID,
+                            'server_hidden' => $has_chip_filter && !in_array((int) $station_post->ID, $matched_ids, true),
+                        )); ?>
                     <?php endforeach; ?>
 
-                    <div class="pro-empty" data-catalog-empty hidden>
+                    <div class="pro-empty" data-catalog-empty <?php echo !empty($matched_ids) ? 'hidden' : ''; ?>>
                         По заданным фильтрам станции не найдены — попробуйте изменить параметры.
                     </div>
                 </div>

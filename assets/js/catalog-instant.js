@@ -16,7 +16,7 @@
 (function () {
     'use strict';
 
-    var PREVIEW_LIMIT = 8; // сколько карточек показываем до «Показать все» (по умолчанию)
+    var PREVIEW_LIMIT = 6; // сколько карточек показываем до «Показать все» (по умолчанию)
 
     // Ограничение можно переопределить атрибутом data-catalog-limit:
     // на главной это превью (8 карточек), в архиве каталога — 0, то есть все.
@@ -54,16 +54,6 @@
         state.people = params.get('capacity') || '';
         state.disposal = params.get('drainage') || '';
         state.sort = params.get('sort') || '';
-
-        // Если фильтр пришёл в URL, сервер отдал ТОЛЬКО совпавшие карточки.
-        // Значит клиентом можно лишь сужать выборку: снятие или смену такого
-        // условия отдаём обычной ссылке (перезагрузка с полным каталогом).
-        var serverState = { people: state.people, disposal: state.disposal };
-
-        function needsReload(next) {
-            return (serverState.people && next.people !== serverState.people) ||
-                   (serverState.disposal && next.disposal !== serverState.disposal);
-        }
 
         function matches(card) {
             if (state.people) {
@@ -157,10 +147,8 @@
                 };
                 next[key] = (state[key] === value) ? '' : value;
 
-                if (needsReload(next)) {
-                    return; // отдаём ссылке — страница перезагрузится с нужным набором
-                }
-
+                // Сервер отдаёт весь каталог, поэтому любое условие меняем на месте —
+                // перезагрузки нет ни при одном сочетании чипов (задача #14).
                 e.preventDefault();
                 state = next;
                 expanded = false;
@@ -171,10 +159,6 @@
 
         if (resetEl) {
             resetEl.addEventListener('click', function (e) {
-                // Сброс при серверном фильтре — тоже перезагрузка (нужен полный каталог).
-                if (serverState.people || serverState.disposal) {
-                    return;
-                }
                 e.preventDefault();
                 state = { people: '', disposal: '', sort: '' };
                 expanded = false;
