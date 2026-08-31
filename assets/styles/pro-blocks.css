@@ -1,0 +1,1466 @@
+/**
+ * pro-blocks.css — блоки, перенесённые из прототипа заказчика.
+ *
+ * Что здесь: карточка станции (.pro-card), чип-фильтр каталога (.pro-filter),
+ * бегущая строка доверия (.pro-marquee), карточка станции в hero (.pro-herocard),
+ * блок сметы (.pro-estimate), инлайн-сравнение (.pro-compare) и одноэкранный
+ * калькулятор (.calc-live).
+ *
+ * Палитра НЕ меняется — используем существующие токены темы (--green, --text,
+ * --text-muted) с фолбэками, чтобы файл работал и вне front-page.
+ * Из прототипа взяты структура, ритм и моно-микролейблы; моно-шрифт — системный
+ * (без веб-шрифта, чтобы не тянуть лишние 40 КБ).
+ */
+
+/* Токены перенесены в tokens.css — единый источник значений.
+   Здесь блок :root удалён, чтобы не переопределять их задним числом. */
+
+
+/* [hidden] должен побеждать display у наших блоков (.pro-card — flex,
+   иначе скрытые фильтром карточки остались бы видимыми). */
+.pro-card[hidden],
+.pro-empty[hidden],
+.pro-filter [hidden],
+.pro-compare [hidden],
+[data-catalog-more][hidden] {
+    display: none !important;
+}
+
+/* Секции новых блоков: ритм и чередование фонов как у остальной главной */
+.pro-compare,
+.pro-estimate {
+    padding: clamp(60px, 8vw, 90px) 0;
+}
+
+.pro-compare {
+    background: var(--bg-primary, #fff);
+}
+
+.pro-estimate {
+    background: var(--bg-secondary, #f8fafc);
+}
+
+/* Hero: текст слева, карточка станции справа */
+.hero-layout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(24px, 5vw, 56px);
+    flex-wrap: wrap;
+}
+
+.hero-layout .hero-content {
+    flex: 1 1 520px;
+    min-width: 0;
+}
+
+/* Пока в hero есть карточка станции, текст выравниваем по левому краю —
+   центрированный текст рядом с карточкой справа выглядит несбалансированно.
+   Если станций нет и карточка не выводится, hero остаётся центрированным. */
+.hero-layout:has(.pro-herocard) .hero-content {
+    text-align: left;
+    max-width: none;
+    margin: 0;
+}
+
+.hero-layout:has(.pro-herocard) .hero-contacts-top,
+.hero-layout:has(.pro-herocard) .hero-stats,
+.hero-layout:has(.pro-herocard) .hero-buttons {
+    justify-content: flex-start;
+}
+
+.hero-layout .pro-herocard {
+    flex: 0 1 340px;
+}
+
+@media (max-width: 900px) {
+    .hero-layout .pro-herocard {
+        margin: 0 auto;
+    }
+}
+
+/* Моно-микролейбл: «СТАНЦИЯ», «НАЙДЕНО», «ПОЛЬЗОВАТЕЛЕЙ» */
+.pro-eyebrow {
+    font-family: var(--pro-mono);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--pro-faint);
+    line-height: 1.2;
+}
+
+/* ============================================================
+   КАРТОЧКА СТАНЦИИ
+   ============================================================ */
+
+.pro-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 18px;
+    margin: 26px 0 0;
+}
+
+.pro-card {
+    background: var(--card-bg, #fff);
+    border: 1px solid var(--pro-line);
+    border-radius: var(--pro-radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.04);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.pro-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--pro-accent);
+    box-shadow: 0 14px 34px rgba(49, 185, 57, 0.14);
+}
+
+/* Медиа: штриховка вместо пустого белого поля (из прототипа) */
+.pro-card__media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background: repeating-linear-gradient(135deg, #f5f8f6, #f5f8f6 10px, #edf2ef 10px, #edf2ef 20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.pro-card__media > a {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.pro-card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 14px;
+    transition: transform 0.35s ease;
+}
+
+.pro-card:hover .pro-card__media img {
+    transform: scale(1.04);
+}
+
+.pro-card__ghost {
+    position: absolute;
+    font-family: var(--pro-mono);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    /* Было #a9bab4 — контраст с белой подложкой 2,03:1. Здесь лежит название
+       станции, то есть настоящий текст, а не декор (задача #13). */
+    color: #5c6b65;
+    text-transform: uppercase;
+}
+
+.pro-card__badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    z-index: 2;
+    background: rgba(22, 101, 52, 0.94);
+    color: #fff;
+    font-family: var(--pro-mono);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    padding: 5px 10px;
+    border-radius: 7px;
+    text-transform: uppercase;
+}
+
+.pro-card__badge--hit {
+    background: rgba(180, 83, 9, 0.94);
+    top: auto;
+    bottom: 14px;
+}
+
+/* Кнопка сравнения поверх картинки */
+.pro-card__cmp {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    gap: 5px;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--brand-ink);
+    border: 1.5px solid var(--pro-accent);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 11px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.pro-card__cmp:hover,
+.pro-card__cmp.is-active {
+    background: var(--pro-accent);
+    color: var(--on-brand);
+}
+
+.pro-card__body {
+    padding: 20px 20px 0;
+}
+
+.pro-card__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.pro-card__title {
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--pro-ink);
+    margin: 0;
+}
+
+.pro-card__title a {
+    color: inherit;
+    text-decoration: none;
+    /* Ссылка на модель занимала 26 px по высоте — добираем до 44 px (задача #18). */
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+}
+
+.pro-card__title a:hover {
+    color: var(--brand-ink);
+}
+
+/* Пилюля с числом проживающих — тёплая, чтобы отделить от зелёных акцентов */
+.pro-card__people {
+    flex: 0 0 auto;
+    background: var(--pro-warn-bg);
+    color: var(--pro-warn);
+    font-family: var(--pro-mono);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 5px 9px;
+    border-radius: 7px;
+    white-space: nowrap;
+}
+
+/* Характеристики строками с разделителями (вместо пилюль) */
+.pro-card__specs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--pro-line-soft);
+}
+
+.pro-card__specs li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--pro-line-soft);
+}
+
+.pro-card__specs span {
+    font-size: 13px;
+    color: var(--pro-dim);
+}
+
+.pro-card__specs strong {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink);
+    text-align: right;
+}
+
+.pro-card__foot {
+    padding: 16px 20px 20px;
+    margin-top: auto;
+}
+
+.pro-card__prices {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+/* Ценовое якорение (задача #10): крупная цифра — «под ключ», под ней мелким
+   серым слагаемые. Прежний .pro-card__turnkey справа больше не используется. */
+.pro-card__price-main {
+    min-width: 0;
+}
+
+.pro-card__price-value {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--brand-ink);
+}
+
+.pro-card__price-parts {
+    margin-top: 4px;
+    font-size: 13px;
+    line-height: 1.35;
+    color: var(--pro-faint);
+}
+
+.pro-card__price-old {
+    display: block;
+    font-size: 13px;
+    color: var(--pro-faint);
+    text-decoration: line-through;
+}
+
+.pro-card__actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+}
+
+.pro-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    text-align: center;
+    padding: 11px 12px;
+    border-radius: 11px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pro-btn--ghost {
+    background: transparent;
+    border-color: var(--pro-accent);
+    color: var(--brand-ink);
+}
+
+.pro-btn--ghost:hover {
+    background: rgba(49, 185, 57, 0.1);
+}
+
+.pro-btn--solid {
+    background: var(--pro-accent);
+    color: var(--on-brand);
+    box-shadow: 0 6px 16px rgba(49, 185, 57, 0.24);
+}
+
+.pro-btn--solid:hover {
+    background: var(--pro-accent-dark);
+    color: var(--on-brand);
+}
+
+@media (max-width: 480px) {
+    .pro-card__actions {
+        grid-template-columns: 1fr;
+    }
+
+    .pro-card__title {
+        font-size: 19px;
+    }
+}
+
+/* ============================================================
+   ЧИП-ФИЛЬТР КАТАЛОГА
+   ============================================================ */
+
+.pro-filter {
+    background: #fff;
+    border: 1px solid var(--pro-line);
+    border-radius: 18px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    flex-wrap: wrap;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.05);
+}
+
+.pro-filter__group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.pro-filter__chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+/* Чип — ссылка (работает без JS), поэтому гасим подчёркивание и цвет ссылки */
+/* min-height 44 px — минимальная зона нажатия (задача #18): чипы были 40 px. */
+.pro-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    text-decoration: none;
+    padding: 8px 13px;
+    border-radius: 9px;
+    border: 1.5px solid var(--pro-line);
+    background: #fff;
+    color: var(--pro-dim);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+.pro-chip:hover {
+    border-color: var(--pro-accent);
+    color: var(--brand-ink);
+}
+
+.pro-chip.is-active,
+.pro-chip.is-active:hover {
+    background: var(--pro-accent);
+    border-color: var(--pro-accent);
+    color: var(--on-brand);
+}
+
+.pro-filter__meta {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.pro-filter__count {
+    font-family: var(--pro-mono);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    color: var(--brand-ink);
+    white-space: nowrap;
+}
+
+.pro-filter__reset {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: var(--pro-warn);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* Пустой результат фильтрации */
+.pro-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 44px 20px;
+    background: #fff;
+    border: 1px dashed var(--pro-line);
+    border-radius: var(--pro-radius);
+    color: var(--pro-dim);
+}
+
+@media (max-width: 860px) {
+    .pro-filter {
+        gap: 16px;
+        padding: 16px;
+    }
+
+    .pro-filter__group {
+        width: 100%;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .pro-filter__meta {
+        margin-left: 0;
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
+/* ============================================================
+   БЕГУЩАЯ СТРОКА ДОВЕРИЯ
+   ============================================================ */
+
+.pro-marquee {
+    background: #0f172a;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    padding: 13px 0;
+}
+
+.pro-marquee__track {
+    display: flex;
+    width: max-content;
+    animation: pro-marquee 34s linear infinite;
+}
+
+.pro-marquee:hover .pro-marquee__track {
+    animation-play-state: paused;
+}
+
+.pro-marquee__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 26px;
+    padding-right: 26px;
+    font-family: var(--pro-mono);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.72);
+    white-space: nowrap;
+}
+
+.pro-marquee__item b {
+    color: var(--brand-on-dark);
+    font-weight: 600;
+}
+
+.pro-marquee__sep {
+    color: rgba(255, 255, 255, 0.25);
+}
+
+@keyframes pro-marquee {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pro-marquee__track {
+        animation: none;
+    }
+}
+
+/* ============================================================
+   КАРТОЧКА СТАНЦИИ В HERO
+   ============================================================ */
+
+.pro-herocard {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(10px);
+    border-radius: 22px;
+    padding: 18px;
+    width: 100%;
+    max-width: 340px;
+    color: #fff;
+}
+
+.pro-herocard__media {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: 14px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+}
+
+.pro-herocard__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 10px;
+}
+
+.pro-herocard__stock {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(22, 101, 52, 0.94);
+    color: #fff;
+    font-family: var(--pro-mono);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    padding: 4px 9px;
+    border-radius: 6px;
+    text-transform: uppercase;
+}
+
+.pro-herocard__eyebrow {
+    font-family: var(--pro-mono);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.pro-herocard__name {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 4px 0 10px;
+    color: #fff;
+}
+
+.pro-herocard__name a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.pro-herocard__price {
+    display: grid;
+    gap: 2px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.pro-herocard__price-parts {
+    font-size: 13px;
+    line-height: 1.35;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.pro-herocard__price-label {
+    font-family: var(--pro-mono);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.pro-herocard__price-value {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--brand-on-dark);
+}
+
+.pro-herocard__notes {
+    display: grid;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.pro-herocard__note {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 13px;
+    line-height: 1.35;
+    color: rgba(255, 255, 255, 0.78);
+}
+
+.pro-herocard__note b {
+    color: #fff;
+    font-weight: 700;
+}
+
+/* ============================================================
+   БОКОВОЙ ДОК СВЯЗИ
+   ============================================================ */
+
+.pro-dock {
+    position: fixed;
+    right: 22px;
+    bottom: 24px;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+}
+
+.pro-dock__btn {
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #fff;
+    transition: transform 0.18s ease;
+}
+
+.pro-dock__btn:hover {
+    transform: translateY(-2px);
+}
+
+.pro-dock__btn--tg {
+    background: #2aabee;
+    box-shadow: 0 8px 22px rgba(42, 171, 238, 0.4);
+}
+
+/* Соцсети из настроек темы: свою иконку кладём на нейтральную белую плашку */
+.pro-dock__btn--social {
+    background: #fff;
+    border: 1px solid var(--pro-line);
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.16);
+}
+
+.pro-dock__btn svg {
+    width: 26px;
+    height: 26px;
+}
+
+.pro-dock__btn img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.pro-dock__letter {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--pro-ink);
+}
+
+/* Звонок — акцентная кнопка с мягкой пульсацией, как в прототипе */
+.pro-dock__btn--call {
+    background: var(--pro-accent);
+    box-shadow: 0 8px 22px rgba(49, 185, 57, 0.4);
+    animation: pro-dock-pulse 2.4s infinite;
+}
+
+@keyframes pro-dock-pulse {
+    0% {
+        box-shadow: 0 8px 22px rgba(49, 185, 57, 0.4), 0 0 0 0 rgba(49, 185, 57, 0.45);
+    }
+
+    70% {
+        box-shadow: 0 8px 22px rgba(49, 185, 57, 0.4), 0 0 0 16px rgba(49, 185, 57, 0);
+    }
+
+    100% {
+        box-shadow: 0 8px 22px rgba(49, 185, 57, 0.4), 0 0 0 0 rgba(49, 185, 57, 0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pro-dock__btn--call {
+        animation: none;
+    }
+}
+
+/* На мобильных нижняя .mobile-action-bar уже закрывает эти действия
+   (её брейкпоинт — max-width: 768px, держим тот же, чтобы не было наложения) */
+@media (max-width: 768px) {
+    .pro-dock {
+        display: none;
+    }
+}
+
+/* Кнопка «Наверх» стоит в том же углу (bottom:24 right:24) и с z-index выше,
+   поэтому на десктопе отодвигаем её влево от столбика дока (22 + 54 = 76px). */
+@media (min-width: 769px) {
+    .back-to-top {
+        right: 90px;
+    }
+}
+
+/* ============================================================
+   НИЖНЯЯ ПАНЕЛЬ НА МОБИЛЬНЫХ — приведение к одному виду
+   ============================================================
+   Правим то, что выглядело неаккуратно: MAX-картинка была 32px против 22px
+   у SVG-иконок и шла без подписи, из-за чего кнопки были разной высоты. */
+
+@media (max-width: 768px) {
+    .mobile-action-bar {
+        gap: 0;
+        background: #fff;
+        border-top: 1px solid var(--pro-line);
+        box-shadow: 0 -6px 24px rgba(15, 23, 42, 0.1);
+    }
+
+    .mobile-action-bar__btn {
+        gap: 4px;
+        padding: 9px 4px 8px;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.15;
+        letter-spacing: -0.01em;
+        text-align: center;
+        border-left: 1px solid var(--pro-line-soft);
+        min-width: 0;
+    }
+
+    .mobile-action-bar__btn:first-child {
+        border-left: none;
+    }
+
+    /* Иконка в фиксированном боксе: любой источник (svg/img/буква) занимает
+       одинаковое место, поэтому кнопки выравниваются по базовой линии подписи. */
+    .mobile-action-bar__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        flex: 0 0 auto;
+    }
+
+    .mobile-action-bar__icon svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .mobile-action-bar__icon img {
+        width: 22px;
+        height: 22px;
+        object-fit: contain;
+    }
+
+    .mobile-action-bar__btn--tg {
+        color: #1e93cf;
+    }
+
+    .mobile-action-bar__btn--social {
+        color: var(--pro-ink);
+    }
+
+    .mobile-action-bar__btn--order {
+        background: var(--pro-accent);
+        color: var(--on-brand);
+        border-left-color: var(--pro-accent);
+    }
+
+    .mobile-action-bar .pro-dock__letter {
+        font-size: 15px;
+        color: inherit;
+    }
+
+    /* Подписи не должны переноситься даже на 320px */
+    .mobile-action-bar__btn > span:last-child {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+}
+
+/* На очень узких экранах подписи убираем — остаются только иконки */
+@media (max-width: 360px) {
+    .mobile-action-bar__btn > span:last-child {
+        display: none;
+    }
+
+    .mobile-action-bar__btn {
+        padding: 12px 4px;
+    }
+
+    /* Панель стала ниже — уменьшаем отступ под контентом (в базе он 62px) */
+    body {
+        padding-bottom: 46px;
+    }
+}
+
+/* ============================================================
+   ОПИСАНИЕ ЛИНЕЙКИ ПОД КАТАЛОГОМ
+   ============================================================ */
+
+.stations-desc {
+    margin: 48px 0 0;
+    padding: 30px 32px;
+    background: #fff;
+    border: 1px solid var(--pro-line);
+    border-radius: var(--pro-radius);
+}
+
+.stations-desc__title {
+    font-size: clamp(22px, 2.4vw, 28px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--pro-ink);
+    margin: 0 0 16px;
+}
+
+@media (max-width: 600px) {
+    .stations-desc {
+        padding: 22px 18px;
+    }
+}
+
+/* ============================================================
+   БЛОК СМЕТЫ: ВХОДИТ / ОПЛАЧИВАЕТСЯ ОТДЕЛЬНО
+   ============================================================ */
+
+.pro-estimate__cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 26px;
+}
+
+.pro-estimate__col {
+    background: #fff;
+    border: 1px solid var(--pro-line);
+    border-radius: var(--pro-radius);
+    padding: 26px 26px 28px;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.04);
+}
+
+.pro-estimate__col--in {
+    border-top: 4px solid var(--pro-accent);
+}
+
+.pro-estimate__col--extra {
+    border-top: 4px solid #d97706;
+}
+
+.pro-estimate__title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--pro-ink);
+    margin: 0 0 16px;
+}
+
+.pro-estimate__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 11px;
+}
+
+.pro-estimate__list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #3a4944;
+}
+
+.pro-estimate__mark {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 1px;
+}
+
+.pro-estimate__col--in .pro-estimate__mark {
+    background: rgba(49, 185, 57, 0.12);
+    color: var(--brand-ink);
+}
+
+.pro-estimate__col--extra .pro-estimate__mark {
+    background: var(--pro-warn-bg);
+    color: var(--pro-warn);
+}
+
+/* Цена доп. работы рядом с пунктом «оплачивается отдельно» */
+.pro-estimate__price {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 1px 7px;
+    border-radius: 6px;
+    background: var(--pro-warn-bg);
+    color: var(--pro-warn);
+    font-family: var(--pro-mono);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.pro-estimate__note {
+    margin-top: 18px;
+    background: linear-gradient(120deg, #0f172a, #1e293b);
+    border-radius: var(--pro-radius);
+    padding: 26px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    color: #fff;
+}
+
+.pro-estimate__note-title {
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+
+.pro-estimate__note-text {
+    font-size: 14.5px;
+    color: rgba(255, 255, 255, 0.68);
+    margin-top: 5px;
+}
+
+@media (max-width: 860px) {
+    .pro-estimate__cols {
+        grid-template-columns: 1fr;
+    }
+
+    .pro-estimate__col {
+        padding: 22px;
+    }
+}
+
+/* ============================================================
+   ИНЛАЙН-СРАВНЕНИЕ МОДЕЛЕЙ
+   ============================================================ */
+
+.pro-compare__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.pro-compare__hint {
+    font-size: 15px;
+    color: var(--pro-dim);
+    margin: 0;
+}
+
+.pro-compare__clear {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: var(--pro-warn);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.pro-compare__scroll {
+    overflow-x: auto;
+    background: #fff;
+    border: 1px solid var(--pro-line);
+    border-radius: var(--pro-radius);
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.04);
+}
+
+.pro-compare__table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 620px;
+}
+
+.pro-compare__table th,
+.pro-compare__table td {
+    padding: 13px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--pro-line-soft);
+    font-size: 14px;
+    color: var(--ink);
+}
+
+.pro-compare__table thead th {
+    vertical-align: bottom;
+    background: #f8fafc;
+    border-bottom: 1px solid var(--pro-line);
+}
+
+.pro-compare__table tbody th {
+    font-weight: 600;
+    color: var(--pro-dim);
+    background: #fcfdfe;
+    white-space: nowrap;
+}
+
+.pro-compare__model {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--pro-ink);
+    text-decoration: none;
+    display: block;
+}
+
+.pro-compare__model:hover {
+    color: var(--brand-ink);
+}
+
+.pro-compare__price {
+    font-family: var(--pro-mono);
+    font-size: 13px;
+    color: var(--brand-ink);
+    font-weight: 600;
+    display: block;
+    margin-top: 4px;
+}
+
+.pro-compare__rm {
+    margin-top: 8px;
+    background: transparent;
+    border: none;
+    padding: 0;
+    font-size: 13px;
+    color: var(--pro-faint);
+    cursor: pointer;
+}
+
+.pro-compare__rm:hover {
+    color: var(--pro-warn);
+}
+
+/* Различающиеся строки подсвечиваем — как в оверлее сравнения */
+.pro-compare__table tr.is-diff td {
+    background: rgba(49, 185, 57, 0.05);
+    font-weight: 600;
+}
+
+.pro-compare__empty {
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--pro-dim);
+}
+
+/* ============================================================
+   ОДНОЭКРАННЫЙ КАЛЬКУЛЯТОР
+   ============================================================ */
+
+.calc-live {
+    margin: 2rem auto;
+    background: #fff;
+    border: 1px solid var(--pro-line);
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.calc-live__head {
+    max-width: 720px;
+    margin-bottom: 24px;
+}
+
+.calc-live__title {
+    font-size: clamp(26px, 3.2vw, 38px);
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+    color: var(--pro-ink);
+    margin: 8px 0 12px;
+}
+
+.calc-live__sub {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--pro-dim);
+    margin: 0;
+}
+
+.calc-live__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 22px;
+    align-items: start;
+}
+
+/* --- Вопросы --- */
+.calc-live__q {
+    padding: 18px 0;
+    border-top: 1px solid var(--pro-line-soft);
+}
+
+.calc-live__q:first-child {
+    border-top: none;
+    padding-top: 0;
+}
+
+.calc-live__q-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.calc-live__q-num {
+    flex: 0 0 auto;
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    background: rgba(49, 185, 57, 0.12);
+    color: var(--brand-ink);
+    font-family: var(--pro-mono);
+    font-size: 13px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calc-live__q-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--pro-ink);
+    margin: 0;
+}
+
+.calc-live__opts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.calc-live__opt {
+    background: #fff;
+    border: 1.5px solid var(--pro-line);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--pro-dim);
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+/* Ховер вариантов калькулятора — полупрозрачный зелёный из палитры
+   (--quiz-hover), чтобы отличался от активного состояния. */
+.calc-live__opt:hover {
+    border-color: var(--quiz-hover);
+    background: var(--brand-soft);
+    color: var(--brand-ink);
+}
+
+.calc-live__opt.is-active {
+    background: var(--pro-accent);
+    border-color: var(--pro-accent);
+    color: var(--on-brand);
+}
+
+.calc-live__opt--wide {
+    flex: 1 1 190px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.calc-live__opt-d {
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0.75;
+    line-height: 1.35;
+}
+
+.calc-live__tip {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-top: 18px;
+    background: #f8fafc;
+    border: 1px solid var(--pro-line);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--pro-dim);
+}
+
+/* --- Результат --- */
+.calc-live__result {
+    position: sticky;
+    top: 100px;
+    background: linear-gradient(160deg, #0f172a, #1e293b);
+    border-radius: 20px;
+    padding: 26px;
+    color: #fff;
+    min-height: 320px;
+}
+
+.calc-live__result-eyebrow {
+    font-family: var(--pro-mono);
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brand-on-dark);
+}
+
+.calc-live__result-name {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 8px 0 4px;
+    color: #fff;
+}
+
+.calc-live__result-people {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.62);
+    margin: 0 0 18px;
+}
+
+.calc-live__result-img {
+    width: 100%;
+    max-height: 170px;
+    object-fit: contain;
+    background: rgba(255, 255, 255, 0.94);
+    border-radius: 14px;
+    padding: 10px;
+    margin-bottom: 18px;
+}
+
+.calc-live__specs {
+    list-style: none;
+    margin: 0 0 18px;
+    padding: 0;
+    display: grid;
+    gap: 0;
+}
+
+.calc-live__specs li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 13.5px;
+}
+
+.calc-live__specs span {
+    color: rgba(255, 255, 255, 0.58);
+}
+
+.calc-live__specs b {
+    color: #fff;
+    font-weight: 700;
+    text-align: right;
+}
+
+.calc-live__total {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 16px;
+}
+
+.calc-live__total-label {
+    font-family: var(--pro-mono);
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.calc-live__total-value {
+    font-size: 25px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--brand-on-dark);
+    margin-top: 5px;
+    line-height: 1.15;
+}
+
+.calc-live__actions {
+    display: grid;
+    gap: 9px;
+    grid-template-columns: 1fr auto;
+}
+
+.calc-live__cta {
+    background: var(--pro-accent);
+    border: none;
+    color: var(--on-brand);
+    padding: 13px 16px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.calc-live__cta:hover {
+    background: var(--pro-accent-dark);
+}
+
+.calc-live__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 13px 16px;
+    border-radius: 12px;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.calc-live__link:hover {
+    border-color: #fff;
+    color: #fff;
+}
+
+.calc-live__note {
+    font-size: 13px;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 14px 0 0;
+}
+
+/* Плейсхолдер, пока не выбрано число проживающих */
+.calc-live__placeholder {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    min-height: 280px;
+    text-align: left;
+}
+
+.calc-live__placeholder-title {
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin: 12px 0 8px;
+    color: #fff;
+}
+
+.calc-live__placeholder-text {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.62);
+    margin: 0;
+}
+
+@media (max-width: 980px) {
+    .calc-live {
+        padding: 22px;
+    }
+
+    .calc-live__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .calc-live__result {
+        position: static;
+    }
+}
+
+@media (max-width: 520px) {
+    .calc-live__actions {
+        grid-template-columns: 1fr;
+    }
+}

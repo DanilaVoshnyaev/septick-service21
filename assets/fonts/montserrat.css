@@ -1,0 +1,20 @@
+/**
+ * Montserrat (вариативный) — сабсет под сайт.
+ *
+ * Было: Montserrat-VariableFont_wght.ttf, 394 КБ, без сжатия и без unicode-range.
+ * Стало: woff2 71 КБ (сабсет латиница + кириллица + типографика/валюта), woff как
+ * фолбэк для очень старых браузеров. Вариативность (ось wght 100–900) сохранена.
+ *
+ * Диапазон font-weight расширен до 100–900: раньше стояло 400–700, из-за чего
+ * заголовки с font-weight: 800 браузер прижимал к 700.
+ *
+ * Исходный .ttf оставлен в папке — из него пересобирается сабсет.
+ */
+@font-face {
+    font-family: 'Montserrat';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../fonts/Montserrat-subset.woff2') format('woff2'),
+         url('../fonts/Montserrat-subset.woff') format('woff');
+}
