@@ -114,7 +114,7 @@
 .pro-card:hover {
     transform: translateY(-4px);
     border-color: var(--pro-accent);
-    box-shadow: 0 14px 34px rgba(21, 128, 61, 0.14);
+    box-shadow: 0 14px 34px rgba(49, 185, 57, 0.14);
 }
 
 /* Медиа: штриховка вместо пустого белого поля (из прототипа) */
@@ -189,7 +189,7 @@
     min-height: 44px;
     gap: 5px;
     background: rgba(255, 255, 255, 0.92);
-    color: var(--pro-accent-dark);
+    color: var(--brand-ink);
     border: 1.5px solid var(--pro-accent);
     font-size: 13px;
     font-weight: 600;
@@ -202,7 +202,7 @@
 .pro-card__cmp:hover,
 .pro-card__cmp.is-active {
     background: var(--pro-accent);
-    color: #fff;
+    color: var(--on-brand);
 }
 
 .pro-card__body {
@@ -236,7 +236,7 @@
 }
 
 .pro-card__title a:hover {
-    color: var(--pro-accent-dark);
+    color: var(--brand-ink);
 }
 
 /* Пилюля с числом проживающих — тёплая, чтобы отделить от зелёных акцентов */
@@ -305,7 +305,7 @@
     font-weight: 800;
     letter-spacing: -0.02em;
     line-height: 1.1;
-    color: var(--pro-accent-dark);
+    color: var(--brand-ink);
 }
 
 .pro-card__price-parts {
@@ -347,22 +347,22 @@
 .pro-btn--ghost {
     background: transparent;
     border-color: var(--pro-accent);
-    color: var(--pro-accent-dark);
+    color: var(--brand-ink);
 }
 
 .pro-btn--ghost:hover {
-    background: rgba(21, 128, 61, 0.1);
+    background: rgba(49, 185, 57, 0.1);
 }
 
 .pro-btn--solid {
     background: var(--pro-accent);
-    color: #fff;
-    box-shadow: 0 6px 16px rgba(21, 128, 61, 0.24);
+    color: var(--on-brand);
+    box-shadow: 0 6px 16px rgba(49, 185, 57, 0.24);
 }
 
 .pro-btn--solid:hover {
     background: var(--pro-accent-dark);
-    color: #fff;
+    color: var(--on-brand);
 }
 
 @media (max-width: 480px) {
@@ -424,14 +424,14 @@
 
 .pro-chip:hover {
     border-color: var(--pro-accent);
-    color: var(--pro-accent-dark);
+    color: var(--brand-ink);
 }
 
 .pro-chip.is-active,
 .pro-chip.is-active:hover {
     background: var(--pro-accent);
     border-color: var(--pro-accent);
-    color: #fff;
+    color: var(--on-brand);
 }
 
 .pro-filter__meta {
@@ -446,7 +446,7 @@
     font-size: 13px;
     letter-spacing: 0.04em;
     font-weight: 600;
-    color: var(--pro-accent-dark);
+    color: var(--brand-ink);
     white-space: nowrap;
 }
 
@@ -732,21 +732,21 @@
 /* Звонок — акцентная кнопка с мягкой пульсацией, как в прототипе */
 .pro-dock__btn--call {
     background: var(--pro-accent);
-    box-shadow: 0 8px 22px rgba(21, 128, 61, 0.4);
+    box-shadow: 0 8px 22px rgba(49, 185, 57, 0.4);
     animation: pro-dock-pulse 2.4s infinite;
 }
 
 @keyframes pro-dock-pulse {
     0% {
-        box-shadow: 0 8px 22px rgba(21, 128, 61, 0.4), 0 0 0 0 rgba(21, 128, 61, 0.45);
+        box-shadow: 0 8px 22px rgba(49, 185, 57, 0.4), 0 0 0 0 rgba(49, 185, 57, 0.45);
     }
 
     70% {
-        box-shadow: 0 8px 22px rgba(21, 128, 61, 0.4), 0 0 0 16px rgba(21, 128, 61, 0);
+        box-shadow: 0 8px 22px rgba(49, 185, 57, 0.4), 0 0 0 16px rgba(49, 185, 57, 0);
     }
 
     100% {
-        box-shadow: 0 8px 22px rgba(21, 128, 61, 0.4), 0 0 0 0 rgba(21, 128, 61, 0);
+        box-shadow: 0 8px 22px rgba(49, 185, 57, 0.4), 0 0 0 0 rgba(49, 185, 57, 0);
     }
 }
 
@@ -834,7 +834,7 @@
 
     .mobile-action-bar__btn--order {
         background: var(--pro-accent);
-        color: #fff;
+        color: var(--on-brand);
         border-left-color: var(--pro-accent);
     }
 
@@ -963,8 +963,8 @@
 }
 
 .pro-estimate__col--in .pro-estimate__mark {
-    background: rgba(21, 128, 61, 0.12);
-    color: var(--pro-accent-dark);
+    background: rgba(49, 185, 57, 0.12);
+    color: var(--brand-ink);
 }
 
 .pro-estimate__col--extra .pro-estimate__mark {
@@ -1098,13 +1098,13 @@
 }
 
 .pro-compare__model:hover {
-    color: var(--pro-accent-dark);
+    color: var(--brand-ink);
 }
 
 .pro-compare__price {
     font-family: var(--pro-mono);
     font-size: 13px;
-    color: var(--pro-accent-dark);
+    color: var(--brand-ink);
     font-weight: 600;
     display: block;
     margin-top: 4px;
@@ -1126,7 +1126,7 @@
 
 /* Различающиеся строки подсвечиваем — как в оверлее сравнения */
 .pro-compare__table tr.is-diff td {
-    background: rgba(21, 128, 61, 0.05);
+    background: rgba(49, 185, 57, 0.05);
     font-weight: 600;
 }
 
@@ -1200,8 +1200,8 @@
     width: 24px;
     height: 24px;
     border-radius: 8px;
-    background: rgba(21, 128, 61, 0.12);
-    color: var(--pro-accent-dark);
+    background: rgba(49, 185, 57, 0.12);
+    color: var(--brand-ink);
     font-family: var(--pro-mono);
     font-size: 13px;
     font-weight: 700;
@@ -1236,15 +1236,18 @@
     transition: border-color 0.18s ease, background 0.18s ease, color 0.18s ease;
 }
 
+/* Ховер вариантов калькулятора — полупрозрачный зелёный из палитры
+   (--quiz-hover), чтобы отличался от активного состояния. */
 .calc-live__opt:hover {
-    border-color: var(--pro-accent);
-    color: var(--pro-accent-dark);
+    border-color: var(--quiz-hover);
+    background: var(--brand-soft);
+    color: var(--brand-ink);
 }
 
 .calc-live__opt.is-active {
     background: var(--pro-accent);
     border-color: var(--pro-accent);
-    color: #fff;
+    color: var(--on-brand);
 }
 
 .calc-live__opt--wide {
@@ -1379,7 +1382,7 @@
 .calc-live__cta {
     background: var(--pro-accent);
     border: none;
-    color: #fff;
+    color: var(--on-brand);
     padding: 13px 16px;
     border-radius: 12px;
     font-size: 15px;

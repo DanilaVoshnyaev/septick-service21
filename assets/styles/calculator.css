@@ -161,7 +161,7 @@
 
 .calc__back:hover,
 .calc__restart:hover {
-    color: var(--calc-green);
+    color: var(--brand-ink);
 }
 
 .calc__restart {
@@ -191,7 +191,7 @@
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: var(--calc-green);
+    color: var(--brand-ink);
     font-weight: 700;
     margin-bottom: 0.15rem;
 }
@@ -205,7 +205,7 @@
 
 .calc-res__link {
     font-size: 0.9rem;
-    color: var(--calc-green);
+    color: var(--brand-ink);
     text-decoration: none;
     font-weight: 600;
 }
@@ -270,7 +270,7 @@
     border: none;
     border-radius: 12px;
     background: var(--calc-green);
-    color: #fff;
+    color: var(--on-brand);
     font-family: inherit;
     font-size: 1.05rem;
     font-weight: 700;

@@ -885,7 +885,7 @@ function handle_premium_form_submit() {
     $message .= "<table style='border-collapse:collapse;width:100%;max-width:640px;border:1px solid #eee;'>";
     $message .= $row('Тип заявки', esc_html($form_label));
     $message .= $row('Имя', esc_html($name));
-    $message .= $row('Телефон', "<a href='tel:{$phone_tel}' style='color:#21b224;text-decoration:none;'>" . esc_html($phone) . "</a>");
+    $message .= $row('Телефон', "<a href='tel:{$phone_tel}' style='color:#157f1c;text-decoration:none;'>" . esc_html($phone) . "</a>");
     $message .= $row('Email', $email_lead ? "<a href='mailto:{$email_lead}'>" . esc_html($email_lead) . "</a>" : '');
     $message .= $row('Адрес', esc_html($address));
     $message .= $row('Комментарий', nl2br(esc_html($comment)));
@@ -1180,7 +1180,7 @@ function servis_lead_column_content($column, $post_id)
         case 'lead_mail':
             $sent = get_post_meta($post_id, '_lead_mail_sent', true);
             if ($sent === '1') {
-                echo '<span style="color:#21b224;">✓ отправлено</span>';
+                echo '<span style="color:#157f1c;">✓ отправлено</span>';
             } elseif ($sent === '0') {
                 echo '<span style="color:#d63638;">✗ не ушло</span>';
             } else {

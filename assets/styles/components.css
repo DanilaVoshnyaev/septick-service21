@@ -52,7 +52,7 @@ details > summary:focus-visible,
     border-radius: var(--radius-sm);
 }
 
-/* На тёмных поверхностях зелёный #15803d почти не виден — берём яркий вариант.
+/* На тёмных поверхностях затемнённый зелёный почти не виден — берём яркий вариант.
    Специфичность тоже поднята удвоением, чтобы перебить правило для ссылок. */
 .hero-premium :focus-visible:focus-visible,
 .testimonials-premium :focus-visible:focus-visible,
@@ -132,7 +132,7 @@ textarea:focus {
 .cmp-bar__open {
     background: var(--brand);
     border-color: var(--brand);
-    color: var(--ink-inverse);
+    color: var(--on-brand);
     box-shadow: var(--shadow-sm);
 }
 
@@ -150,7 +150,7 @@ textarea:focus {
     /* Было: белый фон и чёрный текст — кнопка исчезала на светлой секции */
     background: var(--brand-strong);
     border-color: var(--brand-strong);
-    color: var(--ink-inverse);
+    color: var(--on-brand);
     box-shadow: var(--shadow-md);
 }
 
@@ -168,7 +168,7 @@ textarea:focus {
     /* border-width задаём здесь же: в legacy у части вариантов border: 2px,
        и рамки получались разной толщины у соседних кнопок */
     border: 1.5px solid var(--brand);
-    color: var(--brand);
+    color: var(--brand-ink);
 }
 
 .btn-card.btn-outline:hover,
@@ -192,7 +192,7 @@ textarea:focus {
     background: none;
     border: none;
     border-radius: 0;
-    color: var(--brand);
+    color: var(--brand-ink);
     text-decoration: underline;
     text-underline-offset: 4px;
     box-shadow: none;
@@ -201,7 +201,7 @@ textarea:focus {
 .btn--text:hover,
 .btn.btn--text:hover {
     background: none;
-    color: var(--brand-strong);
+    color: var(--brand-ink);
 }
 
 /* Второстепенная кнопка на тёмном фоне (hero, тёмные секции) */
@@ -403,7 +403,7 @@ textarea,
     font-weight: 800;
     letter-spacing: -0.02em;
     line-height: 1.1;
-    color: var(--brand);
+    color: var(--brand-ink);
 }
 
 .price-card .price-old {
@@ -537,23 +537,26 @@ textarea,
 /* ============================================================
    5. ПЕРВЫЙ ЭКРАН
    ============================================================
-   Было min-height:100vh + padding:120px — на ноутбуке 1366×768 первый экран
-   занимал только hero, а калькулятор и каталог начинались после полной
-   прокрутки. 76vh поднимает их в зону видимости. */
+   Было min-height:100vh + padding:120px, потом 76vh + 88–112px. На 1440×900
+   главная кнопка всё равно оказывалась на отметке 867 px — за сгибом. Теперь
+   высоту задаёт содержимое: заголовок, подзаголовок, кнопка, под ней цифры.
+   Этот файл подключается после front-page.css, поэтому значения живут здесь
+   (задачи #6, #7). */
 
 .hero-premium {
-    min-height: 76vh;
-    padding: clamp(88px, 12vh, 112px) 0 clamp(48px, 8vh, 72px);
+    min-height: 0;
+    padding: clamp(28px, 4vh, 52px) 0 clamp(32px, 5vh, 56px);
 }
 
 /* Промежутки внутри hero тоже сжимаем — иначе выигрыш съедается ими */
 .hero-premium .hero-subtitle {
-    margin-bottom: 28px;
+    margin-bottom: 22px;
 }
 
+/* Статистика стоит под кнопками, поэтому нижнего отступа у неё нет. */
 .hero-premium .hero-stats {
-    margin-bottom: 32px;
-    padding: 24px 0;
+    margin: 26px 0 0;
+    padding: 18px 0 0;
 }
 
 /* Главное действие одно: «Подобрать станцию». Второе — тихой ссылкой. */
@@ -565,6 +568,7 @@ textarea,
 @media (max-width: 560px) {
     .hero-premium {
         min-height: 0;
+        padding: 20px 0 28px;
     }
 
     .hero-buttons {

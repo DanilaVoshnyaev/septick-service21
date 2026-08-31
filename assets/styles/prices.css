@@ -8,13 +8,13 @@
 /* Кнопка CTA: фиксируем зелёный (см. пояснение в works.css). */
 .prices-page .btn-premium.btn-primary {
     background: var(--brand);
-    color: #fff;
+    color: var(--on-brand);
     border: 1px solid var(--brand);
 }
 
 .prices-page .btn-premium.btn-primary:hover {
     background: var(--brand-strong);
-    color: #fff;
+    color: var(--on-brand);
     border-color: var(--brand-strong);
 }
 
@@ -97,12 +97,12 @@
 }
 
 .prices-table td a:hover {
-    color: var(--brand);
+    color: var(--brand-ink);
 }
 
 .prices-table__turnkey {
     font-weight: 800;
-    color: var(--brand);
+    color: var(--brand-ink);
     white-space: nowrap;
 }
 
@@ -113,7 +113,7 @@
 }
 
 .prices-note a {
-    color: var(--brand);
+    color: var(--brand-ink);
 }
 
 /* Колонки «входит / отдельно» */
@@ -131,7 +131,7 @@
 
 .prices-col--in {
     background: #f0fdf4;
-    border-color: rgba(21, 128, 61, 0.25);
+    border-color: rgba(49, 185, 57, 0.25);
 }
 
 .prices-col--out {
@@ -170,7 +170,7 @@
 
 .prices-list--in li::before {
     content: '✓';
-    color: var(--brand);
+    color: var(--brand-ink);
 }
 
 .prices-list--out li::before {

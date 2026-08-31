@@ -15,7 +15,7 @@
 .works-archive .btn-premium.btn-primary,
 .work-single .btn-premium.btn-primary {
     background: var(--brand);
-    color: #fff;
+    color: var(--on-brand);
     border: 1px solid var(--brand);
 }
 
@@ -23,19 +23,19 @@
 .works-archive .btn-premium.btn-primary:hover,
 .work-single .btn-premium.btn-primary:hover {
     background: var(--brand-strong);
-    color: #fff;
+    color: var(--on-brand);
     border-color: var(--brand-strong);
 }
 
 .work-single .btn-premium.btn-outline {
     background: transparent;
-    color: var(--brand);
+    color: var(--brand-ink);
     border: 2px solid var(--brand);
 }
 
 .work-single .btn-premium.btn-outline:hover {
     background: var(--brand);
-    color: #fff;
+    color: var(--on-brand);
     border-color: var(--brand);
 }
 
@@ -99,7 +99,7 @@
     left: 12px;
     top: 12px;
     padding: 0.3rem 0.7rem;
-    background: rgba(21, 128, 61, 0.95);
+    background: rgba(49, 185, 57, 0.95);
     color: #fff;
     font-size: 0.8125rem;
     font-weight: 600;
@@ -126,7 +126,7 @@
 }
 
 .work-card__title a:hover {
-    color: var(--brand);
+    color: var(--brand-ink);
 }
 
 .work-card__loc {
@@ -206,7 +206,7 @@
 
 .works-filter__btn.is-active {
     background: var(--brand);
-    color: #fff;
+    color: var(--on-brand);
 }
 
 /* Страница работы */
@@ -230,7 +230,7 @@
 }
 
 .work-single__crumbs a:hover {
-    color: var(--brand);
+    color: var(--brand-ink);
 }
 
 .work-single__title {

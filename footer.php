@@ -300,8 +300,8 @@ if (function_exists('izex_pro_render_dock')) {
               // занимали 239 px — треть первого экрана (задача #7). Полное описание
               // обработки данных — на странице политики. ?>
         <p class="cookie-consent__text">
-            Мы используем cookie и данные о посещении. Продолжая, вы принимаете
-            <a href="/privacy/">политику конфиденциальности</a>.
+            Сайт использует cookie. Продолжая, вы принимаете
+            <a href="/privacy/">политику обработки данных</a>.
         </p>
         <button type="button" class="cookie-consent__btn" id="cookieConsentAccept">Принять</button>
     </div>

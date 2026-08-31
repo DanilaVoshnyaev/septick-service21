@@ -201,7 +201,7 @@ $operator_ogrn = $cf_option('operator_ogrn', 'ОГРНИП 323210000047416
         .legal-section p { line-height: 1.7; margin: 0 0 .75rem; }
         .legal-list { margin: 0 0 .75rem; padding-left: 1.25rem; line-height: 1.7; }
         .legal-list li { margin-bottom: .35rem; }
-        .legal-doc a { color: var(--green, #21b224); text-decoration: underline; }
+        .legal-doc a { color: var(--brand-ink, #157f1c); text-decoration: underline; }
     </style>
 
 <?php get_footer(); ?>

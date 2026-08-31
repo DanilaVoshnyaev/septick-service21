@@ -19,8 +19,15 @@
             width: 100%; max-width: 1200px; margin: 0 auto;
             padding: 0 clamp(16px, 4vw, 32px);
         }
+        /* Было `padding: 0 max(...) max(...)` — три значения, то есть верх 0,
+           бока и НИЗ. Каждый .container на главной получал лишние 32 px снизу,
+           включая контейнер шапки (шапка была 110 px вместо 78). Задаём боковые
+           отступы по отдельности. */
         @supports (padding: max(0px)) {
-            .container { padding: 0 max(clamp(16px, 4vw, 32px), env(safe-area-inset-right)) max(clamp(16px, 4vw, 32px), env(safe-area-inset-left)); }
+            .container {
+                padding-right: max(clamp(16px, 4vw, 32px), env(safe-area-inset-right));
+                padding-left: max(clamp(16px, 4vw, 32px), env(safe-area-inset-left));
+            }
         }
 
         /* ===== HERO PREMIUM ===== */
@@ -63,8 +70,8 @@
         }
         .hero-bg-overlay {
             position: absolute; inset: 0; z-index: 0; pointer-events: none;
-            background: radial-gradient(circle at 20% 50%, rgba(21, 128, 61, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 80%, rgba(21, 128, 61, 0.05) 0%, transparent 50%);
+            background: radial-gradient(circle at 20% 50%, rgba(49, 185, 57, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(49, 185, 57, 0.05) 0%, transparent 50%);
         }
         .hero-content { position: relative; z-index: 1; text-align: center; max-width: 900px; margin: 0 auto; }
 
@@ -100,8 +107,8 @@
             border-top: 1px solid rgba(255,255,255,0.15);
         }
         .stat-item { text-align: center; }
-        .stat-number { font-size: clamp(28px, 3vw, 36px); font-weight: 500; color: var(--premium-gold); line-height: 1; }
-        .stat-suffix { font-size: clamp(18px, 2vw, 24px); color: var(--premium-gold); vertical-align: super; }
+        .stat-number { font-size: clamp(28px, 3vw, 36px); font-weight: 500; color: var(--brand-ink); line-height: 1; }
+        .stat-suffix { font-size: clamp(18px, 2vw, 24px); color: var(--brand-ink); vertical-align: super; }
         .stat-label { display: block; margin-top: 8px; font-size: 13px; color: rgba(255,255,255,0.7); text-transform: uppercase; letter-spacing: 1px; }
         .stat-divider { width: 1px; height: 50px; background: rgba(255,255,255,0.15); }
 
@@ -127,7 +134,7 @@
 
         .btn-premium.btn-primary {
             background:  var(--premium-gold);
-            color: white;
+            color: var(--on-brand);
             border: 1px solid var(--premium-gold);
         }
         .btn-premium.btn-primary:hover {
@@ -139,7 +146,7 @@
         .btn-premium.btn-outline {
             background: transparent; color: #fff; border: 2px solid rgba(255,255,255,0.4);
         }
-        .btn-premium.btn-outline:hover { background: rgba(255,255,255,0.15); border-color: var(--premium-gold); color: var(--premium-gold); }
+        .btn-premium.btn-outline:hover { background: rgba(255,255,255,0.15); border-color: var(--premium-gold); color: var(--brand-ink); }
 
         .btn-premium.btn-sm { padding: 10px 20px; font-size: 14px; }
         .btn-premium.btn-large { padding: 16px 36px; font-size: 16px; }
@@ -167,13 +174,13 @@
         }
         .feature-icon-wrapper {
             width: 72px; height: 72px; margin: 0 auto 20px;
-            background: linear-gradient(135deg, rgba(21, 128, 61, 0.1) 0%, rgba(21, 128, 61, 0.1) 100%);
+            background: linear-gradient(135deg, rgba(49, 185, 57, 0.1) 0%, rgba(49, 185, 57, 0.1) 100%);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            color: var(--premium-blue); transition: var(--transition);
+            color: var(--brand-ink); transition: var(--transition);
         }
         .feature-luxury:hover .feature-icon-wrapper {
             background: linear-gradient(135deg, var(--premium-blue) 0%, var(--premium-gold) 100%);
-            color: #fff;
+            color: var(--on-brand);
         }
         .feature-luxury h3 { font-size: 18px; font-weight: 600; margin-bottom: 10px; color: var(--premium-text); }
         .feature-luxury p { font-size: 14px; color: var(--premium-gray); line-height: 1.5; }
@@ -195,14 +202,14 @@
         .advantage-card:hover {
             transform: translateY(-4px);
             border-color: var(--header-green, var(--brand));
-            box-shadow: 0 12px 30px rgba(21, 128, 61, 0.12);
+            box-shadow: 0 12px 30px rgba(49, 185, 57, 0.12);
         }
         .advantage-card__icon {
             width: 56px; height: 56px;
             border-radius: 14px;
             display: flex; align-items: center; justify-content: center;
-            background: rgba(21, 128, 61, 0.1);
-            color: var(--header-green, var(--brand));
+            background: rgba(49, 185, 57, 0.1);
+            color: var(--brand-ink);
             margin-bottom: 16px;
         }
         .advantage-card__icon svg { width: 28px; height: 28px; }
@@ -213,9 +220,9 @@
         .catalog-premium { padding: clamp(80px, 12vw, 120px) 0; background: #fff; }
         .section-header { text-align: center; margin-bottom: 48px; }
         .section-label {
-            display: inline-block; font-size: 13px; font-weight: 600; color: var(--premium-gold);
+            display: inline-block; font-size: 13px; font-weight: 600; color: var(--brand-ink);
             text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px;
-            padding: 6px 16px; background: rgba(21, 128, 61, 0.1); border-radius: 20px;
+            padding: 6px 16px; background: rgba(49, 185, 57, 0.1); border-radius: 20px;
         }
         .section-title {
             font-size: clamp(28px, 4vw, 40px); font-weight: 300; color: var(--premium-text);
@@ -262,7 +269,7 @@
 
         .product-badge-premium {
             position: absolute; top: 16px; right: 16px; z-index: 2;
-            padding: 5px 14px; background: var(--premium-blue); color: #fff;
+            padding: 5px 14px; background: var(--premium-blue); color: var(--on-brand);
             font-size: 13px; font-weight: 600; text-transform: uppercase;
             border-radius: 16px; letter-spacing: 0.5px;
         }
@@ -303,7 +310,7 @@
         .product-footer { display: flex; flex-direction: column; gap: 12px; margin-top: auto; }
         .product-price-premium { text-align: center; }
         .price-old { display: block; font-size: 14px; color: var(--premium-gray); text-decoration: line-through; margin-bottom: 2px; }
-        .price-current { font-size: 24px; font-weight: 700; color: var(--premium-gold); }
+        .price-current { font-size: 24px; font-weight: 700; color: var(--brand-ink); }
 
         .catalog-cta-premium {
             text-align: center; padding: 24px; background: var(--premium-light);
@@ -325,7 +332,7 @@
         .catalog-cta-premium p { margin-bottom: 8px; }
         .catalog-cta-premium strong { color: white; }
         .phone-link-premium {
-            font-size: 20px; font-weight: 700; color: var(--header-green);
+            font-size: 20px; font-weight: 700; color: var(--brand-ink);
             margin: 0 8px;
         }
         .phone-link-premium:hover { transform: translateX(3px);  }
@@ -344,15 +351,15 @@
             border-radius: 14px; transition: var(--transition);
         }
         .advantage-item:hover {
-            box-shadow: 0 10px 28px rgba(21, 128, 61, 0.1);
+            box-shadow: 0 10px 28px rgba(49, 185, 57, 0.1);
             transform: translateY(-3px);
             border-color: var(--header-green, var(--brand));
         }
         .advantage-check {
             width: 36px; height: 36px;
-            background: rgba(21, 128, 61, 0.12);
+            background: rgba(49, 185, 57, 0.12);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            color: var(--header-green, var(--brand)); font-weight: 700; font-size: 18px; flex-shrink: 0;
+            color: var(--brand-ink); font-weight: 700; font-size: 18px; flex-shrink: 0;
         }
         .advantage-content h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: var(--premium-text); }
         .advantage-content p { font-size: 14px; color: var(--premium-gray); line-height: 1.5; margin: 0; }
@@ -368,12 +375,12 @@
 
         .step-item { flex: 1; text-align: center; position: relative; padding: 0 8px; }
         .step-number {
-            font-size: 56px; font-weight: 300; color: rgba(21, 128, 61, 0.12);
+            font-size: 56px; font-weight: 300; color: rgba(49, 185, 57, 0.12);
             line-height: 1; margin-bottom: 12px; position: relative; z-index: 1;
         }
         .step-number::after {
             content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 90px; height: 90px; background: linear-gradient(135deg, rgba(21, 128, 61, 0.06) 0%, rgba(21, 128, 61, 0.06) 100%);
+            width: 90px; height: 90px; background: linear-gradient(135deg, rgba(49, 185, 57, 0.06) 0%, rgba(49, 185, 57, 0.06) 100%);
             border-radius: 50%; z-index: -1;
         }
         .step-content h4 { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: var(--premium-text); }
@@ -393,7 +400,7 @@
                 url(../images/rewies.jpg) center / cover no-repeat,
                 var(--premium-darker);
         }
-        .testimonials-premium .section-label { color: var(--premium-gold); }
+        .testimonials-premium .section-label { color: var(--brand-ink); }
         .testimonials-premium .section-title { color: #fff; }
 
         .testimonials-slider-premium {
@@ -411,7 +418,7 @@
         .testimonial-card-premium:hover {
             background: rgba(255,255,255,0.1); transform: translateY(-4px);
         }
-        .testimonial-rating { color: var(--premium-gold); font-size: 18px; margin-bottom: 16px; letter-spacing: 3px; }
+        .testimonial-rating { color: var(--brand-ink); font-size: 18px; margin-bottom: 16px; letter-spacing: 3px; }
         .testimonial-text {
             font-size: 15px; line-height: 1.7; color: rgba(255,255,255,0.92);
             margin-bottom: 24px; font-style: italic;
@@ -420,7 +427,7 @@
         .author-avatar {
             width: 48px; height: 48px; background: linear-gradient(135deg, var(--premium-blue) 0%, var(--premium-gold) 100%);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            color: #fff; font-weight: 600; font-size: 16px; flex-shrink: 0;
+            color: var(--on-brand); font-weight: 600; font-size: 16px; flex-shrink: 0;
         }
         .author-info h5 { font-size: 15px; font-weight: 600; color: #fff; margin: 0 0 2px 0; }
         .author-info span { font-size: 13px; color: rgba(255,255,255,0.6); }
@@ -442,7 +449,7 @@
         .cta-bg-pattern {
             position: absolute; inset: 0; pointer-events: none;
             background-image: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.12) 0%, transparent 50%),
-            radial-gradient(circle at 80% 80%, rgba(21, 128, 61, 0.12) 0%, transparent 50%);
+            radial-gradient(circle at 80% 80%, rgba(49, 185, 57, 0.12) 0%, transparent 50%);
         }
         .cta-content { position: relative; z-index: 1; text-align: center; max-width: 650px; margin: 0 auto; }
         .cta-title {
@@ -458,9 +465,9 @@
             width: 100%; padding: 16px 20px; border: none; border-radius: 10px;
             background: rgba(255,255,255,0.96); font-size: 15px; transition: var(--transition);
         }
-        .form-group input:focus { outline: none; box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.35); }
+        .form-group input:focus { outline: none; box-shadow: 0 0 0 3px rgba(49, 185, 57, 0.35); }
         .form-note { font-size: 13px; color: rgba(255,255,255,0.75); }
-        .form-note a { color: var(--premium-gold); text-decoration: none; }
+        .form-note a { color: var(--brand-ink); text-decoration: none; }
         .form-note a:hover { text-decoration: underline; }
 
         .cta-contacts-premium { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
@@ -509,7 +516,7 @@
         }
         .modal-form input:focus, .modal-form textarea:focus {
             outline: none; border-color: var(--premium-gold);
-            box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.15);
+            box-shadow: 0 0 0 3px rgba(49, 185, 57, 0.15);
         }
         .modal-form textarea { resize: vertical; min-height: 90px; }
 
@@ -554,11 +561,11 @@
         .station-card-home:hover {
             transform: translateY(-4px);
             border-color: var(--card-green);
-            box-shadow: 0 10px 30px rgba(21, 128, 61, 0.15);
+            box-shadow: 0 10px 30px rgba(49, 185, 57, 0.15);
         }
         .station-badge-home {
             position: absolute; top: 1rem; left: 1rem; z-index: 2;
-            background: var(--card-green); color: #fff;
+            background: var(--card-green); color: var(--on-brand);
             padding: 0.35rem 0.85rem; border-radius: 20px;
             font-size: 0.8125rem; font-weight: 700; text-transform: uppercase;
         }
@@ -576,7 +583,7 @@
             margin: 0 0 0.5rem; font-size: 1.1rem; font-weight: 600; color: var(--card-text); line-height: 1.4;
         }
         .station-card-home__title a { color: inherit; text-decoration: none; }
-        .station-card-home__title a:hover { color: var(--card-blue); }
+        .station-card-home__title a:hover { color: var(--brand-ink); }
         .station-card-home__people {
             margin: 0 0 1rem; color: var(--card-text-muted); font-size: 0.9rem;
             display: flex; align-items: center; gap: 0.4rem;
@@ -597,16 +604,16 @@
             transition: var(--card-transition); text-align: center; border: none; cursor: pointer;
         }
         .btn-card-home.btn-outline {
-            background: transparent; border: 2px solid var(--card-blue); color: var(--card-blue);
+            background: transparent; border: 2px solid var(--card-blue); color: var(--brand-ink);
         }
-        .btn-card-home.btn-outline:hover { background: var(--card-blue); color: #fff; }
+        .btn-card-home.btn-outline:hover { background: var(--card-blue); color: var(--on-brand); }
         .btn-card-home.btn-green {
             background: linear-gradient(135deg, var(--card-green) 0%, var(--card-green-hover) 100%);
-            color: #fff;
+            color: var(--on-brand);
         }
         .btn-card-home.btn-green:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(21, 128, 61, 0.35);
+            box-shadow: 0 6px 20px rgba(49, 185, 57, 0.35);
         }
         @media (max-width: 768px) {
             .station-card-home__actions { grid-template-columns: 1fr; }
@@ -656,10 +663,10 @@
         }
         /* убираем дефолтный маркер <summary> */
         .faq-question::-webkit-details-marker { display: none; }
-        .faq-question:hover { color: var(--premium-gold); }
+        .faq-question:hover { color: var(--brand-ink); }
         .faq-icon {
             flex-shrink: 0;
-            color: var(--premium-gold);
+            color: var(--brand-ink);
             transition: transform 0.25s ease;
         }
         .faq-item[open] .faq-icon { transform: rotate(45deg); }

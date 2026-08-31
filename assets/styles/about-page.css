@@ -38,14 +38,14 @@
         }
         .about-hero__cta {
             display: inline-flex; align-items: center; gap: 0.5rem;
-            padding: 0.85rem 1.75rem; background: var(--green); color: white;  /* ✅ Было: var(--gold), color: #0f172a */
+            padding: 0.85rem 1.75rem; background: var(--green); color: var(--on-brand);  /* ✅ Было: var(--gold), color: #0f172a */
             border-radius: 8px; text-decoration: none; font-weight: 600;
             transition: var(--transition); border: 1px solid var(--green);
         }
         .about-hero__cta:hover {
             background: #fff; color: #0f172a;  /* ✅ Логика хедера: инверсия при ховере */
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(21, 128, 61, 0.35);
+            box-shadow: 0 6px 20px rgba(49, 185, 57, 0.35);
         }
         .about-hero__cta .icon { width: 18px; height: 18px; }
 
@@ -59,7 +59,7 @@
             font-size: 1.4rem; font-weight: 600; color: var(--text);
             margin: 0 0 1.25rem; display: flex; align-items: center; gap: 0.6rem;
         }
-        .section-title .icon { width: 24px; height: 24px; color: var(--green); }  /* ✅ Было: var(--gold) */
+        .section-title .icon { width: 24px; height: 24px; color: var(--brand-ink); }  /* ✅ Было: var(--gold) */
         .section-content { color: var(--text-muted); line-height: 1.7; font-size: 1rem; }
         .section-content p { margin: 0 0 1rem; }
         .section-content p:last-child { margin-bottom: 0; }
@@ -75,7 +75,7 @@
             border-radius: var(--radius); border: 1px solid var(--border);
         }
         .stat-number {
-            font-size: 2rem; font-weight: 700; color: var(--green);  /* ✅ Было: var(--gold) */
+            font-size: 2rem; font-weight: 700; color: var(--brand-ink);  /* ✅ Было: var(--gold) */
             display: block; margin-bottom: 0.25rem;
         }
         .stat-label { font-size: 0.9rem; color: var(--text-muted); }
@@ -91,7 +91,7 @@
             display: flex; align-items: center; gap: 0.5rem;
             padding: 0.5rem 0; color: var(--text); font-size: 0.95rem;
         }
-        .geo-list .icon { width: 16px; height: 16px; color: var(--green); flex-shrink: 0; }  /* ✅ Было: var(--blue) */
+        .geo-list .icon { width: 16px; height: 16px; color: var(--brand-ink); flex-shrink: 0; }  /* ✅ Было: var(--blue) */
 
         /* Процесс */
         .process-steps {
@@ -104,7 +104,7 @@
         .process-step__number {
             position: absolute; left: 0; top: 0;
             width: 32px; height: 32px; border-radius: 50%;
-            background: var(--green); color: white;  /* ✅ Было: color: #0f172a */
+            background: var(--green); color: var(--on-brand);  /* ✅ Было: color: #0f172a */
             display: flex; align-items: center; justify-content: center;
             font-weight: 700; font-size: 1rem; border: 1px solid var(--green);
         }
@@ -125,7 +125,7 @@
             background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border);
         }
         .benefit-item .icon {
-            width: 24px; height: 24px; color: var(--green); flex-shrink: 0; margin-top: 2px;  /* ✅ Было: var(--gold) */
+            width: 24px; height: 24px; color: var(--brand-ink); flex-shrink: 0; margin-top: 2px;  /* ✅ Было: var(--gold) */
         }
         .benefit-item__title {
             font-weight: 600; color: var(--text); margin: 0 0 0.3rem; font-size: 1rem;
@@ -170,7 +170,7 @@
         .about-cta__form input:focus {
             outline: none;
             border-color: var(--green);
-            box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.25);
+            box-shadow: 0 0 0 3px rgba(49, 185, 57, 0.25);
         }
         .about-cta__form .btn { white-space: nowrap; justify-content: center; }
         .about-cta__form .form-consent {
@@ -197,7 +197,7 @@
             transition: var(--transition); border: 1px solid #fff; cursor: pointer;
         }
         .about-cta .btn:hover {
-            background: var(--green); color: #fff; border-color: var(--green);  /* ✅ При ховере: зелёная кнопка */
+            background: var(--green); color: var(--on-brand); border-color: var(--green);  /* ✅ При ховере: зелёная кнопка */
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
         }

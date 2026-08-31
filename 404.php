@@ -52,7 +52,7 @@ $company = function_exists('getCompanyContacts') ? getCompanyContacts() : array(
             font-weight: 800;
             line-height: 1;
             letter-spacing: -2px;
-            background: linear-gradient(135deg, var(--header-green, #21b224) 0%, #16a34a 100%);
+            background: linear-gradient(135deg, var(--brand, #31b939) 0%, var(--brand-strong, #1f9f27) 100%);
             -webkit-background-clip: text; background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
@@ -86,14 +86,14 @@ $company = function_exists('getCompanyContacts') ? getCompanyContacts() : array(
         }
         .error-404__search input:focus {
             outline: none;
-            border-color: var(--header-green, #21b224);
+            border-color: var(--brand, #31b939);
             box-shadow: 0 0 0 3px rgba(33, 178, 36, 0.15);
         }
         .error-404__search button {
             padding: 0.85rem 1.5rem;
             border: none;
             border-radius: 10px;
-            background: var(--header-green, #21b224);
+            background: var(--brand, #31b939);
             color: #fff;
             font-weight: 600;
             cursor: pointer;
@@ -109,7 +109,7 @@ $company = function_exists('getCompanyContacts') ? getCompanyContacts() : array(
         }
         .error-404__actions .btn { width: auto; }
         .error-404__phone { color: var(--text-muted, #64748b); font-size: 0.95rem; margin: 0; }
-        .error-404__phone a { color: var(--header-green, #21b224); font-weight: 700; text-decoration: none; }
+        .error-404__phone a { color: var(--brand-ink, #157f1c); font-weight: 700; text-decoration: none; }
         .error-404__phone a:hover { text-decoration: underline; }
         @media (max-width: 480px) {
             .error-404__search { flex-direction: column; }

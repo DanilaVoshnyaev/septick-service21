@@ -37,7 +37,7 @@
 .site-header-premium.scrolled {
     background: var(--header-bg-scrolled);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border-bottom-color: rgba(21, 128, 61, 0.3);
+    border-bottom-color: rgba(49, 185, 57, 0.3);
 }
 
 /* Container */
@@ -73,7 +73,7 @@
 }
 
 .top-icon {
-    color: var(--header-green);
+    color: var(--brand-ink);
     flex-shrink: 0;
 }
 
@@ -93,7 +93,7 @@
 }
 
 .top-contact-link:hover {
-    color: var(--header-blue);
+    color: var(--brand-ink);
 }
 
 .top-phones-wrapper {
@@ -112,7 +112,7 @@
 }
 
 .top-phone-primary:hover {
-    color: var(--header-green);
+    color: var(--brand-ink);
 }
 
 .top-phone-toggle {
@@ -127,7 +127,7 @@
 }
 
 .top-phone-toggle:hover, .top-phone-toggle.active {
-    color: var(--header-green);
+    color: var(--brand-ink);
 }
 
 .top-phone-toggle.active {
@@ -174,8 +174,8 @@
 }
 
 .top-phones-dropdown a:hover {
-    background: rgba(21, 128, 61, 0.1);
-    color: var(--header-green);
+    background: rgba(49, 185, 57, 0.1);
+    color: var(--brand-ink);
     padding-left: 20px;
 }
 
@@ -231,15 +231,15 @@
 }
 
 .btn-premium.btn-ghost:hover {
-    background: rgba(21, 128, 61, 0.1);
+    background: rgba(49, 185, 57, 0.1);
     border-color: var(--header-green);
-    color: var(--header-green);
+    color: var(--brand-ink);
 
 }
 
 .btn-premium.btn-gold {
     background: var(--header-green);
-    color: white;
+    color: var(--on-brand);
     font-weight: 600;
     border-bottom: 1px solid var(--header-green);
 }
@@ -253,7 +253,7 @@
 
 .btn-premium.btn-outline-gold {
     background: transparent;
-    color: var(--header-green);
+    color: var(--brand-ink);
     border: 1px solid var(--header-green);
 }
 
@@ -430,8 +430,8 @@
 }
 
 .nav-list-premium .sub-menu li a:hover {
-    background: rgba(21, 128, 61, 0.1);
-    color: var(--header-green);
+    background: rgba(49, 185, 57, 0.1);
+    color: var(--brand-ink);
     padding-left: 24px;
 }
 
@@ -489,8 +489,8 @@
 }
 
 .header-phone-premium:hover {
-    background: rgba(21, 128, 61, 0.08);
-    color: var(--header-green);
+    background: rgba(49, 185, 57, 0.08);
+    color: var(--brand-ink);
 }
 
 /* Номер рядом с меню и кнопкой влезает только на широких окнах: ниже 1280 px
@@ -533,6 +533,14 @@
 
 .mobile-toggle.active .hamburger-line:nth-child(3) {
     transform: rotate(-45deg) translate(4px, -4px);
+}
+
+/* Бургер нужен только там, где спрятано меню: на десктопе он висел рядом
+   с полным меню и был ещё одной точкой входа. */
+@media (min-width: 1025px) {
+    .header-action-btn-premium.mobile-toggle {
+        display: none;
+    }
 }
 
 /* ===== SEARCH BAR ===== */
@@ -591,7 +599,7 @@
     outline: none;
     background: #fff;
     border-color: var(--header-green);
-    box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.15);
+    box-shadow: 0 0 0 3px rgba(49, 185, 57, 0.15);
 }
 
 .search-input-wrapper button[type="submit"] {
@@ -734,8 +742,8 @@
 
 .mobile-nav-list-premium li a:hover,
 .mobile-nav-list-premium li a.current-menu-item {
-    background: rgba(21, 128, 61, 0.12);
-    color: var(--header-green);
+    background: rgba(49, 185, 57, 0.12);
+    color: var(--brand-ink);
     padding-left: 20px;
 }
 
@@ -757,7 +765,7 @@
 
 .mobile-section-title {
     font-size: 13px;
-    color: var(--header-green);
+    color: var(--brand-ink);
     text-transform: uppercase;
     letter-spacing: 1.5px;
     margin-bottom: 12px;
@@ -780,7 +788,7 @@
 }
 
 .mobile-contact-item a:hover {
-    color: var(--header-green);
+    color: var(--brand-ink);
 }
 
 .mobile-menu-cta-premium {
@@ -927,8 +935,8 @@
     display: inline-block;
     padding: 6px 14px;
     border-radius: 999px;
-    background: rgba(21, 128, 61, 0.1);
-    color: var(--header-green, var(--brand));
+    background: rgba(49, 185, 57, 0.1);
+    color: var(--brand-ink);
     font-size: 14px;
     font-weight: 600;
 }
@@ -962,7 +970,7 @@
     outline: none;
     background: #fff;
     border-color: var(--header-green);
-    box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.15);
+    box-shadow: 0 0 0 3px rgba(49, 185, 57, 0.15);
 }
 
 .form-privacy {
@@ -973,7 +981,7 @@
 }
 
 .form-privacy a {
-    color: var(--header-green);
+    color: var(--brand-ink);
     text-decoration: none;
 }
 
@@ -1164,7 +1172,7 @@ body {
 .footer-social .social-label {
     display: block;
     font-size: 13px;
-    color: var(--footer-green);
+    color: var(--brand-ink);
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 12px;
@@ -1244,7 +1252,7 @@ body {
 }
 
 .footer-menu li a:hover, .footer-list li a:hover {
-    color: var(--footer-green);
+    color: var(--brand-ink);
     padding-left: 18px;
 }
 
@@ -1255,14 +1263,14 @@ body {
 /* Contact Items */
 .contact-item {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
     padding: 8px 0;
     color: var(--footer-text);
 }
 
 .contact-icon {
-    color: var(--footer-green);
+    color: var(--brand-ink);
     flex-shrink: 0;
     margin-top: 2px;
 }
@@ -1278,7 +1286,7 @@ body {
 }
 
 .contact-link:hover {
-    color: var(--footer-green);
+    color: var(--brand-ink);
 }
 
 .contact-text {
@@ -1290,7 +1298,7 @@ body {
     margin-top: 8px;
     padding: 12px 24px;
     background: var(--footer-green);
-    color: white;
+    color: var(--on-brand);
     border: 1px solid var(--footer-green);
     border-radius: 8px;
     font-weight: 600;
@@ -1306,7 +1314,7 @@ body {
     background: #fff;
     color: #0f172a;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(21, 128, 61, 0.2);
+    box-shadow: 0 6px 20px rgba(49, 185, 57, 0.2);
 }
 
 /* ===== FOOTER BOTTOM ===== */
@@ -1339,7 +1347,7 @@ body {
 }
 
 .footer-copyright a {
-    color: var(--footer-green);
+    color: var(--brand-ink);
     text-decoration: none;
 }
 
@@ -1365,7 +1373,7 @@ body {
 }
 
 .footer-company-info a {
-    color: var(--footer-green);
+    color: var(--brand-ink);
     text-decoration: none;
 }
 
@@ -1386,7 +1394,7 @@ body {
 }
 
 .footer-legal a:hover {
-    color: var(--footer-green);
+    color: var(--brand-ink);
 }
 
 @media (max-width: 768px) {
@@ -1404,7 +1412,7 @@ body {
 }
 
 .footer-developer a {
-    color: var(--footer-green);
+    color: var(--brand-ink);
     text-decoration: none;
     font-weight: 500;
 }
@@ -1428,7 +1436,7 @@ body {
     height: 48px;
     border-radius: 50%;
     background: var(--footer-green);
-    color: white;
+    color: var(--on-brand);
     border: 1px solid var(--footer-green);
     cursor: pointer;
     display: flex;
@@ -1439,7 +1447,7 @@ body {
     visibility: hidden;
     transform: translateY(20px);
     z-index: 100;
-    box-shadow: 0 4px 15px rgba(21, 128, 61, 0.3);
+    box-shadow: 0 4px 15px rgba(49, 185, 57, 0.3);
 }
 
 .back-to-top.visible {
@@ -1452,7 +1460,7 @@ body {
     background: #fff;
     color: #0f172a;
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(21, 128, 61, 0.4);
+    box-shadow: 0 10px 30px rgba(49, 185, 57, 0.4);
 }
 
 /* ===== MODAL (shared with header) ===== */
@@ -1572,7 +1580,7 @@ body {
     outline: none;
     background: #fff;
     border-color: var(--footer-green);
-    box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.15);
+    box-shadow: 0 0 0 3px rgba(49, 185, 57, 0.15);
 }
 
 .modal-form .btn-full, .form-privacy {
@@ -1586,7 +1594,7 @@ body {
 }
 
 .form-note a, .form-privacy a {
-    color: var(--footer-green);
+    color: var(--brand-ink);
     text-decoration: none;
 }
 
@@ -1650,7 +1658,7 @@ body {
 }
 
 .stations-hero__promo {
-    background: linear-gradient(135deg, rgba(21, 128, 61, 0.12) 0%, rgba(21, 128, 61, 0.08) 100%);
+    background: linear-gradient(135deg, rgba(49, 185, 57, 0.12) 0%, rgba(49, 185, 57, 0.08) 100%);
     border-left: 4px solid var(--green); /* ✅ Было: var(--gold) */
     padding: 1rem 1.25rem;
     border-radius: 0 8px 8px 0;
@@ -1665,7 +1673,7 @@ body {
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
     background: var(--green); /* ✅ Было: var(--gold) */
-    color: white;
+    color: var(--on-brand);
     border-radius: 8px;
     text-decoration: none;
     font-weight: 700;
@@ -1679,7 +1687,7 @@ body {
     background: #fff;
     color: #0f172a; /* ✅ Логика хедера: зелёный → белый с чёрным текстом */
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(21, 128, 61, 0.35);
+    box-shadow: 0 6px 20px rgba(49, 185, 57, 0.35);
 }
 
 .stations-hero__phone .icon {
@@ -1731,7 +1739,7 @@ body {
 .station-card:hover {
     transform: translateY(-4px);
     border-color: var(--green); /* ✅ Было: var(--gold) */
-    box-shadow: 0 10px 30px rgba(21, 128, 61, 0.15); /* ✅ Было: rgba(21, 128, 61, 0.15) */
+    box-shadow: 0 10px 30px rgba(49, 185, 57, 0.15); /* ✅ Было: rgba(49, 185, 57, 0.15) */
 }
 
 /* Бейдж */
@@ -1741,7 +1749,7 @@ body {
     left: 1rem;
     z-index: 2;
     background: var(--green);
-    color: white; /* ✅ Было: color: #0f172a */
+    color: var(--on-brand); /* ✅ Было: color: #0f172a */
     padding: 0.35rem 0.85rem;
     border-radius: 20px;
     font-size: 0.8125rem;
@@ -1813,7 +1821,7 @@ body {
 }
 
 .station-card__title a:hover {
-    color: var(--green);
+    color: var(--brand-ink);
 }
 
 /* ✅ Было: var(--blue) */
@@ -1830,7 +1838,7 @@ body {
 .station-card__people .icon {
     width: 16px;
     height: 16px;
-    color: var(--green);
+    color: var(--brand-ink);
 }
 
 /* ✅ Было: var(--blue) */
@@ -1878,17 +1886,17 @@ body {
 .btn-card.btn-outline {
     background: transparent;
     border: 2px solid var(--green);
-    color: var(--green); /* ✅ Было: var(--blue) */
+    color: var(--brand-ink); /* ✅ Было: var(--blue) */
 }
 
 .btn-card.btn-outline:hover {
     background: var(--green);
-    color: #fff; /* ✅ Было: background: var(--blue) */
+    color: var(--on-brand); /* ✅ Было: background: var(--blue) */
 }
 
 .btn-card.btn-gold {
     background: var(--green); /* ✅ Было: линейный градиент с gold */
-    color: white;
+    color: var(--on-brand);
     border: 1px solid var(--green);
 }
 
@@ -1896,7 +1904,7 @@ body {
     background: #fff;
     color: #0f172a; /* ✅ Логика хедера: зелёный → белый с чёрным текстом */
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(21, 128, 61, 0.35);
+    box-shadow: 0 6px 20px rgba(49, 185, 57, 0.35);
 }
 
 /* Пагинация */
@@ -1936,7 +1944,7 @@ body {
 .pagination .current {
     background: var(--green);
     border-color: var(--green);
-    color: #fff; /* ✅ Было: color: #0f172a */
+    color: var(--on-brand); /* ✅ Было: color: #0f172a */
 }
 
 /* Нет результатов */
@@ -2047,7 +2055,7 @@ body {
 .service-list-item:hover {
     transform: translateX(4px);
     border-color: var(--green); /* ✅ Было: var(--gold) */
-    box-shadow: 0 6px 24px rgba(21, 128, 61, 0.15); /* ✅ Было: rgba(21, 128, 61, 0.15) */
+    box-shadow: 0 6px 24px rgba(49, 185, 57, 0.15); /* ✅ Было: rgba(49, 185, 57, 0.15) */
 }
 
 /* Изображение — УВЕЛИЧЕНО */
@@ -2105,7 +2113,7 @@ body {
 }
 
 .service-list-title a:hover {
-    color: var(--green);
+    color: var(--brand-ink);
 }
 
 /* ✅ Было: var(--blue) */
@@ -2195,7 +2203,7 @@ body {
 /* ✅ Кнопка зелёная — как в хедере */
 .btn-list.btn-gold {
     background: var(--green);
-    color: white;
+    color: var(--on-brand);
     border: 1px solid var(--green);
 }
 
@@ -2203,19 +2211,19 @@ body {
     background: #fff;
     color: #0f172a; /* ✅ Логика хедера: инверсия при ховере */
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(21, 128, 61, 0.35);
+    box-shadow: 0 6px 20px rgba(49, 185, 57, 0.35);
 }
 
 /* ✅ Кнопка с обводкой — зелёная вместо синей */
 .btn-list.btn-outline {
     background: transparent;
     border: 2px solid var(--green);
-    color: var(--green);
+    color: var(--brand-ink);
 }
 
 .btn-list.btn-outline:hover {
     background: var(--green);
-    color: #fff;
+    color: var(--on-brand);
 }
 
 .btn-arrow {
@@ -2263,7 +2271,7 @@ body {
 .pagination .current {
     background: var(--green);
     border-color: var(--green);
-    color: #fff; /* ✅ Было: color: #0f172a */
+    color: var(--on-brand); /* ✅ Было: color: #0f172a */
 }
 
 /* Нет результатов */
@@ -2443,7 +2451,7 @@ body {
 .station-subtitle .icon {
     width: 18px;
     height: 18px;
-    color: var(--green); /* ✅ Было: var(--blue) */
+    color: var(--brand-ink); /* ✅ Было: var(--blue) */
 }
 
 /* Сетка */
@@ -2598,7 +2606,7 @@ body {
 /* ✅ Кнопка зелёная — как в хедере: при ховере белый фон + чёрный текст */
 .btn--gold {
     background: var(--green);
-    color: white;
+    color: var(--on-brand);
     border: 1px solid var(--green);
 }
 
@@ -2606,19 +2614,19 @@ body {
     background: #fff;
     color: #0f172a; /* ✅ Логика хедера */
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(21, 128, 61, 0.35);
+    box-shadow: 0 6px 20px rgba(49, 185, 57, 0.35);
 }
 
 /* ✅ Кнопка с обводкой — зелёная вместо синей */
 .btn--outline {
     background: transparent;
     border: 2px solid var(--green);
-    color: var(--green);
+    color: var(--brand-ink);
 }
 
 .btn--outline:hover {
     background: var(--green);
-    color: #fff;
+    color: var(--on-brand);
 }
 
 .btn--text {
@@ -2630,7 +2638,7 @@ body {
 }
 
 .btn--text:hover {
-    color: var(--green);
+    color: var(--brand-ink);
     text-decoration: underline;
 }
 
@@ -2702,7 +2710,7 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: var(--green); /* ✅ Было: var(--blue) */
+    color: var(--brand-ink); /* ✅ Было: var(--blue) */
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 500;
@@ -2742,7 +2750,7 @@ body {
 .guarantee-item .icon {
     width: 24px;
     height: 24px;
-    color: var(--green);
+    color: var(--brand-ink);
     margin-bottom: 0.4rem;
     display: block;
 }
@@ -2805,13 +2813,13 @@ body {
 
 .equipment-item__qty {
     font-weight: 600;
-    color: var(--green);
-    background: rgba(21, 128, 61, 0.1);
+    color: var(--brand-ink);
+    background: rgba(49, 185, 57, 0.1);
     padding: 0.2rem 0.6rem;
     border-radius: 6px;
 }
 
-/* ✅ Было: rgba(21, 128, 61, 0.1) */
+/* ✅ Было: rgba(49, 185, 57, 0.1) */
 
 /* Преимущества */
 .features-grid {
@@ -2838,7 +2846,7 @@ body {
 .feature-card .icon {
     width: 32px;
     height: 32px;
-    color: var(--green);
+    color: var(--brand-ink);
     margin-bottom: 0.5rem;
     display: block;
     margin-left: auto;
@@ -2926,7 +2934,7 @@ body {
 /* ✅ Инверсия: на зелёном фоне кнопка белая */
 .station-cta .btn--gold:hover {
     background: var(--green);
-    color: #fff;
+    color: var(--on-brand);
     box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
 }
 
@@ -3036,7 +3044,7 @@ body {
 .form-group input:focus, .form-group textarea:focus {
     outline: none;
     border-color: var(--green);
-    box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.15); /* ✅ Было: rgba(21, 128, 61, 0.15) */
+    box-shadow: 0 0 0 3px rgba(49, 185, 57, 0.15); /* ✅ Было: rgba(49, 185, 57, 0.15) */
 }
 
 /* Видимые рамки полей в модалках (раньше были почти белые) */
@@ -3053,7 +3061,7 @@ body {
 .modal-panel .form-group-premium input:focus,
 .modal-content-premium .form-group-premium input:focus {
     border-color: var(--green);
-    box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.15);
+    box-shadow: 0 0 0 3px rgba(49, 185, 57, 0.15);
 }
 
 .form-consent {
@@ -3089,7 +3097,7 @@ body {
 }
 
 .modal__note a {
-    color: var(--green);
+    color: var(--brand-ink);
     text-decoration: none;
 }
 
@@ -3403,7 +3411,7 @@ body {
 .feature-icon {
     width: 20px;
     height: 20px;
-    color: var(--green);
+    color: var(--brand-ink);
     flex-shrink: 0;
     margin-top: 2px;
 }
@@ -3430,7 +3438,7 @@ body {
     padding: 0.95rem 1.5rem;
     border-radius: 8px;
     background: var(--green);
-    color: white; /* ✅ Было: линейный градиент с gold */
+    color: var(--on-brand); /* ✅ Было: линейный градиент с gold */
     font-weight: 700;
     font-size: 1rem;
     text-decoration: none;
@@ -3443,7 +3451,7 @@ body {
     background: #fff;
     color: #0f172a; /* ✅ Логика хедера: инверсия при ховере */
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(21, 128, 61, 0.35);
+    box-shadow: 0 6px 20px rgba(49, 185, 57, 0.35);
 }
 
 .btn-call .icon {
@@ -3489,7 +3497,7 @@ body {
 /* ✅ Инверсия: белая кнопка на зелёном фоне */
 .cta-bottom .btn-call:hover {
     background: var(--green);
-    color: #fff;
+    color: var(--on-brand);
     border-color: var(--green);
     box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
 }
@@ -3561,7 +3569,7 @@ body {
     text-decoration: none;
 }
 .btn-call-link:hover {
-    color: var(--green);
+    color: var(--brand-ink);
 }
 
 /* SVG */
@@ -3656,7 +3664,7 @@ body {
 }
 
 .toast-success .toast-icon {
-    color: var(--brand);
+    color: var(--brand-ink);
 }
 
 .toast-error .toast-icon {
@@ -3797,9 +3805,9 @@ body {
 .station-stock-pill {
     align-items: center;
     align-self: flex-start;
-    background: rgba(21, 128, 61, 0.12);
+    background: var(--brand-soft);
     border-radius: 999px;
-    color: #15803d;
+    color: var(--brand-ink);
     display: inline-flex;
     font-size: 0.8125rem;
     font-weight: 600;
@@ -3851,14 +3859,14 @@ body {
 }
 
 .cookie-consent__text a {
-    color: var(--green, var(--brand));
+    color: var(--brand-ink);
     text-decoration: underline;
 }
 
 .cookie-consent__btn {
     flex-shrink: 0;
     background: var(--green, var(--brand));
-    color: #fff;
+    color: var(--on-brand);
     border: none;
     border-radius: 999px;
     padding: 0.6rem 1.6rem;
@@ -4018,7 +4026,7 @@ body {
 
 .breadcrumbs-wrapper {
     background: linear-gradient(180deg, rgba(248, 250, 252, 0.95), rgba(255, 255, 255, 0.95));
-    border-bottom: 1px solid rgba(21, 128, 61, 0.12);
+    border-bottom: 1px solid rgba(49, 185, 57, 0.12);
     padding: 0.85rem 0;
 }
 
@@ -4043,8 +4051,8 @@ body {
 }
 
 .breadcrumbs-wrapper .yoast-breadcrumbs a:hover {
-    color: var(--header-green, var(--brand));
-    background: rgba(21, 128, 61, 0.1);
+    color: var(--brand-ink);
+    background: rgba(49, 185, 57, 0.1);
 }
 
 /* Текущая страница (последний элемент Yoast) */
@@ -4104,7 +4112,7 @@ body {
     justify-content: center;
     border: none;
     cursor: pointer;
-    color: #fff;
+    color: var(--on-brand);
     background: var(--header-green, var(--brand));
     border-radius: 8px 0 0 8px;
     box-shadow: -2px 2px 12px rgba(15, 23, 42, 0.18);
@@ -4150,7 +4158,7 @@ body {
 
 .social-float__item:hover {
     transform: translateX(-2px);
-    box-shadow: -6px 6px 22px rgba(21, 128, 61, 0.28);
+    box-shadow: -6px 6px 22px rgba(49, 185, 57, 0.28);
 }
 
 .social-float__icon,
@@ -4172,7 +4180,7 @@ body {
 .social-float__letter {
     font-weight: 700;
     font-size: 18px;
-    color: #fff;
+    color: var(--on-brand);
     background: var(--header-green, var(--brand));
 }
 
@@ -4244,7 +4252,7 @@ body {
     }
 
     .mobile-action-bar__btn--call {
-        color: var(--brand);
+        color: var(--brand-ink);
     }
 
     .mobile-action-bar__btn--wa {
@@ -4253,7 +4261,7 @@ body {
 
     .mobile-action-bar__btn--order {
         background: var(--brand);
-        color: #fff;
+        color: var(--on-brand);
     }
 
     /* Чтобы контент не прятался за панелью */

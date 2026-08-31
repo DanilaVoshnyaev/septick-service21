@@ -211,7 +211,7 @@ $company = getCompanyContacts();
                             Получить консультацию
                         </button>
                         <label class="form-consent"><input type="checkbox" name="consent" style="width: 30px" required checked> Согласен на обработку персональных данных</label>
-                        <p class="about-cta__note"> Нажимая кнопку, вы соглашаетесь с <a href="/privacy/" style="color: #21b224">политикой
+                        <p class="about-cta__note"> Нажимая кнопку, вы соглашаетесь с <a href="/privacy/" style="color: #157f1c">политикой
                                 конфиденциальности</a></p>
                     </form>
                 </div>

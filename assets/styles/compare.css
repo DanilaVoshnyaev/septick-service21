@@ -21,11 +21,11 @@
 }
 
 .station-compare:hover {
-    color: var(--cmp-green);
+    color: var(--brand-ink);
 }
 
 .station-compare.is-active {
-    color: var(--cmp-green);
+    color: var(--brand-ink);
     font-weight: 600;
 }
 
@@ -34,14 +34,14 @@
 }
 
 .station-compare.is-active .station-compare__icon {
-    color: var(--cmp-green);
+    color: var(--brand-ink);
 }
 
 /* Плавающая панель */
 .cmp-bar {
     position: fixed;
     left: 50%;
-    bottom: 16px;
+    bottom: 80px;
     transform: translateX(-50%);
     z-index: 900;
     display: flex;
@@ -145,7 +145,7 @@
     border: none;
     border-radius: 10px;
     background: var(--cmp-green);
-    color: #fff;
+    color: var(--on-brand);
     font-family: inherit;
     font-size: 0.95rem;
     font-weight: 700;
@@ -291,7 +291,7 @@
 }
 
 .cmp-table__name:hover {
-    color: var(--cmp-green);
+    color: var(--brand-ink);
     text-decoration: underline;
 }
 
