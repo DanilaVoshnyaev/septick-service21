@@ -333,6 +333,12 @@
    она обещала фотоотчёт. Текстовая карточка показывает только то, что есть:
    район, модель, месяц и срок монтажа.
    ===================================================================== */
+/* display у карточки перебивает атрибут hidden — фильтр по району прятал
+   карточку в разметке, но она оставалась на экране. */
+.work-card[hidden] {
+    display: none;
+}
+
 .work-card--text {
     display: flex;
     flex-direction: column;
@@ -406,24 +412,51 @@
     stroke-linejoin: round;
 }
 
-/* Райцентр без наших объектов — тихая точка: показывает зону выезда,
-   но не притворяется выполненной работой. */
-.geo-map__point circle {
-    fill: var(--ink-muted);
-    opacity: 0.45;
+/* Соседние регионы Поволжья — зона выезда. Пунктир и почти прозрачная заливка:
+   их нельзя спутать с районами, где объекты уже стоят. Всё, что не поместилось
+   в холст, обрезает край svg. */
+.geo-map__neighbour {
+    fill: rgba(148, 163, 184, 0.12);
+    stroke: rgba(148, 163, 184, 0.75);
+    stroke-width: 1;
+    stroke-dasharray: 4 3;
 }
 
-.geo-map__point.is-active circle {
+/* Район с объектами — кнопка: по клику список ниже показывает только его
+   объекты. Отсюда курсор и видимое выделение. */
+.geo-map__district {
+    cursor: pointer;
+}
+
+.geo-map__district path {
     fill: var(--brand);
-    opacity: 1;
-    stroke: #fff;
-    stroke-width: 1.5;
+    fill-opacity: 0.55;
+    stroke: var(--brand-ink);
+    stroke-width: 1.2;
+    stroke-linejoin: round;
+    transition: fill-opacity 0.18s ease;
 }
 
-.geo-map__point text {
+.geo-map__district:hover path,
+.geo-map__district.is-selected path {
+    fill-opacity: 0.85;
+}
+
+.geo-map__district:focus-visible {
+    outline: 2px solid var(--brand-ink);
+    outline-offset: 2px;
+}
+
+/* Подпись района: белая с тёмной обводкой — читается и на заливке, и на фоне. */
+.geo-map__label {
     font-size: 11px;
-    font-weight: 600;
-    fill: var(--ink);
+    font-weight: 700;
+    fill: #fff;
+    paint-order: stroke;
+    stroke: rgba(21, 29, 25, 0.55);
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+    pointer-events: none;
 }
 
 .geo-map__caption {
@@ -465,4 +498,61 @@
     .geo-map.is-interactive .geo-map__canvas {
         display: flex;
     }
+}
+
+/* Кнопка сброса фильтра по району. */
+.geo-map__reset {
+    /* flex + width:fit-content — чтобы сработали margin: auto по бокам:
+       у inline-flex они не центрируют. */
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    margin: 12px auto 0;
+    padding: 0 18px;
+    border: 1.5px solid var(--brand);
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--brand-ink);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.geo-map__reset:hover {
+    background: var(--brand-soft);
+}
+
+.geo-map__reset[hidden] {
+    display: none;
+}
+
+/* Пока карту не «разблокировали» тапом, поверх неё лежит подсказка: иначе
+   палец двигает карту вместо страницы. */
+.geo-map__interactive {
+    position: relative;
+}
+
+.geo-map__unlock {
+    position: absolute;
+    left: 50%;
+    bottom: 12px;
+    transform: translateX(-50%);
+    z-index: 2;
+    min-height: 44px;
+    padding: 0 16px;
+    border: none;
+    border-radius: var(--radius-pill);
+    background: rgba(15, 23, 42, 0.82);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Секция карты на главной — ритм как у остальных секций страницы. */
+.geo-map-section {
+    padding: clamp(56px, 8vw, 88px) 0;
+    background: var(--surface);
 }

@@ -1639,7 +1639,9 @@ function izex_render_work_card($post_id)
     $title = $location ?: get_the_title($post_id);
     $url = get_permalink($post_id);
     ?>
-    <article class="work-card<?php echo $img ? '' : ' work-card--text'; ?>" data-model="<?php echo esc_attr($model); ?>">
+    <article class="work-card<?php echo $img ? '' : ' work-card--text'; ?>"
+             data-model="<?php echo esc_attr($model); ?>"
+             data-location="<?php echo esc_attr(mb_strtolower($location)); ?>">
         <?php if ($img) : ?>
             <a class="work-card__media" href="<?php echo esc_url($url); ?>">
                 <?php

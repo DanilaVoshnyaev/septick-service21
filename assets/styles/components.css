@@ -789,14 +789,63 @@ textarea,
 
    Ориентир — ритм остальной страницы: 70–80 px сверху и снизу. */
 
+/* Один ритм для всех секций главной. Раньше значения расходились: часть
+   секций 110–120 px, часть 60. Сначала выровняли по верхней границе — стало
+   слишком просторно, страница «рассыпалась» на далеко стоящие блоки.
+   76 px на десктопе — та середина, где блоки читаются как один поток. */
+.main-content > section,
 .main-content > .pro-estimate,
-.main-content > .faq-premium,
-.main-content > .seo-home-block {
-    padding-top: clamp(56px, 9vw, 100px);
-    padding-bottom: clamp(56px, 9vw, 100px);
+.main-content > .trust-warranty,
+.main-content > .trust-faq-pre,
+.main-content > .geo-map-section,
+.main-content > .calc-section {
+    padding-top: clamp(44px, 5.5vw, 76px);
+    padding-bottom: clamp(44px, 5.5vw, 76px);
+}
+
+/* Первый экран живёт по своим правилам — см. ниже. */
+.main-content > .hero-premium {
+    padding-top: clamp(28px, 3.5vw, 48px);
+    padding-bottom: clamp(32px, 4vw, 52px);
 }
 
 /* Внутренние блоки секций тоже стали теснее на те же 32 px. */
 .main-content .section-header {
     margin-bottom: clamp(28px, 3.5vw, 40px);
+}
+
+/* ============================================================
+   9. ПЕРВЫЙ ЭКРАН НА БОЛЬШИХ ЭКРАНАХ
+   ============================================================
+   На ноутбуке hero держим компактным: там дорог каждый пиксель до кнопки.
+   На большом мониторе места хватает, и прижатый к шапке hero выглядит
+   обрезанным — задаём ему минимальную высоту и больше воздуха внутри.
+   Кнопка при этом остаётся в первом экране: 640 px — это меньше, чем
+   видимая область любого монитора такой ширины. */
+@media (min-width: 1200px) {
+    .main-content > .hero-premium {
+        min-height: 640px;
+        padding-top: 72px;
+        padding-bottom: 72px;
+    }
+
+    .hero-premium .hero-title {
+        font-size: clamp(40px, 3.4vw, 50px);
+    }
+
+    .hero-premium .hero-subtitle {
+        font-size: 19px;
+        margin-bottom: 26px;
+    }
+
+    .hero-premium .hero-stats {
+        margin-top: 32px;
+        padding-top: 24px;
+    }
+}
+
+@media (min-width: 1600px) {
+    .main-content > .hero-premium {
+        min-height: 720px;
+    }
 }

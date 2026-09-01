@@ -330,6 +330,10 @@ $company = getCompanyContacts();
         </section>
 
         <?php echo do_shortcode('[topas_works count="8"]'); ?>
+
+        <?php // География: закрашенные районы Чувашии и соседние регионы Поволжья.
+              // Стоит после списка объектов — сначала конкретика, потом охват. ?>
+        <?php echo do_shortcode('[topas_geo_map section="1"]'); ?>
         <?php // «Как мы работаем»: поднято перед блоком работ — сначала объясняем
              // процесс, потом показываем результат и отзывы. ?>
         <section class="process-premium">

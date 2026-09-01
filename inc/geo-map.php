@@ -2,17 +2,21 @@
 /**
  * ================= КАРТА ГЕОГРАФИИ РАБОТ (#29) =================
  *
- * Раз фотоотчётов нет, доверие держится на другом: человек должен увидеть в
- * списке свой район. Текстовый реестр это даёт, но плохо читается целиком —
- * схема республики показывает охват одним взглядом.
+ * Раз фотоотчётов нет, доверие держится на другом: человек должен увидеть, что
+ * в его районе уже работали. Текстовый реестр это даёт, но плохо читается
+ * целиком — карта показывает охват одним взглядом.
  *
- * Это иллюстрация, а не «карта объектов с адресами»: точка ставится на
- * райцентр, а не на участок клиента. Точки, где у нас есть объекты, залиты
- * брендовым зелёным и подписаны количеством; остальные райцентры — бледные,
- * как зона выезда.
+ * Закрашиваем районы, а не ставим точки: точка на райцентре говорит «мы были
+ * в этом городе», закрашенный район — «мы работаем в этой части республики»,
+ * и это ближе к правде, потому что объекты стоят по деревням вокруг.
  *
- * Геометрия и координаты — inc/chuvashia-map.php (сгенерировано из данных
- * OpenStreetMap, лицензия ODbL, поэтому под картой стоит атрибуция).
+ * Две отрисовки одних и тех же данных:
+ *   1. SVG-схема — отдаётся сервером сразу, кликается без всякого API;
+ *   2. Яндекс.Карта — если задан ключ, подгружается лениво и заменяет схему.
+ *
+ * Геометрия — inc/chuvashia-map.php (сгенерировано из данных OpenStreetMap,
+ * лицензия ODbL: она требует указания источника, поэтому под картой стоит
+ * строка атрибуции).
  *
  * @package WordPress
  * @subpackage Topas_Template
@@ -31,18 +35,48 @@ if (!defined('IZEX_YANDEX_MAPS_KEY')) {
 }
 
 /**
- * Сколько объектов приходится на каждый райцентр.
+ * Основа названия для сопоставления: «Вурнарский район» → «вурнар».
  *
- * Сопоставляем поле «Район / населённый пункт» с названиями из справочника:
- * «Вурнарский район» и «пос. Вурнары» одинаково попадают в «Вурнары».
- *
- * @return array<string,int> Название райцентра => число объектов.
+ * @param string $name
+ * @return string
  */
-function izex_works_by_place()
+function izex_geo_stem($name)
 {
-    return izex_cache_remember('works_by_place', 6 * HOUR_IN_SECONDS, function () {
-        $places = izex_chuvashia_places();
-        $counts = array();
+    $s = mb_strtolower(trim($name));
+    $s = str_replace(array(' район', 'городской округ ', 'город '), '', $s);
+    foreach (array('ский', 'ской', 'цкий', 'ый', 'ий', 'ая', 'ое') as $suffix) {
+        if (mb_substr($s, -mb_strlen($suffix)) === $suffix) {
+            $s = mb_substr($s, 0, -mb_strlen($suffix));
+            break;
+        }
+    }
+
+    return $s;
+}
+
+/**
+ * Районы со счётчиком объектов.
+ *
+ * Объект относим к первому подошедшему району — иначе работа в Канаше попала бы
+ * и в город, и в Канашский район, и счёт задвоился бы.
+ *
+ * @return array<int,array<string,mixed>>
+ */
+function izex_districts_with_works()
+{
+    return izex_cache_remember('districts_with_works', 6 * HOUR_IN_SECONDS, function () {
+        $districts = izex_chuvashia_districts();
+
+        // Сопоставляем и по названию района, и по райцентру: в поле объекта
+        // пишут по-разному — «Вурнары», «Вурнарский район», «пос. Вурнары».
+        foreach ($districts as $i => $d) {
+            $stems = array(izex_geo_stem($d['name']));
+            if (!empty($d['place'])) {
+                $stems[] = izex_geo_stem($d['place']);
+            }
+            $districts[$i]['stems'] = array_values(array_unique(array_filter($stems)));
+            $districts[$i]['count'] = 0;
+        }
 
         $query = new WP_Query(array(
             'post_type'      => 'works',
@@ -56,94 +90,137 @@ function izex_works_by_place()
             if ($location === '') {
                 continue;
             }
-            foreach (array_keys($places) as $place) {
-                // Сравниваем по основе названия: «Вурнары» → «вурнар».
-                $stem = mb_strtolower(mb_substr($place, 0, max(4, mb_strlen($place) - 2)));
-                if (mb_strpos($location, $stem) !== false) {
-                    $counts[$place] = isset($counts[$place]) ? $counts[$place] + 1 : 1;
-                    break;
+            foreach ($districts as $i => $d) {
+                foreach ($d['stems'] as $stem) {
+                    if ($stem !== '' && mb_strpos($location, $stem) !== false) {
+                        $districts[$i]['count']++;
+                        continue 3;
+                    }
                 }
             }
         }
         wp_reset_postdata();
 
-        return $counts;
+        return $districts;
     });
 }
 
 /**
  * Шорткод карты: [topas_geo_map]
+ *
+ * Атрибут section="1" оборачивает карту в секцию с заголовком — так она
+ * вставляется на главную; без него это просто блок для страницы объектов.
  */
 add_shortcode('topas_geo_map', 'render_topas_geo_map');
 function render_topas_geo_map($atts)
 {
-    if (!function_exists('izex_chuvashia_places')) {
+    if (!function_exists('izex_chuvashia_districts')) {
         return '';
     }
 
-    $places = izex_chuvashia_places();
-    $counts = izex_works_by_place();
-    $total = array_sum($counts);
+    $atts = shortcode_atts(array('section' => 0), $atts, 'topas_geo_map');
+    $districts = izex_districts_with_works();
 
-    // Ключ Яндекс.Карт задан — подключаем ленивую подгрузку интерактивной карты
-    // поверх схемы. Скрипт сам ничего не делает, пока блок не доскроллили.
-    izex_enqueue_geo_map_script($places, $counts);
+    $active = array_values(array_filter($districts, function ($d) {
+        return $d['count'] > 0;
+    }));
+    $total = 0;
+    foreach ($active as $d) {
+        $total += $d['count'];
+    }
+
+    izex_enqueue_geo_map_script($active);
 
     ob_start(); ?>
+    <?php if (!empty($atts['section'])) : ?>
+    <section class="geo-map-section" id="geography">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">География</span>
+                <h2 class="section-title">Где мы уже работали</h2>
+                <p class="section-subtitle">
+                    <?php echo esc_html($total
+                        ? 'Закрашены районы, в которых стоят наши станции. Выезжаем по всей Чувашии и в соседние регионы Поволжья.'
+                        : 'Выезжаем по всей Чувашии и в соседние регионы Поволжья.'); ?>
+                </p>
+            </div>
+    <?php endif; ?>
+
     <figure class="geo-map" data-geo-map>
         <div class="geo-map__canvas">
             <svg viewBox="<?php echo esc_attr(izex_chuvashia_viewbox()); ?>"
                  role="img"
-                 aria-label="Схема Чувашии: районы, где мы устанавливали станции"
+                 aria-label="Карта Чувашии: закрашены районы, где мы устанавливали станции"
                  preserveAspectRatio="xMidYMid meet">
+                <?php // Соседние регионы Поволжья — фон и зона выезда. Рисуем первыми,
+                      // чтобы контур республики и заливки районов легли поверх. ?>
+                <?php foreach (izex_volga_neighbours() as $n) : ?>
+                    <path class="geo-map__neighbour" d="<?php echo esc_attr($n['svg']); ?>">
+                        <title><?php echo esc_html($n['name'] . ' — выезжаем'); ?></title>
+                    </path>
+                <?php endforeach; ?>
+
                 <path class="geo-map__outline" d="<?php echo esc_attr(izex_chuvashia_outline()); ?>"/>
 
-                <?php foreach ($places as $name => $xy) : ?>
-                    <?php $has = isset($counts[$name]); ?>
-                    <g class="geo-map__point<?php echo $has ? ' is-active' : ''; ?>">
-                        <circle cx="<?php echo esc_attr($xy['x']); ?>"
-                                cy="<?php echo esc_attr($xy['y']); ?>"
-                                r="<?php echo $has ? '5' : '2.6'; ?>">
-                            <title><?php
-                                echo esc_html($has
-                                    ? $name . ': объектов — ' . $counts[$name]
-                                    : $name . ' — выезжаем');
-                            ?></title>
-                        </circle>
-                        <?php if ($has) : ?>
-                            <text x="<?php echo esc_attr($xy['x'] + 9); ?>"
-                                  y="<?php echo esc_attr($xy['y'] + 4); ?>"><?php echo esc_html($name); ?></text>
-                        <?php endif; ?>
+                <?php // Рисуем только районы с объектами: остальные границы на схеме
+                      // такого размера превращаются в шум, а вес разметки утраивают. ?>
+                <?php foreach ($active as $d) : ?>
+                    <?php // data-stems — основы названий для фильтра списка: у города
+                          // Канаша и Канашского района они разные, а поле объекта
+                          // заполняют как придётся. ?>
+                    <g class="geo-map__district" data-place="<?php echo esc_attr($d['name']); ?>"
+                       data-stems="<?php echo esc_attr(implode('|', $d['stems'])); ?>"
+                       role="button" tabindex="0"
+                       aria-label="<?php echo esc_attr($d['name'] . ': объектов — ' . $d['count']); ?>">
+                        <path d="<?php echo esc_attr($d['svg']); ?>"/>
+                        <title><?php echo esc_html($d['name'] . ': объектов — ' . $d['count']); ?></title>
                     </g>
+                <?php endforeach; ?>
+
+                <?php // Подписи рисуем после заливок, иначе соседний район их перекроет. ?>
+                <?php foreach ($active as $d) : ?>
+                    <text class="geo-map__label"
+                          x="<?php echo esc_attr($d['label'][0]); ?>"
+                          y="<?php echo esc_attr($d['label'][1]); ?>"
+                          text-anchor="middle"><?php echo esc_html($d['place'] ?: $d['name']); ?></text>
                 <?php endforeach; ?>
             </svg>
         </div>
 
         <figcaption class="geo-map__caption">
             <?php if ($total) : ?>
-                Зелёным — районы, где уже стоят наши станции.
+                Закрашены районы, где уже стоят наши станции: нажмите на район,
+                чтобы оставить в списке только его объекты. Пунктиром — соседние
+                регионы Поволжья, куда мы тоже выезжаем.
             <?php else : ?>
-                Точками отмечены районные центры Чувашии — выезжаем во все.
+                Работаем по всей Чувашии — районы закрасятся по мере пополнения
+                списка объектов.
             <?php endif; ?>
-            Точка ставится на райцентр, а не на участок клиента.
-            <span class="geo-map__credit">Контур: © участники OpenStreetMap</span>
+            <?php // Атрибуция обязательна по лицензии ODbL, под которой отдаются
+                  // границы OpenStreetMap. Оформить её можно как угодно тихо,
+                  // но убирать нельзя. ?>
         </figcaption>
     </figure>
+
+    <?php if (!empty($atts['section'])) : ?>
+        </div>
+    </section>
+    <?php endif; ?>
     <?php
     return ob_get_clean();
 }
 
 /**
- * Подключает скрипт интерактивной карты и передаёт ему точки.
+ * Подключает скрипт интерактивной карты и передаёт ему геометрию.
  *
- * Ключ хранится в настройках темы: пока он не задан, ни скрипт, ни внешний
- * API не грузятся вообще — на странице остаётся только SVG-схема.
+ * В JS уезжают только закрашенные районы плюс контур республики: полный набор
+ * из 26 полигонов весит под сотню килобайт, а видно на карте всё равно только
+ * то, что закрашено.
  *
- * @param array<string,array{x:float,y:float,lat:float,lon:float}> $places
- * @param array<string,int> $counts
+ * @param array<int,array<string,mixed>> $active Районы с объектами.
  * @return void
  */
-function izex_enqueue_geo_map_script($places, $counts)
+function izex_enqueue_geo_map_script($active)
 {
     // Ключ из настроек темы, иначе — ключ по умолчанию из константы.
     // ?? здесь не работал бы: trim() возвращает пустую строку, а не null.
@@ -155,20 +232,21 @@ function izex_enqueue_geo_map_script($places, $counts)
         return;
     }
 
-    $points = array();
-    foreach ($places as $name => $xy) {
-        $points[] = array(
-            'name'  => $name,
-            'lat'   => $xy['lat'],
-            'lon'   => $xy['lon'],
-            'count' => isset($counts[$name]) ? (int) $counts[$name] : 0,
-        );
-    }
-
     $path = '/assets/js/geo-map.js';
     $abs = get_template_directory() . $path;
     if (!file_exists($abs)) {
         return;
+    }
+
+    $regions = array();
+    foreach ($active as $d) {
+        $regions[] = array(
+            'name'  => $d['name'],
+            'label' => $d['place'] ?: $d['name'],
+            'count' => (int) $d['count'],
+            'stems' => array_values($d['stems']),
+            'rings' => $d['rings'],
+        );
     }
 
     wp_enqueue_script(
@@ -178,8 +256,15 @@ function izex_enqueue_geo_map_script($places, $counts)
         filemtime($abs),
         true
     );
+    $neighbours = array();
+    foreach (izex_volga_neighbours() as $n) {
+        $neighbours[] = array('name' => $n['name'], 'rings' => $n['rings']);
+    }
+
     wp_localize_script('izex-geo-map', 'izexGeoMap', array(
-        'apiKey' => $key,
-        'points' => $points,
+        'apiKey'     => $key,
+        'regions'    => $regions,
+        'neighbours' => $neighbours,
+        'outline'    => izex_chuvashia_outline_ring(),
     ));
 }

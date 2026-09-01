@@ -166,6 +166,17 @@
     flex-wrap: wrap;
 }
 
+/* Иконка и текст — одной строкой. Раньше здесь стояли эмодзи, и строка не
+   разъезжалась; SVG шире символа, flex-элемент сжимался и переносил дату
+   на вторую строку. */
+.review-meta > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
 /* Звёзды */
 .review-rating {
     display: flex;
@@ -203,7 +214,9 @@
 
 /* Услуга */
 .review-service {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     background: var(--accent-soft);
     color: var(--accent-hover);
     padding: 0.3rem 0.85rem;
