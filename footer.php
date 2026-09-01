@@ -100,6 +100,24 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
                         <a href="mailto:<?php echo antispambot($company['email']); ?>" class="contact-link"><?php echo antispambot($company['email']); ?></a>
                     </div>
 
+                    <?php
+                    // Компания «без места» вызывает вопросы: показываем адрес,
+                    // а если приёма нет — говорим об этом прямо (задача #20).
+                    $trust = function_exists('izex_trust') ? izex_trust() : array();
+                    $office = !empty($trust['office_address']) ? $trust['office_address'] : '';
+                    $no_office = !empty($trust['office_none']);
+                    ?>
+                    <?php if ($office || $no_office) : ?>
+                        <div class="contact-item">
+                            <svg class="contact-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            <span class="contact-text">
+                                <?php echo esc_html($office ?: 'Офиса для приёма нет: работаем выездом по Чувашии'); ?>
+                            </span>
+                        </div>
+                    <?php endif; ?>
+
                     <button class="btn-footer open-modal" data-modal="callback">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
@@ -214,7 +232,22 @@ if (function_exists('izex_pro_render_dock')) {
         </button>
         <div class="modal-header">
             <h3 class="modal-title">Вызвать инженера</h3>
-            <p class="modal-subtitle">Бесплатный выезд и консультация</p>
+            <?php
+            // Имя и стаж инженера в модалке выезда: в нише, где человек едет
+            // к вам на участок, знать имя заранее — половина доверия (задача #34).
+            $trust_modal = function_exists('izex_trust') ? izex_trust() : array();
+            $eng_name = !empty($trust_modal['engineer_name']) ? $trust_modal['engineer_name'] : '';
+            $eng_years = !empty($trust_modal['engineer_years']) ? (int) $trust_modal['engineer_years'] : 0;
+            ?>
+            <p class="modal-subtitle">
+                <?php if ($eng_name) : ?>
+                    На замер приедет <?php echo esc_html($eng_name); ?><?php
+                        echo $eng_years ? ', ' . esc_html(izex_years($eng_years)) . ' ставит ТОПАС' : ''; ?>.
+                    Выезд бесплатный и ни к чему не обязывает.
+                <?php else : ?>
+                    Бесплатный выезд и консультация — ни к чему не обязывают
+                <?php endif; ?>
+            </p>
         </div>
 
         <form class="modal-form-premium" id="engineerForm" data-form-type="engineer">

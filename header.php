@@ -65,7 +65,7 @@ $company = getCompanyContacts();
                                 echo '<li><a href="/stations/">Каталог</a></li>';
                                 echo '<li><a href="' . esc_url(izex_prices_page_url()) . '">Цены</a></li>';
                                 echo '<li><a href="/services/">Услуги</a></li>';
-                                echo '<li><a href="' . esc_url(get_post_type_archive_link('works')) . '">Наши работы</a></li>';
+                                echo '<li><a href="' . esc_url(get_post_type_archive_link('works')) . '">География и объекты</a></li>';
                                 echo '<li><a href="/about/">О компании</a></li>';
                                 echo '<li><a href="/reviews/">Отзывы</a></li>';
                                 echo '</ul>';

@@ -29,6 +29,11 @@ function crb_attach_theme_options()
             Field::make('text', 'whatsapp_number', __('WhatsApp (номер)'))
                 ->set_attribute('placeholder', '+7 908 303 32 82')
                 ->set_help_text('Номер для кнопки WhatsApp. Если пусто — берётся основной телефон.'),
+            // Кнопка WhatsApp была отключена в коде «заказчик им не пользуется».
+            // Теперь это переключатель: единственный мессенджер MAX для части
+            // людей — тупик, но включать канал за компанию нельзя (задача #20).
+            Field::make('checkbox', 'crb_show_whatsapp', __('Показывать кнопку WhatsApp'))
+                ->set_help_text('Включайте, только если действительно отвечаете в WhatsApp.'),
             Field::make('text', 'telegram_username', __('Telegram (username без @)'))
                 ->set_attribute('placeholder', 'servis_septik'),
             Field::make('text', 'main_email', __('Email'))->set_attribute('placeholder', 'email')->set_attribute('type', 'email'),
@@ -150,6 +155,115 @@ function crb_attach_theme_options()
                     Field::make('text', 'model', 'Модель')->set_attribute('placeholder', 'ТОПАС 5')->set_width(60),
                     Field::make('text', 'price', 'Цена, ₽')->set_attribute('placeholder', '3500')->set_width(40),
                 )),
+        ));
+
+    // ===== Доверие: гарантия, скидка, факты для блоков спринта 2 =====
+    //
+    // Здесь лежат факты, которые нельзя придумать за компанию: сроки гарантии,
+    // размер скидки, тариф, адрес, имя инженера, ссылки на карточки в
+    // справочниках. Блоки на сайте (гарантия #11, возражения #19,
+    // преимущества #23, строка доверия в hero) читают эти поля и не выводятся,
+    // пока поле пустое — чтобы на сайте не появлялось «гарантия  лет».
+    Container::make('theme_options', 'Доверие и гарантия')
+        ->set_page_parent($basic_options_container)
+        ->add_fields(array(
+            Field::make('separator', 'crb_sep_company', 'Компания'),
+            Field::make('text', 'crb_since_year', 'Работаем с года')
+                ->set_attribute('type', 'number')
+                ->set_attribute('placeholder', '2018')
+                ->set_help_text('Год вместо «8+ лет»: он убедительнее и не устаревает.')
+                ->set_width(33),
+            Field::make('text', 'crb_installs_count', 'Выполнено монтажей')
+                ->set_attribute('placeholder', '1000+')
+                ->set_width(33),
+            Field::make('text', 'crb_crews_count', 'Бригад на монтаже')
+                ->set_attribute('placeholder', '2 бригады')
+                ->set_width(34),
+
+            Field::make('separator', 'crb_sep_warranty', 'Гарантия — ровно как в договоре'),
+            Field::make('text', 'crb_warranty_body_years', 'Гарантия на корпус, лет')
+                ->set_attribute('type', 'number')->set_width(25),
+            Field::make('text', 'crb_warranty_works_years', 'Гарантия на монтаж, лет')
+                ->set_attribute('type', 'number')->set_width(25),
+            Field::make('text', 'crb_warranty_compressor_years', 'Гарантия на компрессор, лет')
+                ->set_attribute('type', 'number')->set_width(25),
+            Field::make('text', 'crb_warranty_visit_hours', 'Выезд по гарантии, часов')
+                ->set_attribute('type', 'number')
+                ->set_help_text('За сколько часов реально приезжаете.')
+                ->set_width(25),
+            Field::make('file', 'crb_contract_sample', 'Образец договора (PDF)')
+                ->set_width(50),
+            Field::make('file', 'crb_dealer_cert', 'Сертификат дилера (PDF или изображение)')
+                ->set_width(50),
+
+            Field::make('separator', 'crb_sep_discount', 'Скидка'),
+            Field::make('select', 'crb_discount_mode', 'Что показываем')
+                ->set_options(array(
+                    'none' => 'Скидки нет — показываем фиксацию сметы в договоре',
+                    'sum'  => 'Скидка суммой к дате',
+                    'soft' => 'Сначала бесплатный выезд, потом скидка',
+                ))
+                ->set_default_value('none')
+                ->set_help_text('Вечное «до конца месяца» не ставим: если дата не меняется, под сомнение попадает и смета, и гарантия.')
+                ->set_width(40),
+            Field::make('text', 'crb_discount_amount', 'Размер скидки, руб.')
+                ->set_attribute('type', 'number')
+                ->set_conditional_logic(array(
+                    array('field' => 'crb_discount_mode', 'value' => 'none', 'compare' => '!='),
+                ))
+                ->set_width(30),
+            Field::make('date', 'crb_discount_until', 'Действует до')
+                ->set_conditional_logic(array(
+                    array('field' => 'crb_discount_mode', 'value' => 'none', 'compare' => '!='),
+                ))
+                ->set_width(30),
+
+            Field::make('separator', 'crb_sep_costs', 'Стоимость владения'),
+            Field::make('text', 'crb_electricity_tariff', 'Тариф на электричество, руб./кВт·ч')
+                ->set_attribute('placeholder', '5')
+                ->set_help_text('Расход станции 1–1,5 кВт·ч/сут = 30–45 кВт·ч в месяц; сумма в месяц считается сама.')
+                ->set_width(33),
+            Field::make('text', 'crb_sewage_price', 'Вызов ассенизатора, руб.')
+                ->set_attribute('type', 'number')->set_width(33),
+            Field::make('text', 'crb_sewage_times', 'Вызовов в год для выгребной ямы')
+                ->set_attribute('placeholder', '8–12')->set_width(34),
+
+            Field::make('separator', 'crb_sep_objections', 'Ответы на возражения'),
+            Field::make('text', 'crb_topas_vs_topas_s', 'Чем ТОПАС отличается от ТОПАС-С')
+                ->set_help_text('Одной-двумя фразами — так, как объясняете по телефону.'),
+            Field::make('text', 'crb_winter_frozen_soil', 'Как решаете вопрос с мёрзлым грунтом зимой')
+                ->set_width(50),
+            Field::make('text', 'crb_winter_conservation', 'Что делается при консервации на зиму')
+                ->set_width(50),
+            Field::make('text', 'crb_ugv_fixation', 'Как фиксируете станцию при высоком УГВ')
+                ->set_help_text('Например: пригруз бетонной плитой, анкеровка.'),
+
+            Field::make('separator', 'crb_sep_engineer', 'Инженер на замер'),
+            Field::make('text', 'crb_engineer_name', 'Имя инженера')->set_width(50),
+            Field::make('text', 'crb_engineer_years', 'Стаж, лет')
+                ->set_attribute('type', 'number')->set_width(50),
+
+            Field::make('separator', 'crb_sep_office', 'Место'),
+            Field::make('text', 'crb_office_address', 'Адрес офиса или склада')
+                ->set_help_text('Куда можно приехать. Если приёма нет — оставьте пустым и отметьте галочку ниже.'),
+            Field::make('checkbox', 'crb_office_no_reception', 'Офиса для приёма нет — работаем выездом'),
+
+            Field::make('separator', 'crb_sep_map', 'Карта географии работ'),
+            Field::make('text', 'crb_yandex_maps_key', 'API-ключ Яндекс.Карт')
+                ->set_attribute('placeholder', 'Ключ из кабинета разработчика Яндекса')
+                ->set_help_text('Пусто — на странице «География и объекты» остаётся лёгкая '
+                    . 'SVG-схема. С ключом поверх неё подгружается интерактивная карта '
+                    . 'Яндекса (~250 КБ внешнего JS, только на этой странице и только '
+                    . 'когда карта доскроллена).'),
+
+            Field::make('separator', 'crb_sep_reviews', 'Отзывы во внешних справочниках'),
+            Field::make('text', 'crb_reviews_rating', 'Рейтинг')
+                ->set_attribute('placeholder', '4,9')->set_width(25),
+            Field::make('text', 'crb_reviews_count', 'Число отзывов')
+                ->set_attribute('type', 'number')->set_width(25),
+            Field::make('text', 'crb_reviews_url_yandex', 'Ссылка: Яндекс.Карты')->set_width(50),
+            Field::make('text', 'crb_reviews_url_2gis', 'Ссылка: 2ГИС')->set_width(50),
+            Field::make('text', 'crb_reviews_url_avito', 'Ссылка: Авито')->set_width(50),
         ));
 
     // ===== SEO главной страницы =====
@@ -296,6 +410,19 @@ function crb_attach_theme_options()
             Field::make('checkbox', 'crb_review_verified', 'Проверенный покупатель')
                 ->set_default_value(true),
 
+            // Отзыв, который можно проверить у третьей стороны, весит больше
+            // десяти непроверяемых — без фотографий это главный аргумент (задача #12).
+            Field::make('select', 'crb_review_source', 'Источник отзыва')
+                ->set_options(array(
+                    ''              => '— с сайта —',
+                    'Яндекс.Карты'  => 'Яндекс.Карты',
+                    '2ГИС'          => '2ГИС',
+                    'Авито'         => 'Авито',
+                ))
+                ->set_width(40),
+            Field::make('text', 'crb_review_source_url', 'Ссылка на отзыв в источнике')
+                ->set_attribute('placeholder', 'https://yandex.ru/maps/org/...')
+                ->set_width(60),
             Field::make('text', 'crb_review_service', 'Услуга/Товар')
                 ->set_attribute('placeholder', 'Например: Установка ТОПАС-5'),
 
@@ -313,7 +440,24 @@ function crb_attach_theme_options()
                 ->set_width(50),
             Field::make('text', 'crb_work_location', 'Район / населённый пункт')
                 ->set_attribute('placeholder', 'Например: Чебоксары, Заволжье')
+                ->set_help_text('Без адресов и фамилий — только район или населённый пункт.')
                 ->set_width(50),
+            // Реестр объектов работает и без фотографий: район, модель, месяц
+            // и срок монтажа — это то, что заменяет фотоотчёт (задача #29).
+            Field::make('date', 'crb_work_date', 'Месяц монтажа')
+                ->set_storage_format('Y-m-d')
+                ->set_help_text('Показываем только месяц и год.')
+                ->set_width(33),
+            Field::make('text', 'crb_work_duration', 'Срок монтажа')
+                ->set_attribute('placeholder', '1 день')
+                ->set_width(33),
+            Field::make('select', 'crb_work_disposal', 'Водоотведение')
+                ->set_options(array(
+                    ''       => '— не указано —',
+                    'Самотёк' => 'Самотёк',
+                    'Принудительное' => 'Принудительное',
+                ))
+                ->set_width(34),
             Field::make('image', 'crb_work_before', 'Фото «До» (необязательно)')
                 ->set_help_text('Если заполнить оба фото «До/После» — на странице работы покажется сравнение.')
                 ->set_width(50),

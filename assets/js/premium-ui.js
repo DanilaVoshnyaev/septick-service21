@@ -190,6 +190,18 @@
             }
         });
 
+        // Отзыв целиком: раньше текст резался многоточием посреди фразы —
+        // это выглядело как заглушка. Теперь длинный отзыв разворачивается
+        // по «Читать полностью» (задача #12).
+        document.addEventListener('click', function (e) {
+            const toggle = e.target.closest('.testimonial-text__toggle');
+            if (!toggle) return;
+            const tail = toggle.parentNode.querySelector('.testimonial-text__tail');
+            if (tail) tail.hidden = false;
+            toggle.setAttribute('aria-expanded', 'true');
+            toggle.remove();
+        });
+
         // Close modal on ESC
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {

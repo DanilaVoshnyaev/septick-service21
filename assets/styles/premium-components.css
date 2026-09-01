@@ -1657,6 +1657,12 @@ body {
     line-height: 1.3;
 }
 
+/* Промо-строка каталога: иконка вместо эмодзи «⚡» (задача #21). */
+.stations-hero__promo .izex-icon {
+    vertical-align: -0.2em;
+    margin-right: 4px;
+}
+
 .stations-hero__promo {
     background: linear-gradient(135deg, rgba(49, 185, 57, 0.12) 0%, rgba(49, 185, 57, 0.08) 100%);
     border-left: 4px solid var(--green); /* ✅ Было: var(--gold) */
@@ -4264,9 +4270,11 @@ body {
         color: var(--on-brand);
     }
 
-    /* Чтобы контент не прятался за панелью */
+    /* Чтобы контент не прятался за панелью. Сама панель на iPhone с домашней
+       полосой становится выше на высоту безопасной зоны — учитываем её здесь
+       тоже, иначе последние строки футера уходят под панель. */
     body {
-        padding-bottom: 62px;
+        padding-bottom: calc(62px + env(safe-area-inset-bottom, 0px));
     }
 }
 

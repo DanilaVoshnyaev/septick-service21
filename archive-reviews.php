@@ -91,7 +91,7 @@ $reviews_query = new WP_Query($args);
                                     <?php endif; ?>
                                     <div class="review-meta">
                                         <?php if ($date): ?>
-                                            <span>📅 <?php echo esc_html($date); ?></span>
+                                            <span><?php echo izex_icon('calendar', 15); ?> <?php echo esc_html($date); ?></span>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -113,7 +113,7 @@ $reviews_query = new WP_Query($args);
 
                             <!-- Услуга -->
                             <?php if ($service): ?>
-                                <span class="review-service">🔧 <?php echo esc_html($service); ?></span>
+                                <span class="review-service"><?php echo izex_icon('wrench', 15); ?> <?php echo esc_html($service); ?></span>
                             <?php endif; ?>
                         </li>
 

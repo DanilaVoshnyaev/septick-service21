@@ -1,0 +1,222 @@
+/**
+ * trust-blocks.css — блоки доверия спринта 2.
+ *
+ * Строка доверия в первом экране (#11), блок гарантии с четырьмя плашками (#11),
+ * плашка скидки или фиксации сметы (#16) и шесть возражений (#19).
+ * Разметка — inc/trust-blocks.php.
+ *
+ * Значения берём из токенов: кегли не ниже 13 px, зоны нажатия не меньше 44 px,
+ * зелёный текст на светлом — --brand-ink (см. tokens.css).
+ */
+
+/* ===== Строка доверия под кнопками hero (#11) ===== */
+.hero-trust-line {
+    margin: 16px 0 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.hero-layout:has(.pro-herocard) .hero-trust-line {
+    text-align: left;
+}
+
+@media (max-width: 768px) {
+    .hero-trust-line {
+        margin-top: 12px;
+        font-size: 13px;
+    }
+}
+
+/* ===== Гарантия в цифрах (#11) ===== */
+.trust-warranty {
+    padding: clamp(56px, 9vw, 100px) 0;
+    background: var(--surface);
+}
+
+.trust-warranty__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: clamp(14px, 2vw, 20px);
+}
+
+.trust-warranty__card {
+    position: relative;
+    padding: 22px 20px 20px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+}
+
+/* Номер плашки — тихий ориентир, а не украшение: он держит порядок чтения. */
+.trust-warranty__num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    margin-bottom: 12px;
+    border-radius: 50%;
+    background: var(--brand-soft);
+    color: var(--brand-ink);
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.trust-warranty__title {
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+}
+
+.trust-warranty__text {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: var(--ink-2);
+}
+
+.trust-warranty__foot {
+    margin: clamp(18px, 3vw, 26px) 0 0;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--ink-2);
+}
+
+.trust-warranty__foot a {
+    color: var(--brand-ink);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* ===== Скидка или фиксация сметы (#16) ===== */
+.trust-offer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 10px;
+    margin-top: 18px;
+    padding: 16px 20px;
+    background: var(--brand-soft);
+    border-left: 3px solid var(--brand);
+    border-radius: var(--radius-sm);
+}
+
+.trust-offer__title {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--brand-ink);
+}
+
+.trust-offer__text {
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: var(--ink-2);
+}
+
+/* ===== Шесть возражений (#19) ===== */
+.trust-faq-pre {
+    padding: clamp(56px, 9vw, 100px) 0;
+    background: var(--surface-2);
+}
+
+.trust-faq-pre__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: clamp(14px, 2vw, 20px);
+}
+
+.trust-faq-pre__card {
+    padding: 22px 22px 20px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Вопрос — словами клиента, в кавычках: так он узнаёт свою мысль. */
+.trust-faq-pre__q {
+    margin: 0 0 10px;
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+}
+
+.trust-faq-pre__a {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--ink-2);
+}
+
+@media (max-width: 560px) {
+    .trust-warranty__card,
+    .trust-faq-pre__card {
+        padding: 18px 16px;
+    }
+
+
+    .trust-offer {
+        padding: 14px 16px;
+    }
+}
+
+/* ===== Отзывы: агрегат и раскрытие текста (#12) ===== */
+.reviews-aggregate {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px 16px;
+    margin: 12px 0 0;
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.reviews-aggregate b {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--brand-ink);
+}
+
+.reviews-aggregate a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* Кнопка «Читать полностью» — часть абзаца, поэтому без рамки и отступов. */
+.testimonial-text__toggle {
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    color: var(--brand-ink);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+}
+
+.testimonial-source {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--brand-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}

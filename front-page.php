@@ -61,6 +61,11 @@ $company = getCompanyContacts();
                             <span>Вызвать инженера бесплатно</span>
                         </button>
                     </div>
+                    <?php // Строка доверия: монтажи, год начала работы, смета в договоре,
+                          // срок гарантии. Факты берутся из настроек темы, пункты без
+                          // данных выпадают (задача #11). ?>
+                    <?php echo do_shortcode('[topas_trust_line]'); ?>
+
                     <!-- Статистика -->
                     <div class="hero-stats animate-fade-up delay-3">
                         <div class="stat-item">
@@ -115,11 +120,11 @@ $company = getCompanyContacts();
 
                         <div class="pro-herocard__notes">
                             <div class="pro-herocard__note">
-                                <span aria-hidden="true">✓</span>
+                                <?php echo izex_icon('check', 16); ?>
                                 <span><b>Монтаж за 1 день</b> в любой грунт и погоду</span>
                             </div>
                             <div class="pro-herocard__note">
-                                <span aria-hidden="true">🛡️</span>
+                                <?php echo izex_icon('shield', 16); ?>
                                 <span><b>Договор</b> и гарантия на оборудование и работы</span>
                             </div>
                         </div>
@@ -131,11 +136,7 @@ $company = getCompanyContacts();
         <?php // Бегущая строка доверия убрана (задача #27): она повторяла те же шесть
               // тезисов, что и блок «Почему мы», бесконечно анимировалась и имела
               // контраст 2,25–3,62:1. Шорткод [topas_trust_marquee] остался в теме. ?>
-        <?php
-        // Здесь был второй SEO-блок с display:none — полная копия текста и того же
-        // <h2>, что в видимом блоке внизу страницы. Скрытый текст с дублем заголовка
-        // поисковикам не помогает, а выглядит как попытка накрутки, поэтому убран.
-        ?>
+
         <?php
         // Параметры фильтра (фильтруем прямо на главной — так же, как в каталоге:
         // берём все станции и фильтруем/сортируем в PHP через carbon_get_post_meta,
@@ -227,12 +228,31 @@ $company = getCompanyContacts();
         // берёт на себя catalog-instant.js, без JS работает атрибут ниже.
         $page_stations = $all_stations;
         ?>
-        <?php // Нижний отступ вернули: дальше идёт секция сравнения, а не блок работ,
-              // и CTA-картинка каталога упиралась в её край. ?>
-        <section id="catalog" class="catalog-premium" data-catalog style="background: var(--bg-secondary); padding: clamp(80px, 12vw, 80px) 0 clamp(60px, 8vw, 80px);">
+
+        <?php // Калькулятор — первым делом после hero и в собственной секции.
+              // Раньше он стоял внутри секции каталога, над карточками: главное
+              // действие страницы читалось как подзаголовок каталога (задача #30). ?>
+        <section class="calc-section">
             <div class="container">
                 <?php echo do_shortcode('[topas_calculator]'); ?>
+            </div>
+        </section>
 
+        <?php // Смета — данные общие со /prices. Сравнение переехало в секцию
+              // каталога, сразу под карточки. ?>
+        <?php echo do_shortcode('[topas_estimate]'); ?>
+
+        <?php // Гарантия в цифрах — сразу после сметы: человек только что увидел,
+              // что входит в цену, и следующий его вопрос — «а что если» (задача #11).
+              // Внутри блока выводится скидка или фиксация сметы (задача #16). ?>
+        <?php echo do_shortcode('[topas_warranty]'); ?>
+
+        <?php // Нижний отступ вернули: дальше идёт секция сравнения, а не блок работ,
+              // и CTA-картинка каталога упиралась в её край. ?>
+        <?php // Фон и отступы секции — в front-page.css: инлайн-стиль перебивал
+              // правила вертикального ритма и правился только через шаблон. ?>
+        <section id="catalog" class="catalog-premium" data-catalog>
+            <div class="container">
                 <!-- Заголовок -->
                 <div class="section-header">
                     <span class="section-label">Каталог</span>
@@ -309,68 +329,14 @@ $company = getCompanyContacts();
             </div>
         </section>
 
-        <?php // Смета — данные общие со /prices. Сравнение переехало в секцию
-              // каталога, сразу под карточки. ?>
-        <?php echo do_shortcode('[topas_estimate]'); ?>
-
-        <?php // Преимущества оборудования: перенесены из-под hero — там они
-             // отодвигали калькулятор и каталог, главное действие страницы. ?>
-        <section class="luxury-features">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">Преимущества септиков Топас</h2>
-                    <p class="section-subtitle">Не просто оборудование, а комплексное решение для комфортной жизни</p>
-                </div>
-                <div class="features-grid">
-                    <div class="feature-luxury">
-                        <div class="feature-icon-wrapper">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
-                            </svg>
-                        </div>
-                        <h3>Простота монтажа</h3>
-                        <p>Независимость от типа грунта и уровня грунтовых вод — установка в любых условиях</p>
-                    </div>
-                    <div class="feature-luxury">
-                        <div class="feature-icon-wrapper">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                                <path d="M8 11h.01M12 11h.01M16 11h.01"/>
-                            </svg>
-                        </div>
-                        <h3>Комфорт без запахов</h3>
-                        <p>Полная герметичность и биологическая очистка — никаких неприятных запахов на участке</p>
-                    </div>
-                    <div class="feature-luxury">
-                        <div class="feature-icon-wrapper">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
-                            </svg>
-                        </div>
-                        <h3>Срок службы 50+ лет</h3>
-                        <p>Прочный полипропиленовый корпус не подвержен коррозии и разрушению</p>
-                    </div>
-                    <div class="feature-luxury">
-                        <div class="feature-icon-wrapper">
-                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                            </svg>
-                        </div>
-                        <h3>Экономия на обслуживании</h3>
-                        <p>Не требуется вызов ассенизаторской машины — чистка 2-4 раза в год самостоятельно</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
+        <?php echo do_shortcode('[topas_works count="8"]'); ?>
         <?php // «Как мы работаем»: поднято перед блоком работ — сначала объясняем
              // процесс, потом показываем результат и отзывы. ?>
         <section class="process-premium">
             <div class="container">
                 <div class="section-header">
                     <span class="section-label">Как мы работаем</span>
-                    <h2 class="section-title">4 простых шага до комфортной жизни за городом без неприятных запахов и лишних хлопот</h2>
+                    <h2 class="section-title">От заявки до работающей станции — четыре шага и один день на монтаж</h2>
                 </div>
                 <div class="process-steps">
                     <div class="step-item">
@@ -397,75 +363,19 @@ $company = getCompanyContacts();
         </section>
 
 
-        <?php echo do_shortcode('[topas_works count="8"]'); ?>
-        <section class="why-choose-premium">
-            <div class="container">
-                <div class="section-header">
-                    <span class="section-label">Почему мы</span>
-                    <h2 class="section-title">Преимущества работы с нами</h2>
-                    <p class="section-subtitle">Доверьте ТОПАС нам: профессионализм исполнения, опыт мастеров и гарантия надёжности!</p>
-                </div>
-
-                <div class="advantages-list-premium">
-                            <div class="advantage-item">
-                                <div class="advantage-check">✓</div>
-                                <div class="advantage-content">
-                                    <h4>Бесплатный выезд инженера</h4>
-                                    <p>После оформления заявки мы свяжемся с вами, чтобы договориться о бесплатной встрече на объекте — она ни к чему вас не обязывает</p>
-                                </div>
-                            </div>
-                            <div class="advantage-item">
-                                <div class="advantage-check">✓</div>
-                                <div class="advantage-content">
-                                    <h4>Доступные цены</h4>
-                                    <p>Благодаря прямым поставкам и отлаженным процессам у нас максимально сокращены лишние расходы и прочие траты</p>
-                                </div>
-                            </div>
-                            <div class="advantage-item">
-                                <div class="advantage-check">✓</div>
-                                <div class="advantage-content">
-                                    <h4>Гарантия и договор</h4>
-                                    <p>Мы работаем официально: перед началом работ подписываем договор, в котором закреплены все гарантии и ответственность сторон</p>
-                                </div>
-                            </div>
-                            <div class="advantage-item">
-                                <div class="advantage-check">✓</div>
-                                <div class="advantage-content">
-                                    <h4>Прозрачная смета</h4>
-                                    <p>Работаем открыто и заранее согласовываем стоимость всех работ — никаких скрытых платежей</p>
-                                </div>
-                            </div>
-                            <div class="advantage-item">
-                                <div class="advantage-check">✓</div>
-                                <div class="advantage-content">
-                                    <h4>Монтаж за 1 день</h4>
-                                    <p>Производим монтаж в любых типах грунта и в любую погоду — профессиональная бригада с опытом</p>
-                                </div>
-                            </div>
-                            <div class="advantage-item">
-                                <div class="advantage-check">✓</div>
-                                <div class="advantage-content">
-                                    <h4>Сервисное обслуживание</h4>
-                                    <p>Производим гарантийное и постгарантийное обслуживание — всегда на связи и готовы помочь</p>
-                                </div>
-                            </div>
-                        </div>
-
-                <div class="why-choose-cta">
-                    <button class="btn-premium btn-primary open-modal" data-modal="engineer">
-                        <span>Вызвать инженера</span>
-                        <svg class="btn-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </section>
+        <?php
+        // Здесь был второй SEO-блок с display:none — полная копия текста и того же
+        // <h2>, что в видимом блоке внизу страницы. Скрытый текст с дублем заголовка
+        // поисковикам не помогает, а выглядит как попытка накрутки, поэтому убран.
+        ?>
         <section class="testimonials-premium">
             <div class="container">
                 <div class="section-header">
                     <span class="section-label" style="background-color: white">Отзывы</span>
                     <h2 class="section-title">Что говорят наши клиенты</h2>
+                    <?php // Рейтинг и число отзывов из внешнего справочника — со ссылкой
+                          // на карточку: это проверяемо третьей стороной (задача #12). ?>
+                    <?php echo do_shortcode('[topas_reviews_rating]'); ?>
                 </div>
 
                 <?php
@@ -511,7 +421,21 @@ $company = getCompanyContacts();
                                 $avatar = wp_get_attachment_image_url($avatar, 'thumbnail');
                             }
                             $service = $cf('crb_review_service');
-                            $content = wp_trim_words(get_the_content(), 40, '...');
+                            $review_date = $cf('crb_review_date');
+                            $source = $cf('crb_review_source');
+                            $source_url = $cf('crb_review_source_url');
+
+                            // Текст больше не режем многоточием посреди фразы: длинный
+                            // отзыв разворачивается по «Читать полностью» (задача #12).
+                            $full = trim(wp_strip_all_tags(get_the_content()));
+                            $head = $full;
+                            $tail = '';
+                            if (mb_strlen($full) > 260) {
+                                $cut = mb_strrpos(mb_substr($full, 0, 260), ' ');
+                                $cut = $cut ?: 260;
+                                $head = rtrim(mb_substr($full, 0, $cut));
+                                $tail = mb_substr($full, $cut);
+                            }
 
                             // Если Carbon Fields возвращает массив
                             if (is_array($rating) && !empty($rating[0]['rating_value'])) {
@@ -536,12 +460,12 @@ $company = getCompanyContacts();
                             <div class="testimonial-card-premium">
                                 <div class="testimonial-rating">
                                     <?php for ($i = 1; $i <= 5; $i++): ?>
-                                        <span class="star <?php echo $i > $rating ? 'empty' : ''; ?>">★</span>
+                                        <span class="star <?php echo $i > $rating ? 'empty' : ''; ?>"><?php echo izex_icon('star-filled', 16); ?></span>
                                     <?php endfor; ?>
                                 </div>
 
                                 <p class="testimonial-text">
-                                    "<?php echo esc_html($content); ?>"
+                                    «<?php echo esc_html($head); ?><?php if ($tail) : ?><span class="testimonial-text__tail" hidden><?php echo esc_html($tail); ?></span><button type="button" class="testimonial-text__toggle" aria-expanded="false">… Читать полностью</button><?php endif; ?>»
                                 </p>
 
                                 <div class="testimonial-author">
@@ -554,7 +478,20 @@ $company = getCompanyContacts();
                                     </div>
                                     <div class="author-info">
                                         <h5><?php echo esc_html($author ?: 'Анонимный клиент'); ?></h5>
-                                        <span><?php echo esc_html($service ?: $position ?: ''); ?></span>
+                                        <?php
+                                        // Район, модель и месяц — то, по чему отзыв
+                                        // опознаётся как настоящий (задача #12).
+                                        $meta = array_filter(array($position, $service, $review_date));
+                                        ?>
+                                        <?php if ($meta) : ?>
+                                            <span><?php echo esc_html(implode(' · ', $meta)); ?></span>
+                                        <?php endif; ?>
+                                        <?php if ($source_url) : ?>
+                                            <a class="testimonial-source" href="<?php echo esc_url($source_url); ?>"
+                                               target="_blank" rel="noopener nofollow">
+                                                Читать на <?php echo esc_html($source ?: 'источнике'); ?> →
+                                            </a>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -585,6 +522,19 @@ $company = getCompanyContacts();
 
             </div>
         </section>
+
+        <?php // Здесь было два блока подряд: «Преимущества септиков Топас» (4 карточки)
+              // и «Преимущества работы с нами» (6 карточек) — десять галочек без единого
+              // числа. Теперь один блок из шести пунктов, каждый с цифрой или
+              // проверяемым фактом (задача #23, см. inc/trust-blocks.php).
+              // Тезисы про сам ТОПАС не потеряны: срок службы и отсутствие запаха
+              // ушли в карточку товара, экономия — в блок возражений, где есть цифры. ?>
+        <?php echo do_shortcode('[topas_advantages]'); ?>
+
+        <?php // Шесть возражений — после отзывов и перед FAQ: FAQ начинается после
+              // ~9 500 px прокрутки, а эти вопросы нужно снять раньше, чем человек
+              // посмотрит на цену (задача #19). ?>
+        <?php echo do_shortcode('[topas_objections]'); ?>
 
         <?php
         // ===== FAQ (частые вопросы) =====
@@ -617,7 +567,9 @@ $company = getCompanyContacts();
             ),
             array(
                 'q' => 'Какая гарантия на станцию и монтажные работы?',
-                'a' => 'Мы работаем официально и подписываем договор, в котором закреплены гарантии. На оборудование действует заводская гарантия производителя, на выполненные монтажные работы — гарантия нашей компании. Также выполняем гарантийное и постгарантийное обслуживание.',
+                // Ответ собирается из сроков в настройках темы: пока они не заполнены,
+                // остаётся честная формулировка без чисел (задачи #11, #24).
+                'a' => izex_warranty_faq_answer(),
             ),
             array(
                 'q' => 'Можно ли пользоваться септиком зимой и при сезонном проживании?',
@@ -670,11 +622,14 @@ $company = getCompanyContacts();
             '</script>' . "\n";
         ?>
 
-        <section class="cta-premium" id="contacts" style="background-image: url('<?=assets('/images/cta-opt.jpg')?>');">
+        <?php // Фон вынесен в front-page.css: WebP через image-set с jpg-фолбэком
+              // (задача #25). Картинка декоративная — участок с домом, без
+              // претензии на «наш объект». ?>
+        <section class="cta-premium" id="contacts">
             <div class="cta-bg-pattern"></div>
             <div class="container">
                 <div class="cta-content">
-                    <h2 class="cta-title">Готовы сделать первый шаг?</h2>
+                    <h2 class="cta-title">Узнайте точную цену для вашего участка</h2>
                     <p class="cta-subtitle">Получите бесплатную консультацию инженера и скидку на монтаж при заказе до конца месяца</p>
                     <form class="cta-form-premium premium-contact-form" id="consultationForm" data-form-type="consultation">
                         <input type="text" name="hp_email" class="form-hp" tabindex="-1" autocomplete="off" aria-hidden="true">

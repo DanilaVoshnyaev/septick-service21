@@ -326,3 +326,143 @@
     justify-content: center;
     padding-top: 1rem;
 }
+
+/* =====================================================================
+   РЕЕСТР ОБЪЕКТОВ БЕЗ ФОТОГРАФИЙ (задача #29)
+   Раньше на месте отсутствующего фото стояла заглушка «Фото объекта» —
+   она обещала фотоотчёт. Текстовая карточка показывает только то, что есть:
+   район, модель, месяц и срок монтажа.
+   ===================================================================== */
+.work-card--text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 168px;
+    border-left: 3px solid var(--brand);
+}
+
+.work-card--text .work-card__body {
+    padding: 20px 22px;
+}
+
+.work-card--text .work-card__title {
+    margin-bottom: 8px;
+    font-size: 19px;
+}
+
+/* Модель и водоотведение — одной строкой, как в реестре. */
+.work-card__spec {
+    margin: 0 0 6px;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--brand-ink);
+}
+
+/* Месяц и срок монтажа — моно-цифрами: строка читается как запись реестра. */
+.work-card__meta {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-muted);
+}
+
+.works-archive__foot {
+    margin: clamp(24px, 4vw, 40px) 0 0;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-2);
+}
+
+/* =====================================================================
+   СХЕМА ЧУВАШИИ (задача #29)
+   Иллюстрация охвата: залитые точки — районы с нашими объектами, бледные —
+   зона выезда. Контур — данные OpenStreetMap, поэтому есть строка атрибуции.
+   ===================================================================== */
+.geo-map {
+    margin: 0 0 clamp(24px, 4vw, 40px);
+    padding: clamp(16px, 3vw, 28px);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+}
+
+.geo-map__canvas {
+    display: flex;
+    justify-content: center;
+}
+
+.geo-map__canvas svg {
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+}
+
+.geo-map__outline {
+    fill: var(--brand-soft);
+    stroke: var(--brand-ink);
+    stroke-width: 1.4;
+    stroke-linejoin: round;
+}
+
+/* Райцентр без наших объектов — тихая точка: показывает зону выезда,
+   но не притворяется выполненной работой. */
+.geo-map__point circle {
+    fill: var(--ink-muted);
+    opacity: 0.45;
+}
+
+.geo-map__point.is-active circle {
+    fill: var(--brand);
+    opacity: 1;
+    stroke: #fff;
+    stroke-width: 1.5;
+}
+
+.geo-map__point text {
+    font-size: 11px;
+    font-weight: 600;
+    fill: var(--ink);
+}
+
+.geo-map__caption {
+    margin-top: 14px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-muted);
+    text-align: center;
+}
+
+.geo-map__credit {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+    opacity: 0.8;
+}
+
+/* ===== Интерактивная карта поверх схемы (#29) =====
+   Появляется, только если в настройках задан ключ Яндекс.Карт и API успел
+   загрузиться. До этого — и всегда без JS — виден SVG. */
+.geo-map__interactive {
+    width: 100%;
+    height: clamp(320px, 46vw, 460px);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+/* Схему прячем визуально, но оставляем в разметке: она нужна при печати
+   и если карта отвалится после первой отрисовки. */
+.geo-map.is-interactive .geo-map__canvas {
+    display: none;
+}
+
+@media print {
+    .geo-map__interactive {
+        display: none;
+    }
+
+    .geo-map.is-interactive .geo-map__canvas {
+        display: flex;
+    }
+}

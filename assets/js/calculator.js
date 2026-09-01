@@ -306,15 +306,17 @@
             sticky.set(r.modelName, range, r.params);
 
             resultBox.innerHTML =
-                '<span class="calc-live__result-eyebrow">✦ Рекомендуем вам</span>' +
+                '<span class="calc-live__result-eyebrow">Рекомендуем вам</span>' +
                 '<h3 class="calc-live__result-name">' + esc(r.modelName) + '</h3>' +
                 (st && st.peopleStr ? '<p class="calc-live__result-people">' + esc(st.peopleStr) + '</p>' : '') +
                 img +
                 specs +
                 breakdown +
                 '<div class="calc-live__total">' +
-                    '<div class="calc-live__total-label">≈ станция + монтаж</div>' +
+                    '<div class="calc-live__total-label">Под ключ</div>' +
                     '<div class="calc-live__total-value">' + range + '</div>' +
+                    '<div class="calc-live__total-note">Точную сумму фиксируем в договоре ' +
+                        'до начала работ</div>' +
                 '</div>' +
                 '<div class="calc-live__actions">' +
                     '<button type="button" class="calc-live__cta" data-calc-cta ' +

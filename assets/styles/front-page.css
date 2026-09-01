@@ -418,7 +418,11 @@
         .testimonial-card-premium:hover {
             background: rgba(255,255,255,0.1); transform: translateY(-4px);
         }
-        .testimonial-rating { color: var(--brand-ink); font-size: 18px; margin-bottom: 16px; letter-spacing: 3px; }
+        /* Звёзды — SVG вместо символа «★»: он рисовался системным шрифтом
+           и на части устройств выпадал в эмодзи-начертание (задача #21). */
+        .testimonial-rating { display: flex; gap: 3px; margin-bottom: 16px; color: var(--brand-ink); }
+        .testimonial-rating .star { display: inline-flex; }
+        .testimonial-rating .star.empty { color: rgba(255, 255, 255, 0.28); }
         .testimonial-text {
             font-size: 15px; line-height: 1.7; color: rgba(255,255,255,0.92);
             margin-bottom: 24px; font-style: italic;
@@ -741,4 +745,41 @@
         url('../images/cta-opt.webp') type('image/webp'),
         url('../images/cta-opt.jpg') type('image/jpeg')
     );
+}
+
+/* Фон нижнего CTA: своя иллюстрация участка в WebP — 89 КБ против 179 КБ
+   прежнего jpg. Первая строка — фолбэк для браузеров без image-set. */
+.cta-premium {
+    background-image: url('../images/cta-opt.jpg');
+    background-image: image-set(
+        url('../images/ui/country-house-morning-1440.webp') type('image/webp'),
+        url('../images/cta-opt.jpg') type('image/jpeg')
+    );
+    background-size: cover;
+    background-position: center;
+}
+
+@media (max-width: 820px) {
+    .cta-premium {
+        background-image: url('../images/cta-opt.jpg');
+        background-image: image-set(
+            url('../images/ui/country-house-morning-768.webp') type('image/webp'),
+            url('../images/cta-opt.jpg') type('image/jpeg')
+        );
+    }
+}
+
+/* Секция калькулятора (задача #30). Раньше калькулятор стоял внутри секции
+   каталога, над карточками, и читался как её подзаголовок. Теперь это
+   отдельный блок сразу после первого экрана — главное действие страницы. */
+.calc-section {
+    padding: clamp(56px, 9vw, 100px) 0 clamp(56px, 9vw, 100px);
+    background: var(--bg-secondary);
+}
+
+/* Секция каталога: было инлайн-стилем в шаблоне. Снизу стоит CTA-баннер,
+   поэтому запас чуть больше, чем сверху. */
+.catalog-premium {
+    background: var(--bg-secondary);
+    padding: clamp(64px, 9vw, 100px) 0 clamp(64px, 9vw, 100px);
 }

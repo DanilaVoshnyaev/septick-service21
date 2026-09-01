@@ -66,18 +66,33 @@ $map_link  = getCarbonAddressLink();
                     </div>
                 <?php endif; ?>
 
+                <?php
+                // Адрес офиса или склада берём из настроек «Доверие и гарантия»:
+                // это отдельное поле от юридического адреса в реквизитах (задача #20).
+                $trust = izex_trust();
+                $office = $trust['office_address'] ?: $address;
+                $no_office = $trust['office_none'];
+                ?>
+
                 <!-- Адрес и режим работы -->
-                <?php if (!empty($address) || !empty($work_time)) : ?>
+                <?php if (!empty($office) || !empty($work_time) || $no_office) : ?>
                     <div class="contact-card">
                         <div class="contact-card__icon">
                             <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
                             </svg>
                         </div>
-                        <h2 class="contact-card__title">Адрес и режим работы</h2>
+                        <h2 class="contact-card__title">
+                            <?php echo $no_office && !$office ? 'Как мы работаем' : 'Адрес и режим работы'; ?>
+                        </h2>
                         <div class="contact-card__body">
-                            <?php if (!empty($address)) : ?>
-                                <p class="contact-card__text"><?php echo nl2br(esc_html($address)); ?></p>
+                            <?php if (!empty($office)) : ?>
+                                <p class="contact-card__text"><?php echo nl2br(esc_html($office)); ?></p>
+                            <?php elseif ($no_office) : ?>
+                                <p class="contact-card__text">
+                                    Офиса для приёма нет: работаем выездом по Чувашии
+                                    и соседним регионам Поволжья.
+                                </p>
                             <?php endif; ?>
                             <?php if (!empty($work_time)) : ?>
                                 <p class="contact-card__text contact-card__text--muted"><?php echo esc_html($work_time); ?></p>

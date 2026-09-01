@@ -705,6 +705,13 @@
     box-shadow: 0 8px 22px rgba(42, 171, 238, 0.4);
 }
 
+/* WhatsApp — фирменный зелёный мессенджера, не брендовый зелёный сайта:
+   иначе кнопка читается как ещё одно действие сайта (задача #20). */
+.pro-dock__btn--wa {
+    background: #25d366;
+    box-shadow: 0 8px 22px rgba(37, 211, 102, 0.4);
+}
+
 /* Соцсети из настроек темы: свою иконку кладём на нейтральную белую плашку */
 .pro-dock__btn--social {
     background: #fff;
@@ -826,6 +833,10 @@
 
     .mobile-action-bar__btn--tg {
         color: #1e93cf;
+    }
+
+    .mobile-action-bar__btn--wa {
+        color: #1da851;
     }
 
     .mobile-action-bar__btn--social {
@@ -1364,6 +1375,14 @@
     color: rgba(255, 255, 255, 0.55);
 }
 
+/* Подпись под вилкой: цену фиксируем в договоре (задача #24). */
+.calc-live__total-note {
+    margin-top: 4px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.7);
+}
+
 .calc-live__total-value {
     font-size: 25px;
     font-weight: 800;
@@ -1586,4 +1605,23 @@
     .calc-sticky {
         display: none;
     }
+}
+
+/* ===== Иконки набора темы (задача #21) =====
+   Заменили эмодзи: те рисовались шрифтом системы, не наследовали цвет текста
+   и выглядели по-разному на Windows, macOS и Android. */
+.izex-icon {
+    flex: 0 0 auto;
+    vertical-align: -0.15em;
+}
+
+/* Галочка в смете и щит в карточке hero стояли как текстовый глиф —
+   выравниваем по строке. */
+.pro-estimate__mark .izex-icon {
+    vertical-align: 0;
+}
+
+.pro-herocard__note .izex-icon,
+.calc-live__tip .izex-icon {
+    margin-top: 1px;
 }

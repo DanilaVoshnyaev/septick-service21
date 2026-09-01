@@ -267,11 +267,28 @@ function izex_scripts()
     if (is_front_page()) {
         izex_enqueue_theme_style('page-front', '/assets/styles/front-page.css');
     }
+    // Блоки доверия: гарантия, оффер, возражения. Шорткоды можно вставить
+    // и в произвольную страницу через редактор, поэтому проверяем ещё и контент.
+    $needs_trust = is_front_page();
+    if (!$needs_trust && is_singular()) {
+        $content = (string) get_post_field('post_content', get_queried_object_id());
+        foreach (array('topas_warranty', 'topas_objections', 'topas_advantages', 'topas_offer') as $shortcode) {
+            if (has_shortcode($content, $shortcode)) {
+                $needs_trust = true;
+                break;
+            }
+        }
+    }
+    if ($needs_trust) {
+        izex_enqueue_theme_style('trust-blocks', '/assets/styles/trust-blocks.css');
+    }
     if ($template === 'about-page.php') {
         izex_enqueue_theme_style('page-about', '/assets/styles/about-page.css');
     }
     if (is_post_type_archive('reviews') || $template === 'archive-reviews.php') {
         izex_enqueue_theme_style('page-reviews', '/assets/styles/archive-reviews.css');
+        // Раскрытие длинного отзыва и ссылка на источник оформлены в trust-blocks.css.
+        izex_enqueue_theme_style('trust-blocks', '/assets/styles/trust-blocks.css');
     }
     if ($template === 'page-contacts.php') {
         izex_enqueue_theme_style('page-contacts', '/assets/styles/contacts.css');
@@ -517,7 +534,25 @@ require get_template_directory() . '/inc/install-theme.php';
  * Блоки по прототипу заказчика: карточка станции, смета «входит/отдельно»,
  * инлайн-сравнение, бегущая строка, одноэкранный калькулятор.
  */
+/**
+ * Набор inline-SVG иконок вместо эмодзи (задача #21).
+ */
+require get_template_directory() . '/inc/icons.php';
+
 require get_template_directory() . '/inc/pro-blocks.php';
+
+/**
+ * Блоки доверия: гарантия в цифрах, скидка или фиксация сметы, шесть
+ * возражений, объединённые преимущества. Факты — из настроек темы.
+ */
+require get_template_directory() . '/inc/trust-blocks.php';
+
+/**
+ * Схема Чувашии для реестра объектов: геометрия (сгенерирована из OpenStreetMap)
+ * и сам блок карты.
+ */
+require get_template_directory() . '/inc/chuvashia-map.php';
+require get_template_directory() . '/inc/geo-map.php';
 
 /**
  * Микроразметка Schema.org, которую не покрывает Yoast:
@@ -803,8 +838,10 @@ function register_works_cpt()
         'search_items' => 'Поиск работ',
         'not_found' => 'Работы не найдены',
         'not_found_in_trash' => 'В корзине не найдено',
-        'menu_name' => 'Наши работы',
-        'name_admin_bar' => 'Работа',
+        // «Наши работы» обещает фотоотчёты, которых нет. Раздел называется
+        // «География и объекты» — реестром объектов текстом (задача #29).
+        'menu_name' => 'География и объекты',
+        'name_admin_bar' => 'Объект',
     );
 
     $args = array(
@@ -1582,42 +1619,74 @@ function izex_compare_button($post_id)
 function izex_render_work_card($post_id)
 {
     $post_id = (int) $post_id;
-    $model = carbon_get_post_meta($post_id, 'crb_work_model');
-    $location = carbon_get_post_meta($post_id, 'crb_work_location');
+    $model = (string) carbon_get_post_meta($post_id, 'crb_work_model');
+    $location = (string) carbon_get_post_meta($post_id, 'crb_work_location');
+    $disposal = (string) carbon_get_post_meta($post_id, 'crb_work_disposal');
+    $duration = (string) carbon_get_post_meta($post_id, 'crb_work_duration');
+    $date_raw = (string) carbon_get_post_meta($post_id, 'crb_work_date');
     $img = has_post_thumbnail($post_id);
+
+    // Месяц и год: «2026-07-14» → «Июль 2026».
+    $date = '';
+    if ($date_raw && ($ts = strtotime($date_raw))) {
+        $months = array(1 => 'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+            'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь');
+        $date = $months[(int) date('n', $ts)] . ' ' . date('Y', $ts);
+    }
+
+    // Заголовок карточки — населённый пункт: в реестре объектов ищут свой район,
+    // а не название записи (задача #29).
+    $title = $location ?: get_the_title($post_id);
+    $url = get_permalink($post_id);
     ?>
-    <article class="work-card" data-model="<?php echo esc_attr($model); ?>">
-        <a class="work-card__media" href="<?php echo esc_url(get_permalink($post_id)); ?>">
-            <?php if ($img) : ?>
+    <article class="work-card<?php echo $img ? '' : ' work-card--text'; ?>" data-model="<?php echo esc_attr($model); ?>">
+        <?php if ($img) : ?>
+            <a class="work-card__media" href="<?php echo esc_url($url); ?>">
                 <?php
-                // srcset + width/height от WordPress: в блоке 8 фото, на мобильных
-                // раньше грузились полноразмерные medium_large для каждой карточки.
+                // srcset + width/height от WordPress; sizes — по фактической ширине
+                // слота карточки, иначе браузер тянет самый большой файл (задача #25).
                 echo get_the_post_thumbnail($post_id, 'medium_large', array(
                     'loading'  => 'lazy',
                     'decoding' => 'async',
                     'alt'      => trim(get_the_title($post_id) . ($location ? ', ' . $location : '')),
-                    // Слот карточки работы — 300–380 px, а sizes по умолчанию
-                    // говорит браузеру «768px» (задача #25).
                     'sizes'    => '(max-width: 600px) 92vw, (max-width: 1024px) 45vw, 380px',
                 ));
                 ?>
-            <?php else : ?>
-                <span class="work-card__noimg">Фото объекта</span>
-            <?php endif; ?>
-            <?php if ($model) : ?>
-                <span class="work-card__badge"><?php echo esc_html($model); ?></span>
-            <?php endif; ?>
-        </a>
+                <?php if ($model) : ?>
+                    <span class="work-card__badge"><?php echo esc_html($model); ?></span>
+                <?php endif; ?>
+            </a>
+        <?php endif; ?>
+
         <div class="work-card__body">
+            <?php // Раньше на месте отсутствующего фото стояла заглушка «Фото объекта» —
+                  // она обещала фотоотчёт, которого нет. Без фото карточка просто
+                  // текстовая: район, модель, месяц, срок монтажа. ?>
             <h3 class="work-card__title">
-                <a href="<?php echo esc_url(get_permalink($post_id)); ?>"><?php echo esc_html(get_the_title($post_id)); ?></a>
+                <a href="<?php echo esc_url($url); ?>"><?php echo esc_html($title); ?></a>
             </h3>
-            <?php if ($location) : ?>
-                <p class="work-card__loc">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <?php echo esc_html($location); ?>
+
+            <?php if ($model || $disposal) : ?>
+                <p class="work-card__spec">
+                    <?php echo esc_html(implode(' · ', array_filter(array($model, $disposal)))); ?>
                 </p>
             <?php endif; ?>
+
+            <?php if ($date || $duration) : ?>
+                <p class="work-card__meta">
+                    <?php
+                    $meta = array();
+                    if ($date) {
+                        $meta[] = $date;
+                    }
+                    if ($duration) {
+                        $meta[] = 'монтаж за ' . $duration;
+                    }
+                    echo esc_html(implode(' · ', $meta));
+                    ?>
+                </p>
+            <?php endif; ?>
+
             <?php $excerpt = get_the_excerpt($post_id); ?>
             <?php if ($excerpt) : ?>
                 <p class="work-card__desc"><?php echo esc_html(wp_trim_words($excerpt, 18)); ?></p>
@@ -1725,8 +1794,8 @@ function render_topas_works_block($atts)
     <section class="works-block testimonials-premium">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title">Наши работы</h2>
-                <p class="section-subtitle" style="color: white">Реальные объекты с установленными станциями ТОПАС</p>
+                <h2 class="section-title">География и объекты</h2>
+                <p class="section-subtitle" style="color: white">Район, модель и срок монтажа по объектам последних сезонов</p>
             </div>
             <div class="works-grid">
                 <?php while ($query->have_posts()) : $query->the_post(); ?>
@@ -1734,7 +1803,7 @@ function render_topas_works_block($atts)
                 <?php endwhile; ?>
             </div>
             <div class="works-block__more">
-                <a class="btn-premium btn-primary" href="<?php echo esc_url(get_post_type_archive_link('works')); ?>">Смотреть все работы</a>
+                <a class="btn-premium btn-primary" href="<?php echo esc_url(get_post_type_archive_link('works')); ?>">Все объекты и география</a>
             </div>
         </div>
     </section>
@@ -1899,7 +1968,9 @@ function enqueue_premium_form_assets() {
         'nonce' => wp_create_nonce('premium_form_nonce'),
         'metrikaId' => izex_metrika_id(),
         'messages' => [
-            'success' => 'Спасибо! Мы свяжемся с вами в течение 15 минут.',
+            // Подтверждение заявки называет имя инженера, если оно задано
+            // в настройках: человек уже знает, кто к нему приедет (задача #34).
+            'success' => izex_lead_success_message(),
             'error' => 'Ошибка отправки. Попробуйте позвонить нам.',
             'validation' => [
                 'name' => 'Введите имя (мин. 2 символа)',

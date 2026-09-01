@@ -201,7 +201,7 @@ function render_topas_trust_marquee($atts)
             <?php for ($copy = 0; $copy < 2; $copy++) : ?>
                 <div class="pro-marquee__item">
                     <?php foreach ($items as $item) : ?>
-                        <span><b>★</b> <?php echo esc_html(mb_strtoupper($item, 'UTF-8')); ?></span>
+                        <span><?php echo izex_icon('star', 13); ?> <?php echo esc_html(mb_strtoupper($item, 'UTF-8')); ?></span>
                         <span class="pro-marquee__sep">/</span>
                     <?php endforeach; ?>
                 </div>
@@ -320,9 +320,19 @@ function izex_pro_contact_items()
     $company = getCompanyContacts();
     $items = array();
 
-    // WhatsApp сознательно не выводим — заказчик им не пользуется.
-    // (Поле whatsapp_number в настройках при этом остаётся, оно по умолчанию
-    // подставляет основной номер, так что автоматически кнопка не вернётся.)
+    // WhatsApp — только по явному переключателю в настройках: номер в поле
+    // по умолчанию подставляется из основного телефона, поэтому сам факт
+    // заполненного поля ещё не значит, что в WhatsApp отвечают (задача #20).
+    if (carbon_get_theme_option('crb_show_whatsapp') && !empty($company['whatsapp'])) {
+        $items[] = array(
+            'key'   => 'wa',
+            'label' => 'WhatsApp',
+            'url'   => 'https://wa.me/' . $company['whatsapp'],
+            'mod'   => 'wa',
+            'icon'  => '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20zm4.6-5.9c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8.9c-.1.2-.3.2-.5.1a6.5 6.5 0 0 1-3.2-2.8c-.1-.2 0-.4.1-.5l.6-.7c.1-.2.1-.4 0-.6l-.7-1.7c-.1-.3-.3-.3-.5-.3h-.6c-.2 0-.5.1-.7.4-.3.3-.9 1-.9 2.2 0 1.3.9 2.5 1 2.7.1.2 1.8 2.9 4.4 3.9 2.2.8 2.6.7 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2 0-.1-.2-.2-.4-.3z"/></svg>',
+        );
+    }
+
 
     if (!empty($company['telegram'])) {
         $items[] = array(
@@ -479,7 +489,7 @@ function render_topas_estimate($atts)
                         </h3>
                         <ul class="pro-estimate__list">
                             <?php foreach ($included as $item) : ?>
-                                <li><span class="pro-estimate__mark">✓</span><span><?php echo esc_html($item); ?></span></li>
+                                <li><span class="pro-estimate__mark"><?php echo izex_icon('check', 15); ?></span><span><?php echo esc_html($item); ?></span></li>
                             <?php endforeach; ?>
                         </ul>
                     </div>
@@ -678,7 +688,7 @@ function render_topas_calculator_live($atts)
                 </div>
 
                 <p class="calc-live__tip">
-                    <span aria-hidden="true">💡</span>
+                    <?php echo izex_icon('bulb', 18); ?>
                     <span>Не уверены в параметрах? Оставьте значения по умолчанию — инженер уточнит всё на бесплатном выезде.</span>
                 </p>
             </div>

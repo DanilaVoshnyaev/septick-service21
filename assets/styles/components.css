@@ -583,3 +583,220 @@ textarea,
         text-underline-offset: 4px;
     }
 }
+
+/* ============================================================
+   6. КНОПКИ: ДВЕ ВЫСОТЫ (задача #21)
+   ============================================================
+   В теме было одиннадцать разных высот кнопок — от 32 до 58 px — и шестнадцать
+   вариантов оформления. Здесь не переписываем классы (их сотни вызовов
+   в шаблонах), а сводим к двум высотам из токенов: 44 px — минимальная зона
+   нажатия, 52 px — главное действие блока. Файл подключается последним,
+   поэтому значения выигрывают у прежних без !important. */
+
+.btn-premium,
+.btn-card,
+.btn-list,
+.btn-footer,
+.pro-btn,
+.works-filter__btn,
+.cookie-consent__btn,
+.cmp-bar__open,
+.cmp-bar__clear,
+.calc-live__cta,
+.premium-contact-form button[type="submit"] {
+    min-height: var(--btn-h);
+}
+
+/* Главное действие блока — выше и заметнее вторичного рядом. */
+.hero-buttons .btn-premium.btn-primary,
+.why-choose-cta .btn-premium,
+.about-cta .btn-premium.btn-primary,
+.cta-premium .btn-premium.btn-primary,
+.works-block__more .btn-premium,
+.calc-live__cta {
+    min-height: var(--btn-h-lg);
+}
+
+/* Мелкая кнопка в шапке остаётся компактной по горизонтали, но не ниже 44 px:
+   раньше она была 32 px и не проходила по зоне нажатия. */
+.btn-premium.btn-sm {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* ============================================================
+   7. КНОПКИ: ТРИ ВАРИАНТА ОФОРМЛЕНИЯ (задача #21)
+   ============================================================
+   В теме было шестнадцать вариантов: btn-gold, btn-primary, btn-card,
+   btn-list, btn--gold, pro-btn--solid, btn-call, btn-footer и так далее —
+   часть отличалась только названием класса. Классы в шаблонах не переписываем
+   (их сотни вызовов), а сводим внешний вид к трём ролям:
+
+     solid   — главное действие: заливка брендовым, текст --on-brand;
+     outline — вторичное: прозрачный фон, рамка и текст --brand-ink;
+     quiet   — третьестепенное: только подчёркнутый текст.
+
+   Тёмные секции (hero, отзывы, карточка расчёта) ниже сохраняют свой вариант:
+   там кнопка стоит на тёмном фоне, и обычный outline на нём не читается. */
+
+.btn-premium.btn-primary,
+.btn-premium.btn-gold,
+.btn-card.btn-gold,
+.btn-list.btn-gold,
+.btn--gold,
+.btn-footer,
+.btn-call,
+.pro-btn--solid,
+.calc-live__cta,
+.cookie-consent__btn,
+.cmp-bar__open {
+    background: var(--brand);
+    color: var(--on-brand);
+    border: 1.5px solid var(--brand);
+}
+
+.btn-premium.btn-primary:hover,
+.btn-premium.btn-gold:hover,
+.btn-card.btn-gold:hover,
+.btn-list.btn-gold:hover,
+.btn--gold:hover,
+.btn-footer:hover,
+.btn-call:hover,
+.pro-btn--solid:hover,
+.calc-live__cta:hover,
+.cookie-consent__btn:hover,
+.cmp-bar__open:hover {
+    background: var(--brand-strong);
+    border-color: var(--brand-strong);
+    color: var(--on-brand);
+}
+
+.btn-premium.btn-outline,
+.btn-premium.btn-outline-gold,
+.btn-card.btn-outline,
+.btn-list.btn-outline,
+.btn--outline,
+.pro-btn--ghost,
+.cmp-bar__clear {
+    background: transparent;
+    color: var(--brand-ink);
+    border: 1.5px solid var(--brand);
+}
+
+.btn-premium.btn-outline:hover,
+.btn-premium.btn-outline-gold:hover,
+.btn-card.btn-outline:hover,
+.btn-list.btn-outline:hover,
+.btn--outline:hover,
+.pro-btn--ghost:hover,
+.cmp-bar__clear:hover {
+    background: var(--brand-soft);
+    color: var(--brand-ink);
+    border-color: var(--brand);
+}
+
+/* Третьестепенное действие: рядом с главной кнопкой две равнозначные спорят
+   за внимание, поэтому здесь только подчёркнутый текст. */
+.btn-quiet,
+.pro-compare__clear,
+.calc-live__link {
+    background: none;
+    border: none;
+    color: var(--brand-ink);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+/* ===== Тёмные секции: кнопка стоит на тёмном фоне ===== */
+.hero-premium .btn-premium.btn-outline,
+.testimonials-premium .btn-premium.btn-outline,
+.cta-premium .btn-premium.btn-outline {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.45);
+}
+
+.hero-premium .btn-premium.btn-outline:hover,
+.testimonials-premium .btn-premium.btn-outline:hover,
+.cta-premium .btn-premium.btn-outline:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    border-color: #fff;
+}
+
+.hero-premium .btn-quiet {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Добор до 44 px по обеим сторонам (задача #18, проверка #35):
+   цифры «сколько человек» в калькуляторе были 38 px по ширине, тихая кнопка —
+   36 px по высоте, телефон в баннере каталога — 27 px, иконки соцсетей — 40 px. */
+.calc-live__opts .calc-live__opt {
+    min-width: 44px;
+    justify-content: center;
+}
+
+.calc-live__opt--wide {
+    justify-content: flex-start;
+}
+
+.btn-quiet,
+.phone-link-premium,
+.social-link,
+.social-link-premium {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+}
+
+.social-link,
+.social-link-premium {
+    justify-content: center;
+    min-width: 44px;
+}
+
+/* Название модели в карточке hero — ссылка высотой 30 px, добираем до 44. */
+.pro-herocard__name a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+}
+
+/* Чекбокс согласия был 13 px. Сам квадрат делаем 20 px, а нажимать можно
+   по всей строке подписи — её высота не меньше 44 px. */
+.form-consent {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    cursor: pointer;
+}
+
+.form-consent input[type="checkbox"] {
+    flex: 0 0 auto;
+    width: 20px;
+    height: 20px;
+    accent-color: var(--brand);
+}
+
+/* ============================================================
+   8. ВЕРТИКАЛЬНЫЙ РИТМ ГЛАВНОЙ (возврат воздуха)
+   ============================================================
+   Раньше каждый .container на главной получал лишние 32 px снизу — из-за
+   ошибки в правиле @supports (там стояло три значения padding вместо двух).
+   Ошибку убрали: из-за неё шапка была 110 px при body{padding-top:82px} и
+   перекрывала контент. Но воздух между секциями был к месту, поэтому
+   возвращаем его там, где ему и место — у самих секций, а не у контейнера.
+
+   Ориентир — ритм остальной страницы: 70–80 px сверху и снизу. */
+
+.main-content > .pro-estimate,
+.main-content > .faq-premium,
+.main-content > .seo-home-block {
+    padding-top: clamp(56px, 9vw, 100px);
+    padding-bottom: clamp(56px, 9vw, 100px);
+}
+
+/* Внутренние блоки секций тоже стали теснее на те же 32 px. */
+.main-content .section-header {
+    margin-bottom: clamp(28px, 3.5vw, 40px);
+}

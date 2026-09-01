@@ -22,7 +22,8 @@ $company = getCompanyContacts();
                 <h1 class="stations-hero__title">Каталог станций ТОПАС</h1>
 
                 <div class="stations-hero__promo">
-                    ⚡ Ставим сейчас или храним до даты монтажа с заморозкой текущей цены!
+                    <?php echo izex_icon('bolt', 18); ?>
+                    Ставим сейчас или храним до даты монтажа с заморозкой текущей цены!
                 </div>
 
                 <a href="tel:<?php echo esc_attr($company['phone_clean']); ?>" class="stations-hero__phone">

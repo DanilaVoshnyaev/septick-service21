@@ -650,7 +650,7 @@ $(function () {
             const $consent = $form.find('input[name="consent"]');
             if ($consent.length && !$consent.is(':checked')) {
                 PremiumForms.showConsentError($form);
-                PremiumForms.showToast('warning', '⚠️ Требуется согласие', 'Отметьте согласие на обработку персональных данных');
+                PremiumForms.showToast('warning', 'Требуется согласие', 'Отметьте согласие на обработку персональных данных');
                 return;
             }
             PremiumForms.clearConsentError($form);
@@ -694,7 +694,7 @@ $(function () {
                 timeout: 15000,
                 success: function(response) {
                     if (response.success) {
-                        PremiumForms.showToast('success', '✅ Заявка отправлена', response.data.message || premiumFormVars.messages.success);
+                        PremiumForms.showToast('success', 'Заявка отправлена', response.data.message || premiumFormVars.messages.success);
                         PremiumForms.reachGoal(formType);
                         $form[0].reset();
 
@@ -710,12 +710,12 @@ $(function () {
                             setTimeout(() => { window.location.href = response.data.redirect; }, 1500);
                         }
                     } else {
-                        PremiumForms.showToast('error', '⚠️ Ошибка', response.data.message || premiumFormVars.messages.error);
+                        PremiumForms.showToast('error', 'Ошибка', response.data.message || premiumFormVars.messages.error);
                     }
                 },
                 error: function(xhr, status, error) {
                     console.error('Form error:', error);
-                    PremiumForms.showToast('error', '⚠️ Ошибка сети', 'Проверьте подключение к интернету');
+                    PremiumForms.showToast('error', 'Ошибка сети', 'Проверьте подключение к интернету');
                 },
                 complete: function() {
                     $btn.prop('disabled', false).removeClass('loading').html(originalBtnText);
