@@ -226,7 +226,7 @@ function izex_scripts()
     // Нужны на главной, в архиве станций и на странице станции. Плюс страховка:
     // если шорткод калькулятора или сравнения вставили в контент произвольной
     // страницы через редактор, ассеты всё равно подключатся.
-    $needs_catalog_ui = is_front_page() || is_post_type_archive('stations') || is_singular('stations');
+    $needs_catalog_ui = false;
 
     if (!$needs_catalog_ui && is_singular()) {
         $content = (string) get_post_field('post_content', get_queried_object_id());
@@ -264,9 +264,6 @@ function izex_scripts()
 
     // ===== Постраничные стили (вынесены из <style> в шаблонах) =====
 
-    if (is_front_page()) {
-        izex_enqueue_theme_style('page-front', '/assets/styles/front-page.css');
-    }
     // Блоки доверия: гарантия, оффер, возражения. Шорткоды можно вставить
     // и в произвольную страницу через редактор, поэтому проверяем ещё и контент.
     $needs_trust = is_front_page();
@@ -331,6 +328,18 @@ function izex_components_style()
     izex_enqueue_theme_style('components', '/assets/styles/components.css', array('premium-components'));
 }
 add_action('wp_enqueue_scripts', 'izex_components_style', 20);
+
+/**
+ * Визуальная система «Сервис Септик21»: шапка, подвал, главная, каталог,
+ * карточка станции и формы. Идёт после components.css и перекрывает старые слои.
+ */
+function izex_redesign_assets()
+{
+    izex_enqueue_theme_style('redesign', '/assets/styles/redesign.css', array('components'));
+    $js = '/assets/js/redesign.js';
+    wp_enqueue_script('redesign', get_template_directory_uri() . $js, array(), filemtime(get_template_directory() . $js), true);
+}
+add_action('wp_enqueue_scripts', 'izex_redesign_assets', 30);
 
 /**
  * ================= ПРОИЗВОДИТЕЛЬНОСТЬ ФРОНТА =================
@@ -466,7 +475,7 @@ function izex_defer_scripts($tag, $handle)
     // не отложены — они выполнились бы раньше загрузки jQuery и упали с ошибкой.
     // Из критического пути он уже выведен переносом в футер.
     $defer = array(
-        'global-scripts', 'premium-ui', 'station-single',
+        'global-scripts', 'premium-ui', 'station-single', 'redesign',
         'topas-calculator', 'topas-compare', 'catalog-instant',
     );
 
@@ -573,6 +582,13 @@ require get_template_directory() . '/inc/seo-tech.php';
  * Посадочные страницы под поисковые запросы: шаблон и подборка станций.
  */
 require get_template_directory() . '/inc/landing.php';
+
+/**
+ * Карточки станций других марок: разовый импорт.
+ */
+require get_template_directory() . '/inc/brand-stations.php';
+
+require get_template_directory() . '/inc/redesign.php';
 
 /**
  * SEO: meta-теги, Open Graph, canonical, Schema.org, robots.txt.
@@ -914,7 +930,7 @@ function handle_premium_form_submit() {
     $hp = isset($_POST['hp_email']) ? trim((string) $_POST['hp_email']) : '';
     if ($hp !== '') {
         error_log('[servis-diag] honeypot сработал (бот): name=' . ($_POST['name'] ?? '?'));
-        wp_send_json_success(['message' => 'Спасибо! Мы свяжемся с вами в течение 15 минут.']);
+        wp_send_json_success(['message' => izex_lead_success_message()]);
     }
 
     // Санитизация входных данных
@@ -929,9 +945,6 @@ function handle_premium_form_submit() {
 
     // Валидация
     $errors = [];
-    if (empty($name) || mb_strlen($name) < 2) {
-        $errors[] = 'Введите корректное имя';
-    }
     // Простая валидация телефона РФ
     $phone_clean = preg_replace('/[^\d+]/', '', $phone);
     if (empty($phone_clean) || strlen($phone_clean) < 11) {
@@ -968,11 +981,12 @@ function handle_premium_form_submit() {
         'station_order' => 'Заказ станции',
         'consultation'  => 'Консультация (с главной)',
         'podbor'        => 'Подбор септика',
+        'raschet'       => 'Запрос расчёта',
     );
     $form_label = $form_labels[$form_type] ?? $form_type;
 
     // ===== ФОРМИРОВАНИЕ ПИСЬМА =====
-    $subject = 'Заявка с сайта: ' . $form_label . ' — ' . $name;
+    $subject = 'Заявка с сайта: ' . $form_label . ' — ' . ($name !== '' ? $name : $phone);
 
     $row = function ($label, $value) {
         if ($value === '' || $value === null) {
@@ -1117,7 +1131,7 @@ function handle_premium_form_submit() {
     // Заявка сохранена в базе — визитёру всегда показываем успех,
     // даже если письмо не ушло (заявку менеджер увидит в админке).
     wp_send_json_success(array(
-        'message'  => 'Спасибо! Мы свяжемся с вами в течение 15 минут.',
+        'message'  => izex_lead_success_message(),
         'redirect' => $product_id ? get_permalink($product_id) : '',
     ));
 }
@@ -1381,6 +1395,7 @@ function izex_build_calculator_stations()
 {
     $query = new WP_Query(array(
         'post_type'      => 'stations',
+        'post__not_in'   => izex_non_topas_station_ids(),
         'posts_per_page' => -1,
         'post_status'    => 'publish',
         'no_found_rows'  => true,
@@ -1565,6 +1580,7 @@ function izex_build_compare_stations()
 {
     $query = new WP_Query(array(
         'post_type'      => 'stations',
+        'post__not_in'   => izex_non_topas_station_ids(),
         'posts_per_page' => -1,
         'post_status'    => 'publish',
         'no_found_rows'  => true,
@@ -1860,6 +1876,7 @@ function izex_build_prices_table()
 
     $query = new WP_Query(array(
         'post_type'      => 'stations',
+        'post__not_in'   => izex_non_topas_station_ids(),
         'posts_per_page' => -1,
         'post_status'    => 'publish',
         'orderby'        => 'menu_order',
@@ -1977,7 +1994,7 @@ add_action('wp_enqueue_scripts', 'enqueue_premium_form_assets');
  */
 function izex_metrika_id()
 {
-    return (int) apply_filters('izex_metrika_id', 109479860);
+    return (int) apply_filters('izex_metrika_id', 114009465);
 }
 
 function enqueue_premium_form_assets() {
@@ -1992,7 +2009,7 @@ function enqueue_premium_form_assets() {
             'error' => 'Ошибка отправки. Попробуйте позвонить нам.',
             'validation' => [
                 'name' => 'Введите имя (мин. 2 символа)',
-                'phone' => 'Введите корректный телефон',
+                'phone' => 'Введите номер полностью: +7 и 10 цифр',
             ]
         ]
     ]);

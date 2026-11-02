@@ -179,6 +179,8 @@
             const field = orderModal.querySelector('.js-order-product-field');
             const label = orderModal.querySelector('.js-order-product');
             if (field) field.value = product;
+            const idField = orderModal.querySelector('.js-order-product-id');
+            if (idField) idField.value = trigger.getAttribute('data-product-id') || '';
             if (label) {
                 if (product) {
                     label.textContent = 'Товар: ' + product;
@@ -188,18 +190,6 @@
                     label.hidden = true;
                 }
             }
-        });
-
-        // Отзыв целиком: раньше текст резался многоточием посреди фразы —
-        // это выглядело как заглушка. Теперь длинный отзыв разворачивается
-        // по «Читать полностью» (задача #12).
-        document.addEventListener('click', function (e) {
-            const toggle = e.target.closest('.testimonial-text__toggle');
-            if (!toggle) return;
-            const tail = toggle.parentNode.querySelector('.testimonial-text__tail');
-            if (tail) tail.hidden = false;
-            toggle.setAttribute('aria-expanded', 'true');
-            toggle.remove();
         });
 
         // Close modal on ESC

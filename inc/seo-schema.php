@@ -163,7 +163,7 @@ function izex_schema_product()
     }
 
     $id = get_queried_object_id();
-    $d = izex_pro_station_data($id);
+    $d = function_exists('ss_station') ? ss_station($id) : izex_pro_station_data($id);
     if (empty($d['price'])) {
         return;
     }
@@ -174,7 +174,7 @@ function izex_schema_product()
         '@id'         => $d['url'] . '#product',
         'name'        => $d['title'],
         'url'         => $d['url'],
-        'brand'       => array('@type' => 'Brand', 'name' => 'ТОПАС'),
+        'brand'       => array('@type' => 'Brand', 'name' => izex_station_brand($id)),
         'category'    => 'Септики и станции биологической очистки',
         'description' => wp_strip_all_tags(get_the_excerpt($id) ?: $d['title'] . ' — автономная канализация для дома и дачи.'),
         'offers'      => array(
@@ -182,7 +182,7 @@ function izex_schema_product()
             'url'             => $d['url'],
             'price'           => $d['price'],
             'priceCurrency'   => 'RUB',
-            'availability'    => 'https://schema.org/InStock',
+            'availability'    => station_is_in_stock($id) ? 'https://schema.org/InStock' : 'https://schema.org/PreOrder',
             'itemCondition'   => 'https://schema.org/NewCondition',
             // Цены пересматриваются, поэтому ограничиваем срок действия оффера.
             'priceValidUntil' => gmdate('Y-m-d', strtotime('+3 months')),

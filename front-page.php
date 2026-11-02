@@ -7,755 +7,445 @@
  */
 
 get_header();
-// Контакты компании (из Carbon Fields, с запасными значениями)
 $company = getCompanyContacts();
+$trust = izex_trust();
+$brands = ss_brand_summary();
+$catalog_url = get_post_type_archive_link('stations');
+$install_base = izex_pro_install_base();
+$prices = izex_get_prices_lists();
 
+$featured = array();
+foreach (array('topas-4', 'topas-s-5', 'topas-s-6', 'topas-s-8', 'eko-grand-5', 'yunilos-astra-5') as $slug) {
+    $post = get_page_by_path($slug, OBJECT, 'stations');
+    if ($post && $post->post_status === 'publish') {
+        $featured[] = $post->ID;
+    }
+}
+
+$check = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
 ?>
 
-    <!-- ===== CSS ПЕРЕМЕННЫЕ (runtime, не дублировать в SCSS) ===== -->
-    <?php /* Стили вынесены в front-page.css (подключается в functions.php) */ ?>
+<main class="ss-home">
 
-    <main class="main-content">
-
-        <section class="hero-premium">
-            <?php // Фон hero лежит в теме (assets/images/hero) — раньше он тянулся
-                  // с sun9-56.userapi.com по ссылке со служебными параметрами и мог
-                  // отвалиться в любой момент. Сам файл подключён в front-page.css,
-                  // preload — в izex_resource_hints() (задача #9). ?>
-            <div class="hero-bg-image"></div>
-            <div class="hero-bg-overlay"></div>
-
-            <div class="container hero-layout">
-                <div class="hero-content">
-
-                    <?php // Строка «телефон + Заказать звонок» из hero убрана: телефон есть
-                          // в шапке и в нижней панели на мобильных, а «Заказать звонок» был
-                          // третьим конкурирующим действием в первом экране (задачи #7, #17). ?>
-
-                    <!-- Заголовок -->
-                    <h1 class="hero-title animate-fade-up delay-1">
-                        Септики и автономная канализация под ключ<br>
-                        <span class="gradient-text">в Чебоксарах и Чувашии</span>
-                    </h1>
-
-                    <!-- Подзаголовок -->
-                    <p class="hero-subtitle animate-fade-up delay-2">
-                        Подберём станцию под ваш дом, участок и бюджет и рассчитаем оборудование,
-                        доставку и монтаж. Более 1000 выполненных монтажей, выезд инженера бесплатно.
-                    </p>
-
-                    <!-- Кнопки -->
-                    <div class="hero-buttons animate-fade-up delay-4">
-                        <a href="/podbor-septika/" class="btn-premium btn-primary">
-                            <span class="btn-text">Подобрать септик</span>
-                            <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M5 12h14M12 5l7 7-7 7"/>
-                            </svg>
-                        </a>
-                        <?php // Второе действие — тихой ссылкой: рядом с главной кнопкой две
-                              // равнозначные кнопки спорили за внимание (см. components.css, п.5). ?>
-                        <button class="btn-quiet open-modal" data-modal="engineer">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
-                            </svg>
-                            <span>Вызвать инженера бесплатно</span>
-                        </button>
-                    </div>
-                    <nav class="hero-brands animate-fade-up delay-4" aria-label="Марки септиков">
-                        <span class="hero-brands__label">Марки:</span>
-                        <a href="/stations/">ТОПАС</a>
-                        <a href="/septik-unilos-astra/">Юнилос Астра</a>
-                        <a href="/septik-eko-grand/">Эко-Гранд</a>
-                        <a href="/septik-evrolos/">Евролос</a>
-                        <a href="/septik-ital-bio/">Итал Био</a>
-                        <a href="/septik-kit/">КИТ</a>
-                        <a href="/septik-evrobion/">Евробион</a>
-                        <a href="/septik-biodevice/">Биодевайс</a>
-                    </nav>
-                    <?php // Строка доверия: монтажи, год начала работы, смета в договоре,
-                          // срок гарантии. Факты берутся из настроек темы, пункты без
-                          // данных выпадают (задача #11). ?>
-                    <?php echo do_shortcode('[topas_trust_line]'); ?>
-
-                    <!-- Статистика -->
-                    <div class="hero-stats animate-fade-up delay-3">
-                        <div class="stat-item">
-                            <span class="stat-number" data-count="8">8</span><span class="stat-suffix">+</span>
-                            <span class="stat-label">лет опыта</span>
-                        </div>
-                        <div class="stat-divider"></div>
-                        <div class="stat-item">
-                            <span class="stat-number" data-count="1000">1000</span><span class="stat-suffix">+</span>
-                            <span class="stat-label">установок</span>
-                        </div>
-                    </div>
-
+    <section class="ss-hero">
+        <div class="ss-container ss-hero__grid">
+            <div class="ss-hero__text">
+                <h1 class="ss-h1">Автономная канализация под&nbsp;ключ <span class="ss-hero__place">в Чебоксарах и Чувашии</span></h1>
+                <p class="ss-lead">Подберём станцию под ваш дом, условия участка и бюджет. Рассчитаем оборудование, монтаж и доставку.</p>
+                <div class="ss-actions">
+                    <a class="ss-btn ss-btn--primary ss-btn--lg" href="#podbor">Подобрать септик</a>
+                    <a class="ss-btn ss-btn--secondary ss-btn--lg" href="<?php echo esc_url($catalog_url); ?>">Смотреть каталог</a>
                 </div>
-
-                <?php
-                // Карточка ходовой станции в hero (по прототипу): даёт конкретику —
-                // модель, цену и наличие — до того, как пользователь доскроллит до каталога.
-                $hero_station = function_exists('izex_pro_hero_station') ? izex_pro_hero_station() : null;
-                ?>
-                <?php if ($hero_station) : ?>
-                    <aside class="pro-herocard animate-fade-up delay-3">
-                        <div class="pro-herocard__media">
-                            <?php if ($hero_station['img']) : ?>
-                                <img src="<?php echo esc_url($hero_station['img']); ?>"
-                                     alt="<?php echo esc_attr($hero_station['title']); ?>"
-                                     loading="lazy" decoding="async">
-                            <?php endif; ?>
-                            <span class="pro-herocard__stock">В наличии</span>
-                        </div>
-
-                        <span class="pro-herocard__eyebrow">
-                            <?php echo esc_html($hero_station['people_text'] ?: 'Станция биологической очистки'); ?>
-                        </span>
-                        <div class="pro-herocard__name">
-                            <a href="<?php echo esc_url($hero_station['url']); ?>"><?php echo esc_html($hero_station['title']); ?></a>
-                        </div>
-
-                        <?php // Крупно — цена «под ключ», мелко — из чего она складывается
-                              // (задача #10): раньше в hero крупно стояла цена станции без
-                              // монтажа, и её сравнивали с ценами конкурентов «под ключ». ?>
-                        <?php if ($hero_station['turnkey']) : ?>
-                            <div class="pro-herocard__price">
-                                <span class="pro-herocard__price-label">под ключ от</span>
-                                <span class="pro-herocard__price-value"><?php echo esc_html(izex_pro_money($hero_station['turnkey'])); ?></span>
-                                <span class="pro-herocard__price-parts">
-                                    станция <?php echo esc_html(izex_pro_money($hero_station['price'])); ?>
-                                    + монтаж <?php echo esc_html(izex_pro_money($hero_station['install'])); ?>
-                                </span>
-                            </div>
-                        <?php endif; ?>
-
-                        <div class="pro-herocard__notes">
-                            <div class="pro-herocard__note">
-                                <?php echo izex_icon('check', 16); ?>
-                                <span><b>Монтаж за 1 день</b> в любой грунт и погоду</span>
-                            </div>
-                            <div class="pro-herocard__note">
-                                <?php echo izex_icon('shield', 16); ?>
-                                <span><b>Договор</b> и гарантия на оборудование и работы</span>
-                            </div>
-                        </div>
-                    </aside>
-                <?php endif; ?>
-            </div>
-        </section>
-
-        <?php // Бегущая строка доверия убрана (задача #27): она повторяла те же шесть
-              // тезисов, что и блок «Почему мы», бесконечно анимировалась и имела
-              // контраст 2,25–3,62:1. Шорткод [topas_trust_marquee] остался в теме. ?>
-
-        <?php
-        // Параметры фильтра (фильтруем прямо на главной — так же, как в каталоге:
-        // берём все станции и фильтруем/сортируем в PHP через carbon_get_post_meta,
-        // это надёжнее meta_query и не зависит от формата хранения Carbon Fields).
-        $f_capacity = isset($_GET['capacity']) ? absint($_GET['capacity']) : 0;
-        $f_drainage = isset($_GET['drainage']) ? sanitize_text_field(wp_unslash($_GET['drainage'])) : '';
-        $f_sort     = isset($_GET['sort']) ? sanitize_text_field(wp_unslash($_GET['sort'])) : '';
-        $has_filter = ($f_capacity || $f_drainage || $f_sort !== '');
-
-        $stations_query = new WP_Query(array(
-            'post_type'      => 'stations',
-            'posts_per_page' => -1,
-            'orderby'        => 'menu_order',
-            'order'          => 'ASC',
-            'post_status'    => 'publish',
-        ));
-        $all_stations = $stations_query->posts;
-
-        // Фильтр по пользователям: число из текста (или из названия), учитываем диапазон.
-        // Раньше несовпавшие станции просто выбрасывались из выборки, и смена фильтра
-        // требовала перезагрузки страницы. Теперь сервер отдаёт весь каталог, а
-        // совпадение помечает у карточки — фильтрует и сортирует клиент (задача #14).
-        $matches_filter = function ($p) use ($f_capacity, $f_drainage) {
-            if ($f_capacity) {
-                $text = (string) carbon_get_post_meta($p->ID, 'crb_people_count_text');
-                preg_match_all('/\d+/', $text, $m);
-                $nums = $m[0];
-                if (empty($nums)) {
-                    preg_match_all('/\d+/', $p->post_title, $mt);
-                    $nums = $mt[0];
-                }
-                if (empty($nums)) {
-                    return false;
-                }
-                $nums = array_map('intval', $nums);
-                if ($f_capacity < min($nums) || $f_capacity > max($nums)) {
-                    return false;
-                }
-            }
-
-            // Водоотведение: основа слова «самот» / «принуд».
-            if ($f_drainage) {
-                $stem = (stripos($f_drainage, 'принуд') !== false) ? 'принуд' : 'самот';
-                $haystack = mb_strtolower(
-                    (string) carbon_get_post_meta($p->ID, 'crb_water_disposal') . ' ' .
-                    (string) carbon_get_post_meta($p->ID, 'crb_mounting_dimensions')
-                );
-                if (mb_strpos($haystack, $stem) === false) {
-                    return false;
-                }
-            }
-
-            return true;
-        };
-
-        $matched_ids = array();
-        foreach ($all_stations as $p) {
-            if ($matches_filter($p)) {
-                $matched_ids[] = (int) $p->ID;
-            }
-        }
-
-        // Сортировка по цене: по умолчанию от дешёвых к дорогим, «По запросу» — в конец.
-        // Цены считаем один раз в массив: внутри usort() каждое сравнение дёргало
-        // carbon_get_post_meta() ещё дважды — на 22 моделях это ~180 лишних
-        // обращений к метаданным на запрос (задача #25).
-        $price_map = array();
-        foreach ($all_stations as $p) {
-            $price_map[$p->ID] = (float) (carbon_get_post_meta($p->ID, 'crb_price_topas_s') ?: carbon_get_post_meta($p->ID, 'crb_price'));
-        }
-
-        $sort_desc = ($f_sort === 'price_desc');
-        usort($all_stations, function ($a, $b) use ($sort_desc, $price_map) {
-            $pa = $price_map[$a->ID];
-            $pb = $price_map[$b->ID];
-            if ($pa <= 0 && $pb <= 0) {
-                return 0;
-            }
-            if ($pa <= 0) {
-                return 1;
-            }
-            if ($pb <= 0) {
-                return -1;
-            }
-            return $sort_desc ? ($pb <=> $pa) : ($pa <=> $pb);
-        });
-
-        // Показываем весь каталог: видимую часть до «Показать все» и фильтрацию
-        // берёт на себя catalog-instant.js, без JS работает атрибут ниже.
-        $page_stations = $all_stations;
-        ?>
-
-        <?php // Калькулятор — первым делом после hero и в собственной секции.
-              // Раньше он стоял внутри секции каталога, над карточками: главное
-              // действие страницы читалось как подзаголовок каталога (задача #30). ?>
-        <section class="calc-section">
-            <div class="container">
-                <?php echo do_shortcode('[topas_calculator]'); ?>
-            </div>
-        </section>
-
-        <?php // Смета — данные общие со /prices. Сравнение переехало в секцию
-              // каталога, сразу под карточки. ?>
-        <?php echo do_shortcode('[topas_estimate]'); ?>
-
-        <?php // Гарантия в цифрах — сразу после сметы: человек только что увидел,
-              // что входит в цену, и следующий его вопрос — «а что если» (задача #11).
-              // Внутри блока выводится скидка или фиксация сметы (задача #16). ?>
-        <?php echo do_shortcode('[topas_warranty]'); ?>
-
-        <?php // Нижний отступ вернули: дальше идёт секция сравнения, а не блок работ,
-              // и CTA-картинка каталога упиралась в её край. ?>
-        <?php // Фон и отступы секции — в front-page.css: инлайн-стиль перебивал
-              // правила вертикального ритма и правился только через шаблон. ?>
-        <section id="catalog" class="catalog-premium" data-catalog>
-            <div class="container">
-                <!-- Заголовок -->
-                <div class="section-header">
-                    <span class="section-label">Каталог</span>
-                    <h2 class="section-title">Выберите идеальную станцию</h2>
-                    <p class="section-subtitle">Индивидуальный подбор под количество проживающих и особенности участка</p>
-                </div>
-
-                <!-- 🔷 SVG-иконки для карточек -->
-                <svg class="svg-sprite" aria-hidden="true" style="display:none">
-                    <symbol id="icon-people" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
-                    <symbol id="icon-tool" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol>
-                    <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></symbol>
-                </svg>
-
-                <?php
-                // Чип-фильтр — общий рендерер для главной и архива каталога
-                // (см. izex_render_catalog_filter в inc/pro-blocks.php).
-                izex_render_catalog_filter(array(
-                    'base_url' => home_url('/'),
-                    'capacity' => $f_capacity,
-                    'drainage' => $f_drainage,
-                    'sort'     => $f_sort,
-                    'count'    => count($matched_ids),
-                ));
-                ?>
-
-                <?php // Без JS фильтр всё равно работает: сервер помечает несовпавшие
-                      // карточки атрибутом, а этот стиль их скрывает. С JS атрибут
-                      // игнорируется — видимость считает catalog-instant.js. ?>
-                <noscript>
-                    <style>.pro-grid .pro-card[data-server-hidden]{display:none}</style>
-                </noscript>
-
-                <!-- Сетка карточек (вёрстка карточки — template-parts/station-card-pro.php) -->
-                <div class="pro-grid" data-catalog-grid>
-                    <?php foreach ($page_stations as $station_post) : ?>
-                        <?php get_template_part('template-parts/station-card-pro', null, array(
-                            'id'            => $station_post->ID,
-                            'server_hidden' => $has_filter && !in_array((int) $station_post->ID, $matched_ids, true),
-                        )); ?>
-                    <?php endforeach; ?>
-
-                    <div class="pro-empty" data-catalog-empty <?php echo !empty($matched_ids) ? 'hidden' : ''; ?>>
-                        <?php echo !empty($page_stations)
-                            ? 'По заданным фильтрам станции не найдены — попробуйте изменить параметры.'
-                            : 'Станции пока не добавлены в каталог.'; ?>
-                    </div>
-                </div>
-
-                <?php // Превью каталога — 6 карточек (было 8): выше вероятность
-                      // дойти до кнопки, а не утонуть в сетке (задача #14). ?>
-                <?php if (count($page_stations) > 6) : ?>
-                    <div style="text-align:center;margin-top:24px">
-                        <a class="pro-btn pro-btn--ghost"
-                           href="<?php echo esc_url(get_post_type_archive_link('stations')); ?>"
-                           data-catalog-more>Показать все модели (<?php echo count($page_stations); ?>)</a>
-                    </div>
-                <?php endif; ?>
-
-                <?php // Сравнение моделей — сразу под карточками: отсюда видно, какие
-                      // модели отмечены, и не нужно скроллить назад к каталогу (задача #22). ?>
-                <?php echo do_shortcode('[topas_compare_inline default="3" bare="1"]'); ?>
-
-                <?php // Фон вынесен в front-page.css: там WebP через image-set (89 КБ
-                      // вместо 179 КБ jpg) с jpg-фолбэком — задача #25. ?>
-                <div class="catalog-cta-premium" style="margin-top: 20px;">
-                    <div class="catalog-cta-premium--block">
-                        <p>Не нашли подходящую модель? <strong>Мы поставляем всю линейку ТОПАС</strong> и <a href="/montazh-septika-lyuboj-marki/">монтируем септики других марок</a></p>
-                        <a href="tel:<?php echo $company['phone_clean']; ?>" class="phone-link-premium"><?php echo $company['phone']; ?></a>
-                        <span>— подберем индивидуально за 5 минут</span>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-        <?php echo do_shortcode('[topas_works count="8"]'); ?>
-
-        <?php // География: закрашенные районы Чувашии и соседние регионы Поволжья.
-              // Стоит после списка объектов — сначала конкретика, потом охват. ?>
-        <?php echo do_shortcode('[topas_geo_map section="1"]'); ?>
-        <?php // «Как мы работаем»: поднято перед блоком работ — сначала объясняем
-             // процесс, потом показываем результат и отзывы. ?>
-        <section class="process-premium">
-            <div class="container">
-                <div class="section-header">
-                    <span class="section-label">Как мы работаем</span>
-                    <h2 class="section-title">От заявки до работающей станции — четыре шага и один день на монтаж</h2>
-                </div>
-                <div class="process-steps">
-                    <div class="step-item">
-                        <div class="step-number">01</div>
-                        <div class="step-content"><h4>Заявка</h4><p>Оставьте заявку на сайте или позвоните нам</p></div>
-                    </div>
-                    <div class="step-connector"></div>
-                    <div class="step-item">
-                        <div class="step-number">02</div>
-                        <div class="step-content"><h4>Выезд инженера</h4><p>Бесплатный замер участка и подбор оптимальной модели</p></div>
-                    </div>
-                    <div class="step-connector"></div>
-                    <div class="step-item">
-                        <div class="step-number">03</div>
-                        <div class="step-content"><h4>Монтаж</h4><p>Установка и подключение за 1 день с гарантией качества</p></div>
-                    </div>
-                    <div class="step-connector"></div>
-                    <div class="step-item">
-                        <div class="step-number">04</div>
-                        <div class="step-content"><h4>Запуск и сервис</h4><p>Пусконаладка, инструктаж и поддержка на весь срок эксплуатации</p></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
-        <?php
-        // Здесь был второй SEO-блок с display:none — полная копия текста и того же
-        // <h2>, что в видимом блоке внизу страницы. Скрытый текст с дублем заголовка
-        // поисковикам не помогает, а выглядит как попытка накрутки, поэтому убран.
-        ?>
-        <section class="testimonials-premium">
-            <div class="container">
-                <div class="section-header">
-                    <span class="section-label" style="background-color: white">Отзывы</span>
-                    <h2 class="section-title">Что говорят наши клиенты</h2>
-                    <?php // Рейтинг и число отзывов из внешнего справочника — со ссылкой
-                          // на карточку: это проверяемо третьей стороной (задача #12). ?>
-                    <?php echo do_shortcode('[topas_reviews_rating]'); ?>
-                </div>
-
-                <?php
-                // 🔷 ПРОСТОЙ ЗАПРОС БЕЗ META_QUERY
-                $testimonials_args = array(
-                    'post_type'      => 'reviews',
-                    'posts_per_page' => 6,
-                    'post_status'    => 'publish',
-                    'orderby'        => 'date',
-                    'order'          => 'DESC',
-                );
-
-                $testimonials_query = new WP_Query($testimonials_args);
-
-                // 🔍 ОТЛАДКА (раскомментируйте для проверки)
-                // echo '<!-- Запросов найдено: ' . $testimonials_query->found_posts . ' -->';
-                // echo '<!-- SQL: ' . $testimonials_query->request . ' -->';
-
-                if ($testimonials_query->have_posts()) :
-                    ?>
-
-                    <div class="testimonials-slider-premium">
-                        <?php while ($testimonials_query->have_posts()) : $testimonials_query->the_post();
-
-                            // 🔷 ПОЛУЧЕНИЕ ПОЛЕЙ через Carbon Fields (хранит ключи с префиксом «_»,
-                            //    поэтому обычный get_post_meta возвращал пусто → «Анонимный»)
-                            $cf = function ($key, $default = '') {
-                                if (function_exists('carbon_get_post_meta')) {
-                                    $v = carbon_get_post_meta(get_the_ID(), $key);
-                                    if ($v !== null && $v !== '' && $v !== []) {
-                                        return $v;
-                                    }
-                                }
-                                return get_post_meta(get_the_ID(), $key, true) ?: $default;
-                            };
-
-                            $author = $cf('crb_review_author');
-                            $position = $cf('crb_review_position');
-                            $rating = $cf('crb_review_rating');
-                            $avatar = $cf('crb_review_avatar');
-                            // Carbon Fields хранит ID вложения — превращаем в URL
-                            if (is_numeric($avatar)) {
-                                $avatar = wp_get_attachment_image_url($avatar, 'thumbnail');
-                            }
-                            $service = $cf('crb_review_service');
-                            $review_date = $cf('crb_review_date');
-                            $source = $cf('crb_review_source');
-                            $source_url = $cf('crb_review_source_url');
-
-                            // Текст больше не режем многоточием посреди фразы: длинный
-                            // отзыв разворачивается по «Читать полностью» (задача #12).
-                            $full = trim(wp_strip_all_tags(get_the_content()));
-                            $head = $full;
-                            $tail = '';
-                            if (mb_strlen($full) > 260) {
-                                $cut = mb_strrpos(mb_substr($full, 0, 260), ' ');
-                                $cut = $cut ?: 260;
-                                $head = rtrim(mb_substr($full, 0, $cut));
-                                $tail = mb_substr($full, $cut);
-                            }
-
-                            // Если Carbon Fields возвращает массив
-                            if (is_array($rating) && !empty($rating[0]['rating_value'])) {
-                                $rating = intval($rating[0]['rating_value']);
-                            } else {
-                                $rating = intval($rating) ?: 5;
-                            }
-
-                            // Инициалы для аватара
-                            $initials = 'К';
-                            if ($author) {
-                                $name_parts = explode(' ', trim($author));
-                                $first_initial = mb_strtoupper(mb_substr($name_parts[0], 0, 1));
-                                $second_initial = isset($name_parts[1]) ? mb_strtoupper(mb_substr($name_parts[1], 0, 1)) : '';
-                                $initials = $first_initial . $second_initial;
-                            }
-
-                            // 🔍 ОТЛАДКА КОНКРЕТНОГО ОТЗЫВА
-                            // echo '<!-- Отзыв ID: ' . get_the_ID() . ', Автор: ' . $author . ' -->';
-                            ?>
-
-                            <div class="testimonial-card-premium">
-                                <div class="testimonial-rating">
-                                    <?php for ($i = 1; $i <= 5; $i++): ?>
-                                        <span class="star <?php echo $i > $rating ? 'empty' : ''; ?>"><?php echo izex_icon('star-filled', 16); ?></span>
-                                    <?php endfor; ?>
-                                </div>
-
-                                <p class="testimonial-text">
-                                    «<?php echo esc_html($head); ?><?php if ($tail) : ?><span class="testimonial-text__tail" hidden><?php echo esc_html($tail); ?></span><button type="button" class="testimonial-text__toggle" aria-expanded="false">… Читать полностью</button><?php endif; ?>»
-                                </p>
-
-                                <div class="testimonial-author">
-                                    <div class="author-avatar">
-                                        <?php if ($avatar): ?>
-                                            <img src="<?php echo esc_url($avatar); ?>" alt="<?php echo esc_attr($author); ?>">
-                                        <?php else: ?>
-                                            <?php echo esc_html($initials); ?>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="author-info">
-                                        <h5><?php echo esc_html($author ?: 'Анонимный клиент'); ?></h5>
-                                        <?php
-                                        // Район, модель и месяц — то, по чему отзыв
-                                        // опознаётся как настоящий (задача #12).
-                                        $meta = array_filter(array($position, $service, $review_date));
-                                        ?>
-                                        <?php if ($meta) : ?>
-                                            <span><?php echo esc_html(implode(' · ', $meta)); ?></span>
-                                        <?php endif; ?>
-                                        <?php if ($source_url) : ?>
-                                            <a class="testimonial-source" href="<?php echo esc_url($source_url); ?>"
-                                               target="_blank" rel="noopener nofollow">
-                                                Читать на <?php echo esc_html($source ?: 'источнике'); ?> →
-                                            </a>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                            </div>
-
-                        <?php endwhile; ?>
-                    </div>
-
-                    <div class="testimonials-footer">
-                        <a href="<?php echo esc_url(get_post_type_archive_link('reviews')); ?>" class="btn btn--outline">
-                            Все отзывы →
-                        </a>
-                    </div>
-
-                <?php
-                else :
-                    ?>
-
-                    <div class="testimonials-empty">
-                        <p>Отзывов пока нет. Будьте первым!</p>
-                        <?php
-                        // 🔍 ОТЛАДКА - покажем сколько всего отзывов
-                        $total_reviews = wp_count_posts('reviews');
-                        echo '<!-- Всего отзывов: ' . $total_reviews->publish . ' -->';
-                        ?>
-                    </div>
-
-                <?php endif; wp_reset_postdata(); ?>
-
-            </div>
-        </section>
-
-        <?php // Здесь было два блока подряд: «Преимущества септиков Топас» (4 карточки)
-              // и «Преимущества работы с нами» (6 карточек) — десять галочек без единого
-              // числа. Теперь один блок из шести пунктов, каждый с цифрой или
-              // проверяемым фактом (задача #23, см. inc/trust-blocks.php).
-              // Тезисы про сам ТОПАС не потеряны: срок службы и отсутствие запаха
-              // ушли в карточку товара, экономия — в блок возражений, где есть цифры. ?>
-        <?php echo do_shortcode('[topas_advantages]'); ?>
-
-        <?php // Шесть возражений — после отзывов и перед FAQ: FAQ начинается после
-              // ~9 500 px прокрутки, а эти вопросы нужно снять раньше, чем человек
-              // посмотрит на цену (задача #19). ?>
-        <?php echo do_shortcode('[topas_objections]'); ?>
-
-        <?php
-        // ===== FAQ (частые вопросы) =====
-        // Вопросы/ответы держим в одном массиве: из него рендерим видимый
-        // аккордеон И микроразметку FAQPage (schema.org) — чтобы они не расходились.
-        $faq_items = array(
-            array(
-                'q' => 'Сколько стоит монтаж септика ТОПАС под ключ?',
-                'a' => 'Стоимость зависит от модели станции, типа грунта и удалённости участка. Точную цену инженер называет после бесплатного выезда и замера. Мы заранее согласовываем смету и не добавляем скрытых платежей.',
-            ),
-            array(
-                'q' => 'За какое время устанавливается станция?',
-                'a' => 'В большинстве случаев монтаж и подключение автономной канализации ТОПАС занимают один день. Бригада выполняет земляные работы, установку, обвязку и пусконаладку, после чего проводит инструктаж по эксплуатации.',
-            ),
-            array(
-                'q' => 'Можно ли установить ТОПАС при высоком уровне грунтовых вод?',
-                'a' => 'Да. Септики ТОПАС полностью герметичны и устанавливаются в любых типах грунта, в том числе при высоком уровне грунтовых вод. Для сложных условий подбирается подходящая модификация станции и способ водоотведения (самотёк или принудительный).',
-            ),
-            array(
-                'q' => 'Как часто нужно обслуживать септик ТОПАС?',
-                'a' => 'Регламентное обслуживание проводится 2–4 раза в год: удаление избыточного ила и осмотр оборудования. Вызов ассенизаторской машины не требуется — обслуживание можно выполнять самостоятельно или доверить нашему сервису.',
-            ),
-            array(
-                'q' => 'Какую модель ТОПАС выбрать для дома или дачи?',
-                'a' => 'Модель подбирается по количеству постоянно проживающих: ТОПАС-С 4 и 5 — для дачи и небольшого дома, ТОПАС-С 6, 8 и 10 — для большого дома и коттеджа. Инженер поможет с выбором бесплатно с учётом залпового сброса и особенностей участка.',
-            ),
-            array(
-                'q' => 'Вы работаете только в Чебоксарах?',
-                'a' => 'Мы работаем в Чебоксарах, Новочебоксарске и по всей Чувашской Республике, а также в соседних регионах Поволжья. Доставка станций по Чувашии — бесплатная.',
-            ),
-            array(
-                'q' => 'Какая гарантия на станцию и монтажные работы?',
-                // Ответ собирается из сроков в настройках темы: пока они не заполнены,
-                // остаётся честная формулировка без чисел (задачи #11, #24).
-                'a' => izex_warranty_faq_answer(),
-            ),
-            array(
-                'q' => 'Можно ли пользоваться септиком зимой и при сезонном проживании?',
-                'a' => 'Да. Станция рассчитана на круглогодичную эксплуатацию и не боится морозов при правильном монтаже. Для дач с сезонным проживанием предусмотрен режим консервации — расскажем, как правильно подготовить станцию к зиме.',
-            ),
-        );
-        ?>
-
-        <section class="faq-premium">
-            <div class="container">
-                <div class="section-header">
-                    <span class="section-label">Вопросы и ответы</span>
-                    <h2 class="section-title">Частые вопросы о септиках ТОПАС</h2>
-                    <p class="section-subtitle">Собрали ответы на вопросы, которые чаще всего задают при выборе, монтаже и обслуживании автономной канализации</p>
-                </div>
-
-                <div class="faq-list">
-                    <?php foreach ($faq_items as $item) : ?>
-                        <details class="faq-item">
-                            <summary class="faq-question">
-                                <span><?php echo esc_html($item['q']); ?></span>
-                                <svg class="faq-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-                            </summary>
-                            <div class="faq-answer">
-                                <p><?php echo esc_html($item['a']); ?></p>
-                            </div>
-                        </details>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        </section>
-
-        <?php
-        $faq_schema = array(
-            '@context'   => 'https://schema.org',
-            '@type'      => 'FAQPage',
-            'mainEntity' => array_map(function ($item) {
-                return array(
-                    '@type'          => 'Question',
-                    'name'           => $item['q'],
-                    'acceptedAnswer' => array(
-                        '@type' => 'Answer',
-                        'text'  => $item['a'],
-                    ),
-                );
-            }, $faq_items),
-        );
-        echo '<script type="application/ld+json">' .
-            wp_json_encode($faq_schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) .
-            '</script>' . "\n";
-        ?>
-
-        <?php // Фон вынесен в front-page.css: WebP через image-set с jpg-фолбэком
-              // (задача #25). Картинка декоративная — участок с домом, без
-              // претензии на «наш объект». ?>
-        <section class="cta-premium" id="contacts">
-            <div class="cta-bg-pattern"></div>
-            <div class="container">
-                <div class="cta-content">
-                    <h2 class="cta-title">Узнайте точную цену для вашего участка</h2>
-                    <p class="cta-subtitle">Получите бесплатную консультацию инженера и скидку на монтаж при заказе до конца месяца</p>
-                    <form class="cta-form-premium premium-contact-form" id="consultationForm" data-form-type="consultation">
-                        <input type="text" name="hp_email" class="form-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-                        <input type="hidden" name="action" value="premium_form_submit">
-                        <input type="hidden" name="page_url" value="<?php echo esc_url($_SERVER['REQUEST_URI'] ?? ''); ?>">
-                        <div class="form-group"><input type="text" name="name" placeholder="Ваше имя" required><span class="form-error"></span></div>
-                        <div class="form-group"><input type="tel" name="phone" placeholder="+7 (___) ___-__-__" required><span class="form-error"></span></div>
-                        <label class="form-consent form-consent--light"><input type="checkbox" name="consent" required checked> Согласен на обработку персональных данных</label>
-                        <button type="submit" class="btn-premium btn-primary btn-large">
-                            <span>Получить консультацию</span>
-                            <svg class="btn-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                        </button>
-                        <p class="form-note" style="color: white">Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой конфиденциальности</a></p>
-                    </form>
-                    <div class="cta-contacts-premium">
-                        <a href="tel:<?php echo $company['phone_clean']; ?>" class="contact-link">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                            <span><?php echo $company['phone']; ?></span>
-                        </a>
-                        <a href="mailto:<?php echo $company['email']; ?>" class="contact-link">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="m22,6 -10,7L2,6"/></svg>
-                            <span><?php echo $company['email']; ?></span>
-                        </a>
-
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <?php
-        // Внутренние ссылки в SEO-тексте: раньше здесь было три абзаца без единой
-        // ссылки. Осмысленные анкоры передают вес на каталог, цены и работы и дают
-        // поисковику понять, о чём эти страницы.
-        $link_catalog = get_post_type_archive_link('stations');
-        // Ссылку на архив работ даём только когда там что-то есть (задача #5).
-        $link_works   = izex_has_published_works() ? get_post_type_archive_link('works') : '';
-        $prices_page  = get_page_by_path('prices');
-        $link_prices  = $prices_page ? get_permalink($prices_page) : '';
-        ?>
-        <section class="seo-home-block">
-            <div class="container">
-                <h2>Продажа и монтаж септиков ТОПАС в Чебоксарах и Чувашии</h2>
-
-                <p>
-                    Компания «Сервис Септик21» занимается продажей, доставкой, монтажом
-                    и обслуживанием септиков ТОПАС в Чебоксарах, Новочебоксарске
-                    и по всей Чувашской Республике. Выполняем установку автономной
-                    канализации под ключ для частных домов, дач, коттеджей
-                    и коммерческих объектов.
-                </p>
-
-                <p>
-                    В наличии популярные модели —
-                    <?php if ($link_catalog) : ?>
-                        <a href="<?php echo esc_url($link_catalog); ?>">ТОПАС-С 4, ТОПАС-С 5, ТОПАС-С 6, ТОПАС-С 8 и ТОПАС-С 10</a>.
-                    <?php else : ?>
-                        ТОПАС-С 4, ТОПАС-С 5, ТОПАС-С 6, ТОПАС-С 8 и ТОПАС-С 10.
+                <ul class="ss-checks">
+                    <li><?php echo $check; ?>Выезд инженера и смета — бесплатно</li>
+                    <li><?php echo $check; ?>Стоимость фиксируем в договоре до начала работ</li>
+                    <li><?php echo $check; ?>8 марок: ТОПАС, Юнилос Астра, Евролос и другие</li>
+                    <?php if ($trust['since_year']) : ?>
+                        <li><?php echo $check; ?>Работаем с <?php echo (int) $trust['since_year']; ?> года</li>
                     <?php endif; ?>
-                    Подбираем станцию под количество проживающих, тип грунта и уровень
-                    грунтовых вод, монтируем в любых условиях и в любую погоду, как
-                    правило, за один день. Рассчитать модель и ориентировочную стоимость
-                    можно в <a href="#calc">калькуляторе подбора</a><?php if ($link_prices) : ?>,
-                    а полный прайс — на странице <a href="<?php echo esc_url($link_prices); ?>">цен на септики ТОПАС</a><?php endif; ?>.
-                </p>
+                </ul>
+            </div>
+            <?php
+            $hero = apply_filters('ss_hero_photo', array(
+                'url'    => assets('/images/hero/hero-bg-1448.webp'),
+                'srcset' => assets('/images/hero/hero-bg-768.webp') . ' 768w, ' . assets('/images/hero/hero-bg-1448.webp') . ' 1448w',
+                'alt'    => 'Схема: частный дом, станция очистки в грунте и колодец для очищенной воды',
+                'own'    => false,
+            ));
+            ?>
+            <figure class="ss-hero__media<?php echo $hero['own'] ? '' : ' is-sample'; ?>">
+                <img src="<?php echo esc_url($hero['url']); ?>"<?php if (!empty($hero['srcset'])) : ?> srcset="<?php echo esc_attr($hero['srcset']); ?>" sizes="(max-width: 1023px) 100vw, 520px"<?php endif; ?> width="1448" height="1086"
+                     alt="<?php echo esc_attr($hero['alt']); ?>" fetchpriority="high" decoding="async">
+                <figcaption><?php echo $hero['own'] ? 'Наш монтаж' : 'Схема: станция очистки и отвод очищенной воды'; ?></figcaption>
+            </figure>
+        </div>
+    </section>
 
-                <p>
-                    Работаем по Чувашии и регионам Поволжья. Бесплатно выезжаем
-                    на участок, подбираем оборудование, рассчитываем стоимость монтажа
-                    и предоставляем гарантию на все выполненные работы. Выполняем
-                    сервисное обслуживание, чистку и ремонт септиков ТОПАС, а также
-                    <a href="/obsluzhivanie-septikov-lyubyh-marok/">станций других производителей</a><?php if ($link_works) : ?> —
-                    посмотрите <a href="<?php echo esc_url($link_works); ?>">примеры выполненных монтажей</a><?php endif; ?>.
-                </p>
+    <section class="ss-section ss-section--tint" id="podbor">
+        <div class="ss-container ss-split">
+            <div class="ss-split__intro">
+                <p class="ss-eyebrow">Подбор оборудования</p>
+                <h2 class="ss-h2">Подберём станцию за пару минут</h2>
+                <p>Ответьте на несколько вопросов. Если что-то неизвестно — выбирайте «Не знаю», инженер уточнит на выезде.</p>
+                <p class="ss-muted">Точную цену без данных об участке не называем: покажем подходящие модели, а расчёт пришлём после звонка.</p>
+            </div>
+            <div class="ss-panel">
+                <?php echo ss_render_podbor(); ?>
+            </div>
+        </div>
+    </section>
+
+    <section class="ss-section" id="brands">
+        <div class="ss-container">
+            <div class="ss-head">
+                <p class="ss-eyebrow">Производители</p>
+                <h2 class="ss-h2">Работаем с восемью марками</h2>
+                <p>Подбираем станцию по условиям участка, а не под одну марку. ТОПАС — основное направление: вся линейка в каталоге с ценами.</p>
+            </div>
+            <ul class="ss-brands">
+                <?php foreach ($brands as $key => $b) :
+                    $url = $b['page'] ?: add_query_arg('brand', $key, $catalog_url); ?>
+                    <li class="ss-brand<?php echo $key === 'topas' ? ' ss-brand--main' : ''; ?>">
+                        <a href="<?php echo esc_url($url); ?>">
+                            <span class="ss-brand__name"><?php echo esc_html($b['name']); ?></span>
+                            <span class="ss-brand__count">
+                                <?php if ($b['count']) : ?>
+                                    <?php echo (int) $b['count'] . ' ' . ss_models_word($b['count']); ?> в каталоге
+                                <?php else : ?>
+                                    Модели — по запросу
+                                <?php endif; ?>
+                            </span>
+                            <span class="ss-brand__stock<?php echo $b['in_stock'] ? ' is-ok' : ''; ?>">
+                                <?php echo $b['in_stock'] ? 'Есть в наличии' : 'Наличие и срок — по запросу'; ?>
+                            </span>
+                        </a>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </section>
+
+    <?php if ($featured) : ?>
+        <section class="ss-section ss-section--tint" id="models">
+            <div class="ss-container">
+                <div class="ss-head ss-head--row">
+                    <div>
+                        <p class="ss-eyebrow">Модели</p>
+                        <h2 class="ss-h2">Популярные станции для частного дома</h2>
+                    </div>
+                    <a class="ss-btn ss-btn--secondary" href="<?php echo esc_url($catalog_url); ?>">Весь каталог</a>
+                </div>
+                <div class="ss-grid ss-grid--cards">
+                    <?php foreach ($featured as $id) {
+                        get_template_part('template-parts/station-card-ss', null, array('id' => $id));
+                    } ?>
+                </div>
+                <p class="ss-note">Цена оборудования — по каталогу. Монтаж «от» — стандартные работы на подготовленном участке; итог зависит от грунта, длины трасс и отвода воды.</p>
             </div>
         </section>
+    <?php endif; ?>
 
-    </main>
+    <section class="ss-section" id="cost">
+        <div class="ss-container">
+            <div class="ss-head">
+                <p class="ss-eyebrow">Стоимость под ключ</p>
+                <h2 class="ss-h2">Из чего складывается цена</h2>
+                <p>Каждая часть — отдельной строкой в смете. Смету согласуем до начала работ.</p>
+            </div>
+            <ol class="ss-formula">
+                <li>
+                    <span class="ss-formula__label">Оборудование</span>
+                    <strong><?php echo $brands['topas']['min_price'] ? 'от ' . esc_html(ss_money($brands['topas']['min_price'])) : 'по каталогу'; ?></strong>
+                    <span>Станция по цене каталога. Другие марки — по запросу.</span>
+                </li>
+                <li>
+                    <span class="ss-formula__label">Монтаж</span>
+                    <strong>от <?php echo esc_html(ss_money($install_base)); ?></strong>
+                    <span>Стандартный монтаж — что входит, смотрите ниже.</span>
+                </li>
+                <li>
+                    <span class="ss-formula__label">Доставка</span>
+                    <strong>по адресу</strong>
+                    <span>Зависит от расстояния, указываем в смете.</span>
+                </li>
+                <li>
+                    <span class="ss-formula__label">Дополнительные работы</span>
+                    <strong>если нужны</strong>
+                    <span>Определяются условиями участка.</span>
+                </li>
+            </ol>
+            <div class="ss-cols">
+                <div class="ss-box">
+                    <h3 class="ss-h3">Входит в стандартный монтаж</h3>
+                    <ul class="ss-list ss-list--check">
+                        <?php foreach ($prices['included'] as $item) : ?>
+                            <li><?php echo $check . esc_html($item); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+                <div class="ss-box">
+                    <h3 class="ss-h3">Что может изменить смету</h3>
+                    <ul class="ss-list">
+                        <?php foreach ($prices['extra'] as $row) : ?>
+                            <li><span><?php echo esc_html($row['item']); ?></span><?php if ($row['price'] !== '') : ?> <span class="ss-muted">— <?php echo esc_html($row['price']); ?></span><?php endif; ?></li>
+                        <?php endforeach; ?>
+                        <li>Глубина выхода трубы из дома: для глубокой трубы нужна станция исполнения «Лонг»</li>
+                        <li>Отвод воды насосом, если самотёком отвести некуда</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="ss-actions ss-actions--center">
+                <button type="button" class="ss-btn ss-btn--primary ss-btn--lg open-modal" data-modal="order">Получить расчёт</button>
+            </div>
+        </div>
+    </section>
 
-    <!-- Модалки выводятся глобально в footer.php (с рабочим крестиком .modal-close-btn);
-         здесь дубликаты убраны во избежание конфликта одинаковых id -->
+    <?php $works = ss_recent_works(3); ?>
+    <?php if ($works) : ?>
+        <section class="ss-section ss-section--tint" id="works">
+            <div class="ss-container">
+                <div class="ss-head ss-head--row">
+                    <div>
+                        <p class="ss-eyebrow">Выполненные работы</p>
+                        <h2 class="ss-h2">Наши объекты</h2>
+                    </div>
+                    <a class="ss-btn ss-btn--secondary" href="<?php echo esc_url(get_post_type_archive_link('works')); ?>">Все работы</a>
+                </div>
+                <div class="ss-grid ss-grid--3">
+                    <?php foreach ($works as $work) :
+                        $model = carbon_get_post_meta($work->ID, 'crb_work_model');
+                        $place = carbon_get_post_meta($work->ID, 'crb_work_location');
+                        $disposal = carbon_get_post_meta($work->ID, 'crb_work_disposal');
+                        $duration = carbon_get_post_meta($work->ID, 'crb_work_duration'); ?>
+                        <article class="ss-work">
+                            <a href="<?php echo esc_url(get_permalink($work)); ?>" class="ss-work__media">
+                                <?php echo get_the_post_thumbnail($work, 'medium_large', array('loading' => 'lazy', 'alt' => '')) ?: '<span class="ss-card__noimg">Фото объекта</span>'; ?>
+                            </a>
+                            <div class="ss-work__body">
+                                <?php if ($place) : ?><p class="ss-work__place"><?php echo esc_html($place); ?></p><?php endif; ?>
+                                <h3 class="ss-h3"><a href="<?php echo esc_url(get_permalink($work)); ?>"><?php echo esc_html(get_the_title($work)); ?></a></h3>
+                                <dl class="ss-specs ss-specs--compact">
+                                    <?php if ($model) : ?><div><dt>Станция</dt><dd><?php echo esc_html($model); ?></dd></div><?php endif; ?>
+                                    <?php if ($disposal) : ?><div><dt>Отвод воды</dt><dd><?php echo esc_html($disposal); ?></dd></div><?php endif; ?>
+                                    <?php if ($duration) : ?><div><dt>Срок монтажа</dt><dd><?php echo esc_html($duration); ?></dd></div><?php endif; ?>
+                                </dl>
+                                <?php if (has_excerpt($work)) : ?><p class="ss-muted"><strong>Участок и работы:</strong> <?php echo esc_html(get_the_excerpt($work)); ?></p><?php endif; ?>
+                            </div>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </section>
+    <?php endif; ?>
 
-    <!-- JavaScript -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
+    <section class="ss-section" id="process">
+        <div class="ss-container">
+            <div class="ss-head">
+                <p class="ss-eyebrow">Как мы работаем</p>
+                <h2 class="ss-h2">От заявки до обслуживания</h2>
+            </div>
+            <ol class="ss-steps">
+                <li><span class="ss-steps__num">1</span><h3 class="ss-h3">Подбор</h3><p>По телефону или через форму: уточняем дом, число жильцов и участок, предлагаем 2–3 станции.</p></li>
+                <li><span class="ss-steps__num">2</span><h3 class="ss-h3">Выезд инженера</h3><p>Бесплатно: смотрим грунт, глубину трубы, место для станции и куда отводить воду.</p></li>
+                <li><span class="ss-steps__num">3</span><h3 class="ss-h3">Согласование сметы</h3><p>Оборудование, монтаж, доставка и дополнительные работы — отдельными строками. Цену фиксируем в договоре.</p></li>
+                <li><span class="ss-steps__num">4</span><h3 class="ss-h3">Монтаж</h3><p>Котлован, установка, подключение трубы и электричества, пусконаладка и инструктаж.</p></li>
+                <li><span class="ss-steps__num">5</span><h3 class="ss-h3">Обслуживание</h3><p>Плановое обслуживание и ремонт, в том числе станций, которые ставили не мы.</p></li>
+            </ol>
+        </div>
+    </section>
 
-            try {
-                var params = new URLSearchParams(window.location.search);
-                if (params.has('capacity') || params.has('drainage') || params.has('stock') || params.has('sort')) {
-                    var catalogSection = document.getElementById('catalog');
-                    if (catalogSection) {
-                        // отменяем авто-восстановление позиции и учитываем фикс-шапку
-                        if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
-                        var doScroll = function () {
-                            var header = document.querySelector('.site-header-premium');
-                            var offset = (header ? header.offsetHeight : 0) + 12;
-                            var top = catalogSection.getBoundingClientRect().top + window.pageYOffset - offset;
-                            window.scrollTo({ top: top, behavior: 'smooth' });
-                        };
-                        setTimeout(doScroll, 250);
-                    }
-                }
-            } catch (e) {}
+    <section class="ss-section ss-section--tint" id="warranty">
+        <div class="ss-container">
+            <div class="ss-head">
+                <p class="ss-eyebrow">Гарантии и обслуживание</p>
+                <h2 class="ss-h2">Что гарантируем и как обратиться</h2>
+            </div>
+            <div class="ss-grid ss-grid--3">
+                <div class="ss-box">
+                    <h3 class="ss-h3">Корпус станции</h3>
+                    <p class="ss-big"><?php echo $trust['warranty_body'] ? esc_html(izex_years($trust['warranty_body'])) : 'По паспорту'; ?></p>
+                    <p class="ss-muted">Гарантия производителя на корпус. Срок для вашей модели указываем в договоре.</p>
+                </div>
+                <div class="ss-box">
+                    <h3 class="ss-h3">Электрооборудование</h3>
+                    <p class="ss-big"><?php echo $trust['warranty_compressor'] ? esc_html(izex_years($trust['warranty_compressor'])) : 'По паспорту'; ?></p>
+                    <p class="ss-muted">Компрессоры, насосы и блок управления — по условиям производителя станции.</p>
+                </div>
+                <div class="ss-box">
+                    <h3 class="ss-h3">Монтажные работы</h3>
+                    <p class="ss-big"><?php echo $trust['warranty_works'] ? esc_html(izex_years($trust['warranty_works'])) : 'По договору'; ?></p>
+                    <p class="ss-muted">Наша гарантия на монтаж закреплена в договоре, который подписываем до начала работ.</p>
+                </div>
+            </div>
+            <div class="ss-service">
+                <div>
+                    <h3 class="ss-h3">Нужно обслуживание или ремонт?</h3>
+                    <p>Позвоните или напишите в MAX: какая станция, что случилось. Обслуживаем станции разных марок, в том числе установленные другими компаниями.</p>
+                </div>
+                <div class="ss-actions">
+                    <a class="ss-btn ss-btn--primary" href="tel:<?php echo esc_attr($company['phone_clean']); ?>">Позвонить</a>
+                    <a class="ss-btn ss-btn--secondary" href="/obsluzhivanie-septikov-lyubyh-marok/">Об обслуживании</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            const scrollObs = new IntersectionObserver(entries => {
-                entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('animate-in'); });
-            }, { threshold: 0.1 });
-            document.querySelectorAll('.product-card-premium, .advantage-item, .step-item, .testimonial-card-premium').forEach(el => {
-                el.style.opacity = '0'; el.style.transform = 'translateY(25px)'; el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                scrollObs.observe(el);
-            });
-        });
-    </script>
+    <?php
+    $reviews = get_posts(array('post_type' => 'reviews', 'post_status' => 'publish', 'posts_per_page' => 3));
+    $sources = array('yandex' => 'Яндекс Карты', '2gis' => '2ГИС', 'avito' => 'Авито');
+    ?>
+    <?php if ($reviews) : ?>
+        <section class="ss-section" id="reviews">
+            <div class="ss-container">
+                <div class="ss-head ss-head--row">
+                    <div>
+                        <p class="ss-eyebrow">Отзывы</p>
+                        <h2 class="ss-h2">Что говорят клиенты</h2>
+                    </div>
+                    <a class="ss-btn ss-btn--secondary" href="<?php echo esc_url(get_post_type_archive_link('reviews') ?: '/reviews/'); ?>">Все отзывы</a>
+                </div>
+                <?php echo do_shortcode('[topas_reviews_rating]'); ?>
+                <div class="ss-grid ss-grid--3">
+                    <?php foreach ($reviews as $review) :
+                        $author = carbon_get_post_meta($review->ID, 'crb_review_author') ?: get_the_title($review);
+                        $meta = array_filter(array(
+                            carbon_get_post_meta($review->ID, 'crb_review_position'),
+                            carbon_get_post_meta($review->ID, 'crb_review_service'),
+                            carbon_get_post_meta($review->ID, 'crb_review_date'),
+                        ));
+                        $source = (string) carbon_get_post_meta($review->ID, 'crb_review_source');
+                        $source_url = (string) carbon_get_post_meta($review->ID, 'crb_review_source_url');
+                        $text = trim(wp_strip_all_tags($review->post_content)); ?>
+                        <figure class="ss-review">
+                            <blockquote>
+                                <?php if (mb_strlen($text) > 260) : ?>
+                                    <p><?php echo esc_html(mb_substr($text, 0, 240)); ?><span class="ss-review__tail" hidden><?php echo esc_html(mb_substr($text, 240)); ?></span>…</p>
+                                    <button type="button" class="ss-link ss-review__more" data-ss-review-more>Читать полностью</button>
+                                <?php else : ?>
+                                    <p><?php echo esc_html($text); ?></p>
+                                <?php endif; ?>
+                            </blockquote>
+                            <figcaption>
+                                <strong><?php echo esc_html($author); ?></strong>
+                                <span class="ss-muted"><?php echo esc_html(implode(' · ', $meta)); ?></span>
+                                <span class="ss-review__src">
+                                    <?php if ($source && $source_url) : ?>
+                                        <a href="<?php echo esc_url($source_url); ?>" target="_blank" rel="noopener nofollow">Отзыв на <?php echo esc_html($sources[$source] ?? $source); ?></a>
+                                    <?php else : ?>
+                                        Отзыв оставлен на сайте
+                                    <?php endif; ?>
+                                </span>
+                            </figcaption>
+                        </figure>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </section>
+    <?php endif; ?>
+
+    <?php
+    $faq_items = array(
+        array(
+            'q' => 'Как выбрать станцию для дома?',
+            'a' => 'Главное — число людей, которые живут постоянно, и залповый сброс: сколько воды уходит за раз, например из ванны. Ещё важны глубина, на которой труба выходит из дома, и куда можно отвести очищенную воду. По этим данным предлагаем 2–3 станции, а инженер подтверждает выбор на участке.',
+        ),
+        array(
+            'q' => 'Чем ТОПАС отличается от ТОПАС-С?',
+            'a' => 'В станциях ТОПАС стоят два компрессора, которые работают попеременно, в ТОПАС-С — один. Производительность у моделей с одной цифрой одинаковая. Это разные модели с разной ценой: обе цены указаны в карточке станции.',
+        ),
+        array(
+            'q' => 'Что значат «Пр», «Лонг» и «Лонг Ус» в названии?',
+            'a' => '«Пр» — принудительный отвод: очищенная вода откачивается встроенным насосом, если самотёком её отвести некуда. «Лонг» — для трубы, которая входит на глубине 80–140 см, «Лонг Ус» — до 240 см. Обычное исполнение рассчитано на трубу до 80 см.',
+        ),
+        array(
+            'q' => 'Чем различаются марки станций?',
+            'a' => 'Все станции в каталоге — аэрационные, с биологической очисткой. Различаются устройством корпуса, числом и расположением компрессоров, допустимым залповым сбросом, способом отвода воды, обслуживанием и ценой. Под ваш участок сравним 2–3 варианта разных марок.',
+        ),
+        array(
+            'q' => 'Сколько длится монтаж?',
+            'a' => 'Стандартный монтаж обычно занимает один рабочий день. Если нужны длинные трассы, замена грунта или отвод воды на большое расстояние, срок указываем в смете.',
+        ),
+        array(
+            'q' => 'Что делать, если на участке глина или близко грунтовые воды?',
+            'a' => 'Это решается монтажом: песчаная подушка, засыпка, фиксация корпуса от всплытия и, при необходимости, отвод воды насосом. Что понадобится именно у вас, инженер определит на выезде и внесёт в смету.',
+        ),
+        array(
+            'q' => 'Как обслуживать станцию?',
+            'a' => 'Несколько раз в год из станции удаляют избыточный ил и проверяют оборудование — порядок указан в паспорте модели. Это можно делать самостоятельно по инструкции или заказать у нас. Обслуживаем и ремонтируем станции разных марок.',
+        ),
+        array(
+            'q' => 'Можно ли пользоваться станцией зимой и при сезонном проживании?',
+            'a' => 'Да. Станция работает круглый год. Если дом пустует зимой, станцию консервируют — расскажем, как это сделать, или выполним сами.',
+        ),
+        array(
+            'q' => 'Какая гарантия?',
+            'a' => izex_warranty_faq_answer(),
+        ),
+        array(
+            'q' => 'Где вы работаете?',
+            'a' => 'В Чебоксарах, Новочебоксарске и по всей Чувашии. Стоимость доставки зависит от расстояния и указывается в смете.',
+        ),
+    );
+    ?>
+    <section class="ss-section ss-section--tint" id="faq">
+        <div class="ss-container ss-split">
+            <div class="ss-split__intro">
+                <p class="ss-eyebrow">Вопросы и ответы</p>
+                <h2 class="ss-h2">Частые вопросы</h2>
+                <p>О выборе, монтаже, обслуживании и различиях моделей. Не нашли ответ — позвоните, объясним.</p>
+                <a class="ss-link" href="tel:<?php echo esc_attr($company['phone_clean']); ?>"><?php echo esc_html($company['phone']); ?></a>
+            </div>
+            <div class="ss-faq">
+                <?php foreach ($faq_items as $item) : ?>
+                    <details class="ss-faq__item">
+                        <summary><?php echo esc_html($item['q']); ?></summary>
+                        <p><?php echo esc_html($item['a']); ?></p>
+                    </details>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </section>
+    <?php
+    izex_print_jsonld(array(
+        '@context'   => 'https://schema.org',
+        '@type'      => 'FAQPage',
+        'mainEntity' => array_map(function ($item) {
+            return array(
+                '@type'          => 'Question',
+                'name'           => $item['q'],
+                'acceptedAnswer' => array('@type' => 'Answer', 'text' => $item['a']),
+            );
+        }, $faq_items),
+    ));
+    ?>
+
+    <section class="ss-section" id="contacts">
+        <div class="ss-container ss-split">
+            <div class="ss-split__intro">
+                <p class="ss-eyebrow">Контакты</p>
+                <h2 class="ss-h2">Получите расчёт для вашего участка</h2>
+                <p>Оставьте телефон — перезвоним в рабочее время, зададим несколько вопросов и пришлём расчёт оборудования, монтажа и доставки.</p>
+                <dl class="ss-contacts">
+                    <div><dt>Телефон</dt><dd><a href="tel:<?php echo esc_attr($company['phone_clean']); ?>"><?php echo esc_html($company['phone']); ?></a></dd></div>
+                    <div><dt>Режим работы</dt><dd><?php echo esc_html($company['work_time']); ?></dd></div>
+                    <div><dt>Почта</dt><dd><a href="mailto:<?php echo antispambot($company['email']); ?>"><?php echo antispambot($company['email']); ?></a></dd></div>
+                    <div><dt>Мессенджер</dt><dd><a href="https://max.ru/u/f9LHodD0cOI_AGyWf9AKcrl72RIFsKRL7vOApMiqwT37En8F81IprazW1ro">Написать в MAX</a></dd></div>
+                    <div><dt>Где работаем</dt><dd>Чебоксары, Новочебоксарск и вся Чувашия<?php echo $trust['office_none'] ? ' · работаем выездом, офиса для приёма нет' : ''; ?></dd></div>
+                </dl>
+            </div>
+            <div class="ss-panel">
+                <form class="premium-contact-form ss-form" data-form-type="consultation" novalidate>
+                    <input type="text" name="hp_email" class="form-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+                    <div class="form-group">
+                        <label class="ss-field__label" for="contact-phone">Телефон</label>
+                        <input class="ss-input" id="contact-phone" type="tel" name="phone" placeholder="+7 (___) ___-__-__" autocomplete="tel" inputmode="tel" required>
+                        <span class="form-error" role="alert"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="ss-field__label" for="contact-name">Имя <span class="ss-field__opt">— необязательно</span></label>
+                        <input class="ss-input" id="contact-name" type="text" name="name" autocomplete="given-name">
+                        <span class="form-error" role="alert"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="ss-field__label" for="contact-comment">Вопрос или адрес участка <span class="ss-field__opt">— необязательно</span></label>
+                        <textarea class="ss-input" id="contact-comment" name="comment" rows="3"></textarea>
+                    </div>
+                    <?php echo ss_consent_field(); ?>
+                    <button type="submit" class="ss-btn ss-btn--primary ss-btn--block ss-btn--lg">Получить расчёт</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section class="ss-section ss-seo">
+        <div class="ss-container"><div class="ss-prose">
+            <h2 class="ss-h3">Септики и станции очистки в Чебоксарах и Чувашии</h2>
+            <p>«Сервис Септик21» подбирает, доставляет, монтирует и обслуживает автономную канализацию для частных домов, дач и коттеджей в Чебоксарах, Новочебоксарске и по всей Чувашской Республике.</p>
+            <p>В <a href="<?php echo esc_url($catalog_url); ?>">каталоге</a> — вся линейка ТОПАС-С от 4 до 10 пользователей в обычном исполнении, «Лонг» и с принудительным отводом, а также станции Юнилос Астра, Эко-Гранд, Евролос, Итал Био, КИТ, Евробион и Биодевайс. Модель подбираем по числу жильцов, залповому сбросу, глубине трубы и условиям участка — <a href="/podbor-septika/">подбор септика</a> занимает пару минут.</p>
+            <p>Смету на <a href="/montazh-septika-lyuboj-marki/">монтаж</a> составляем после бесплатного выезда инженера, цены станций — на странице <a href="<?php echo esc_url(izex_prices_page_url()); ?>">цен</a>. Выполняем <a href="/obsluzhivanie-septikov-lyubyh-marok/">обслуживание и ремонт</a> станций разных марок<?php if (izex_has_published_works()) : ?>, а <a href="<?php echo esc_url(get_post_type_archive_link('works')); ?>">наши работы</a> можно посмотреть на сайте<?php endif; ?>.</p>
+        </div></div>
+    </section>
+
+</main>
 
 <?php get_footer(); ?>

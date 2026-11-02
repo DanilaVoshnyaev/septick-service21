@@ -219,7 +219,7 @@
 
 .pro-card__title {
     font-size: 21px;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: -0.02em;
     line-height: 1.2;
     color: var(--pro-ink);
@@ -937,7 +937,7 @@
     align-items: center;
     gap: 10px;
     font-size: 20px;
-    font-weight: 800;
+    font-weight: 700;
     letter-spacing: -0.01em;
     color: var(--pro-ink);
     margin: 0 0 16px;
@@ -1167,9 +1167,9 @@
 
 .calc-live__title {
     font-size: clamp(26px, 3.2vw, 38px);
-    line-height: 1.06;
+    line-height: 1.15;
     letter-spacing: -0.02em;
-    font-weight: 800;
+    font-weight: 600;
     color: var(--pro-ink);
     margin: 8px 0 12px;
 }
@@ -1624,4 +1624,13 @@
 .pro-herocard__note .izex-icon,
 .calc-live__tip .izex-icon {
     margin-top: 1px;
+}
+
+/* Если у станции есть фото, подложка-заглушка и подпись под ним не нужны. */
+.pro-card__media:has(img) {
+    background: var(--surface);
+}
+
+.pro-card__media:has(img) .pro-card__ghost {
+    display: none;
 }

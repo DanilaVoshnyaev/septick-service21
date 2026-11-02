@@ -310,6 +310,8 @@ function crb_attach_theme_options()
     Container::make('post_meta', 'Характеристики станции')
         ->where('post_type', '=', 'stations')
         ->add_tab('📊 Параметры', array(
+            Field::make('text', 'crb_brand', 'Марка')
+                ->set_help_text('Для ТОПАС оставьте пустым. Станции других марок («Юнилос Астра», «Евролос» и т. п.) выводятся в каталоге отдельным блоком и не участвуют в подборе, сравнении и на главной.'),
             Field::make('text', 'crb_model_number', 'Номер модели (цифра после ТОПАС)')
                 ->set_help_text('Например: 5 — выведется как «ТОПАС 5» и «ТОПАС-С 5»')
                 ->set_width(34),
@@ -342,6 +344,7 @@ function crb_attach_theme_options()
                 ->set_width(33),
             Field::make('text', 'crb_mounting_dimensions', 'Габариты для информации по монтажу')
                 ->set_width(33),
+            Field::make('text', 'crb_manual_pdf', 'Паспорт или инструкция (ссылка на PDF)'),
         ))
         ->add_tab('🏷️ Статусы', array(
             Field::make('checkbox', 'crb_is_hit', 'Хит продаж'),
@@ -816,6 +819,50 @@ function station_is_in_stock($post_id)
     }
     // Поле никогда не сохранялось — по умолчанию «в наличии».
     return true;
+}
+
+/**
+ * Марка станции. Пустое поле «Марка» — ТОПАС.
+ *
+ * @param int $post_id
+ * @return string
+ */
+function izex_station_brand($post_id)
+{
+    $brand = trim((string) carbon_get_post_meta($post_id, 'crb_brand'));
+    return $brand !== '' ? $brand : 'ТОПАС';
+}
+
+function izex_station_is_topas($post_id)
+{
+    return mb_stripos(izex_station_brand($post_id), 'топас') !== false;
+}
+
+/**
+ * ID станций других марок — их исключают из выборок, где нужна только линейка
+ * ТОПАС: подбор, сравнение, главная, посадочные. Марку проверяем в PHP, как и
+ * остальные фильтры каталога: meta_query по полям Carbon здесь ненадёжен.
+ *
+ * @return int[]
+ */
+function izex_non_topas_station_ids()
+{
+    static $ids = null;
+    if ($ids === null) {
+        $ids = array();
+        $all = get_posts(array(
+            'post_type'      => 'stations',
+            'post_status'    => 'any',
+            'posts_per_page' => -1,
+            'fields'         => 'ids',
+        ));
+        foreach ($all as $id) {
+            if (!izex_station_is_topas($id)) {
+                $ids[] = (int) $id;
+            }
+        }
+    }
+    return $ids;
 }
 
 function getCarbonJdCode()

@@ -681,12 +681,14 @@ function izex_lead_success_message()
 {
     $t = izex_trust();
 
+    $company = getCompanyContacts();
+    $answer = 'Перезвоним в рабочее время' . ($company['work_time'] ? ' (' . $company['work_time'] . ')' : '') . ' по номеру, который вы указали.';
+
     if ($t['engineer_name']) {
-        return 'Спасибо! Свяжемся с вами в течение 15 минут. На замер приедет '
-            . $t['engineer_name']
-            . ($t['engineer_years'] ? ', ' . izex_years($t['engineer_years']) . ' ставит ТОПАС' : '')
+        $answer .= ' На замер приедет ' . $t['engineer_name']
+            . ($t['engineer_years'] ? ', стаж — ' . izex_years($t['engineer_years']) : '')
             . '.';
     }
 
-    return 'Спасибо! Мы свяжемся с вами в течение 15 минут.';
+    return $answer;
 }

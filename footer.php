@@ -25,290 +25,101 @@ $op_ogrn = $cf_opt('operator_ogrn', '323210000047416');
 ?>
 
 </main>
-<footer class="site-footer" id="site-footer">
-
-    <!-- Footer Top -->
-    <div class="footer-top">
-        <div class="container">
-            <div class="footer-grid">
-
-                <!-- Company Column -->
-                <div class="footer-col footer-col-company">
-                    <a href="<?php echo esc_url(home_url('/')); ?>" class="footer-logo">
-                        <img src="<?=assets('/images/logo-transparent-216.png')?>"
-                             alt="Сервис Септик21 — септики ТОПАС и других марок в Чебоксарах"
-                             width="108" height="49" loading="lazy" decoding="async">
-                    </a>
-                    <p class="footer-description">
-                        Официальный дилер автономных канализаций ТОПАС, монтируем и обслуживаем септики других марок.
-                        Установка под ключ с гарантией качества и сервисным обслуживанием в Чувашской Республике.
-                    </p>
-
-                    <div class="footer-social">
-                        <span class="social-label">Мы в соцсетях:</span>
-                        <div class="social-links">
-                            <a href="https://max.ru/u/f9LHodD0cOI_AGyWf9AKcrl72RIFsKRL7vOApMiqwT37En8F81IprazW1ro" class="social-link" aria-label="MAX">
-                                <img src="<?=assets('/images/social/max.svg')?>" alt="Иконка MAX" width="32" height="32" loading="lazy" decoding="async">
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Navigation Column -->
-                <div class="footer-col footer-col-nav">
-                    <h4 class="footer-heading">Навигация</h4>
-                    <nav class="footer-nav">
-                        <?php
-                        wp_nav_menu(array(
-                            'theme_location' => 'footer',
-                            'menu_class' => 'footer-menu',
-                            'container' => false,
-                            'fallback_cb' => function() {
-                                echo '<ul class="footer-menu">';
-                                echo '<li><a href="/">Главная</a></li>';
-                                echo '<li><a href="/stations/">Каталог</a></li>';
-                                echo '<li><a href="' . esc_url(izex_prices_page_url()) . '">Цены</a></li>';
-                                echo '<li><a href="/services/">Услуги</a></li>';
-                                echo '<li><a href="' . esc_url(get_post_type_archive_link('works')) . '">Наши работы</a></li>';
-                                echo '<li><a href="/about/">О компании</a></li>';
-                                echo '<li><a href="/reviews/">Отзывы</a></li>';
-                                echo '<li><a href="/contacts/">Контакты</a></li>';
-                                echo '</ul>';
-                            }
-                        ));
-                        ?>
-                    </nav>
-                </div>
-
-                <!-- Solutions Column -->
-                <div class="footer-col footer-col-solutions">
-                    <h4 class="footer-heading">Решения</h4>
-                    <ul class="footer-menu">
-                        <li><a href="/septik-dlya-chastnogo-doma/">Септик для частного дома</a></li>
-                        <li><a href="/septik-dlya-dachi/">Септик для дачи</a></li>
-                        <li><a href="/septik-dlya-kottedzha/">Септик для коттеджа</a></li>
-                        <li><a href="/septik-pri-vysokih-gruntovyh-vodah/">При высоких грунтовых водах</a></li>
-                        <li><a href="/konservaciya-septika-topas/">Консервация на зиму</a></li>
-                        <li><a href="/septik-novocheboksarsk/">Септик в Новочебоксарске</a></li>
-                        <li><a href="/montazh-septika-lyuboj-marki/">Монтаж септика любой марки</a></li>
-                        <li><a href="/obsluzhivanie-septikov-lyubyh-marok/">Обслуживание любых марок</a></li>
-                    </ul>
-                </div>
-
-                <!-- Services Column -->
-
-                <!-- Contacts Column -->
-                <div class="footer-col footer-col-contacts">
-                    <h4 class="footer-heading">Контакты</h4>
-
-                    <div class="contact-item">
-                        <svg class="contact-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                        </svg>
-                        <a href="tel:<?php echo $company['phone_clean']; ?>" class="contact-link"><?php echo $company['phone']; ?></a>
-                    </div>
-
-                    <div class="contact-item">
-                        <svg class="contact-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                            <path d="m22,6 -10,7L2,6"/>
-                        </svg>
-                        <a href="mailto:<?php echo antispambot($company['email']); ?>" class="contact-link"><?php echo antispambot($company['email']); ?></a>
-                    </div>
-
-                    <button class="btn-footer open-modal" data-modal="callback">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-                        </svg>
-                        Заказать звонок
-                    </button>
-                </div>
-
-            </div>
+<footer class="ss-footer" id="site-footer">
+    <div class="ss-container ss-footer__grid">
+        <div class="ss-footer__about">
+            <a href="<?php echo esc_url(home_url('/')); ?>" class="ss-footer__logo">
+                <img src="<?php echo esc_url(assets('/images/logo-transparent-216.png')); ?>"
+                     alt="Сервис Септик21" width="108" height="49" loading="lazy" decoding="async">
+            </a>
+            <p>Подбор, монтаж и обслуживание автономной канализации в Чебоксарах и по Чувашии. Станции ТОПАС и других марок.</p>
+        </div>
+        <nav class="ss-footer__col" aria-label="Разделы сайта">
+            <p class="ss-footer__head">Разделы</p>
+            <ul>
+                <li><a href="/stations/">Каталог</a></li>
+                <li><a href="/podbor-septika/">Подбор септика</a></li>
+                <li><a href="<?php echo esc_url(izex_prices_page_url()); ?>">Цены</a></li>
+                <?php if (izex_has_published_works()) : ?>
+                    <li><a href="<?php echo esc_url(get_post_type_archive_link('works')); ?>">Наши работы</a></li>
+                <?php endif; ?>
+                <li><a href="/reviews/">Отзывы</a></li>
+                <li><a href="/about/">О компании</a></li>
+                <li><a href="/contacts/">Контакты</a></li>
+            </ul>
+        </nav>
+        <nav class="ss-footer__col" aria-label="Решения">
+            <p class="ss-footer__head">Решения</p>
+            <ul>
+                <li><a href="/montazh-septika-lyuboj-marki/">Монтаж септика любой марки</a></li>
+                <li><a href="/obsluzhivanie-septikov-lyubyh-marok/">Обслуживание септиков</a></li>
+                <li><a href="/septik-dlya-chastnogo-doma/">Септик для частного дома</a></li>
+                <li><a href="/septik-dlya-dachi/">Септик для дачи</a></li>
+                <li><a href="/septik-dlya-kottedzha/">Септик для коттеджа</a></li>
+                <li><a href="/septik-pri-vysokih-gruntovyh-vodah/">При высоких грунтовых водах</a></li>
+                <li><a href="/konservaciya-septika-topas/">Консервация на зиму</a></li>
+                <li><a href="/septik-novocheboksarsk/">Септик в Новочебоксарске</a></li>
+            </ul>
+        </nav>
+        <div class="ss-footer__col">
+            <p class="ss-footer__head">Связаться</p>
+            <a class="ss-footer__phone" href="tel:<?php echo esc_attr($company['phone_clean']); ?>"><?php echo esc_html($company['phone']); ?></a>
+            <p class="ss-muted"><?php echo esc_html($company['work_time']); ?></p>
+            <p><a href="mailto:<?php echo antispambot($company['email']); ?>"><?php echo antispambot($company['email']); ?></a></p>
+            <p><a href="https://max.ru/u/f9LHodD0cOI_AGyWf9AKcrl72RIFsKRL7vOApMiqwT37En8F81IprazW1ro">Написать в MAX</a></p>
         </div>
     </div>
-
-    <div class="footer-bottom">
-        <div class="container">
-            <div class="footer-bottom-inner">
-                <div class="footer-company-info">
-                    <p class="footer-legal-line">
-                        &copy;<?php echo date('Y'); ?> <?php echo esc_html($op_name); ?>
-                        <?php if ($op_inn) : ?> / ИНН: <?php echo esc_html($op_inn); ?><?php endif; ?>
-                        <?php if ($op_ogrn) : ?> / ОГРНИП: <?php echo esc_html($op_ogrn); ?><?php endif; ?>
-                    </p>
-                    <p class="footer-tagline">
-                        Септики ТОПАС и других марок &middot; Продажа &mdash; Монтаж &mdash; Обслуживание
-                    </p>
-                    <p class="footer-contacts-line">
-                        Контактный телефон:
-                        <a href="tel:<?php echo esc_attr($company['phone_clean']); ?>"><?php echo esc_html($company['phone']); ?></a>
-                        <?php if (!empty($company['work_time'])) : ?>
-                            <span class="footer-worktime">(<?php echo esc_html($company['work_time']); ?>)</span>
-                        <?php endif; ?>
-                    </p>
-                    <p class="footer-contacts-line">
-                        Электронная почта:
-                        <a href="mailto:<?php echo antispambot($company['email']); ?>"><?php echo antispambot($company['email']); ?></a>
-                    </p>
-                </div>
-
-                <div class="footer-legal">
-                    <a href="/privacy/">Политика конфиденциальности</a>
-                </div>
-
-            </div>
-        </div>
+    <div class="ss-container ss-footer__legal">
+        <p>&copy;<?php echo date('Y'); ?> <?php echo esc_html($op_name); ?><?php if ($op_inn) : ?> · ИНН <?php echo esc_html($op_inn); ?><?php endif; ?><?php if ($op_ogrn) : ?> · ОГРНИП <?php echo esc_html($op_ogrn); ?><?php endif; ?></p>
+        <a href="/privacy/">Политика обработки персональных данных</a>
     </div>
-
-    <button class="back-to-top" id="backToTop" aria-label="Наверх">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="m18 15-6-6-6 6"/>
-        </svg>
-    </button>
-
 </footer>
 
 <?php
-// Быстрые контакты: нижняя панель на мобильных и боковой док на десктопе.
-// Оба берут каналы из одного списка — izex_pro_contact_items().
 if (function_exists('izex_pro_render_mobile_bar')) {
     izex_pro_render_mobile_bar();
 }
-if (function_exists('izex_pro_render_dock')) {
-    izex_pro_render_dock();
-}
 ?>
 
-<div class="modal-premium" id="modal-callback">
-    <div class="modal-backdrop"></div>
-    <div class="modal-panel">
-        <button class="modal-close-btn" aria-label="Закрыть">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M18 6 6 18M6 6l12 12"/>
-            </svg>
-        </button>
-        <div class="modal-header">
-            <h3 class="modal-title">Заказать звонок</h3>
-            <p class="modal-subtitle">Перезвоним в течение 15 минут</p>
-        </div>
-
-        <form class="modal-form-premium" id="callbackForm" data-form-type="callback">
-            <input type="text" name="hp_email" class="form-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-            <input type="hidden" name="action" value="premium_form_submit">
-            <input type="hidden" name="page_url" value="<?php echo esc_url($_SERVER['REQUEST_URI'] ?? ''); ?>">
-
-            <div class="form-group form-group-premium">
-                <input type="text" name="name" placeholder="Ваше имя *" required>
-                <span class="form-error"></span>
-            </div>
-            <div class="form-group form-group-premium">
-                <input type="tel" name="phone" placeholder="+7 (___) ___-__-__ *" required>
-                <span class="form-error"></span>
-            </div>
-            <label class="form-consent"><input type="checkbox" name="consent" required checked> Согласен на обработку персональных данных</label>
-
-            <button type="submit" class="btn-premium btn-full btn-gold">
-                <span class="spinner"></span>
-                <span class="btn-text">Жду звонка</span>
-                <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
+<?php
+$ss_modal = function ($id, $title, $subtitle, $type, $button, $extra = '') {
+    ?>
+    <div class="modal-premium ss-modal" id="modal-<?php echo esc_attr($id); ?>">
+        <div class="modal-backdrop"></div>
+        <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-<?php echo esc_attr($id); ?>-title">
+            <button class="modal-close-btn" aria-label="Закрыть">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
             </button>
-            <p class="form-privacy">Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой конфиденциальности</a></p>
-        </form>
-    </div>
-</div>
-
-<div class="modal-premium" id="modal-engineer">
-    <div class="modal-backdrop"></div>
-    <div class="modal-panel">
-        <button class="modal-close-btn" aria-label="Закрыть">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M18 6 6 18M6 6l12 12"/>
-            </svg>
-        </button>
-        <div class="modal-header">
-            <h3 class="modal-title">Вызвать инженера</h3>
-            <p class="modal-subtitle">Бесплатный выезд и консультация</p>
+            <h2 class="ss-modal__title" id="modal-<?php echo esc_attr($id); ?>-title"><?php echo esc_html($title); ?></h2>
+            <p class="ss-modal__sub"><?php echo esc_html($subtitle); ?></p>
+            <p class="ss-modal__product js-order-product" hidden></p>
+            <form class="modal-form-premium ss-form" data-form-type="<?php echo esc_attr($type); ?>" novalidate>
+                <input type="text" name="hp_email" class="form-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+                <input type="hidden" name="product_name" class="js-order-product-field" value="">
+                <input type="hidden" name="product_id" class="js-order-product-id" value="">
+                <div class="form-group">
+                    <label class="ss-field__label" for="<?php echo esc_attr($id); ?>-phone">Телефон</label>
+                    <input class="ss-input" id="<?php echo esc_attr($id); ?>-phone" type="tel" name="phone" placeholder="+7 (___) ___-__-__" autocomplete="tel" inputmode="tel" required>
+                    <span class="form-error" role="alert"></span>
+                </div>
+                <div class="form-group">
+                    <label class="ss-field__label" for="<?php echo esc_attr($id); ?>-name">Имя <span class="ss-field__opt">— необязательно</span></label>
+                    <input class="ss-input" id="<?php echo esc_attr($id); ?>-name" type="text" name="name" autocomplete="given-name">
+                    <span class="form-error" role="alert"></span>
+                </div>
+                <?php echo $extra; ?>
+                <?php echo ss_consent_field(); ?>
+                <button type="submit" class="ss-btn ss-btn--primary ss-btn--block"><?php echo esc_html($button); ?></button>
+            </form>
         </div>
-
-        <form class="modal-form-premium" id="engineerForm" data-form-type="engineer">
-            <!-- Hidden поля для AJAX-обработчика -->
-            <input type="text" name="hp_email" class="form-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-            <input type="hidden" name="action" value="premium_form_submit">
-            <input type="hidden" name="page_url" value="<?php echo esc_url($_SERVER['REQUEST_URI'] ?? ''); ?>">
-
-            <div class="form-group form-group-premium">
-                <input type="text" name="name" placeholder="Ваше имя *" required>
-                <span class="form-error"></span>
-            </div>
-            <div class="form-group form-group-premium">
-                <input type="tel" name="phone" placeholder="+7 (___) ___-__-__ *" required>
-                <span class="form-error"></span>
-            </div>
-            <div class="form-group form-group-premium">
-                <input type="text" name="address" placeholder="Адрес участка">
-            </div>
-            <label class="form-consent"><input type="checkbox" name="consent" required checked> Согласен на обработку персональных данных</label>
-            <button type="submit" class="btn-premium btn-full btn-gold">
-                <span class="spinner"></span>
-                <span class="btn-text">Вызвать инженера</span>
-                <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-            </button>
-            <p class="form-privacy">Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой конфиденциальности</a></p>
-        </form>
     </div>
-</div>
-
-<div class="modal-premium" id="modal-order">
-    <div class="modal-backdrop"></div>
-    <div class="modal-panel">
-        <button class="modal-close-btn" aria-label="Закрыть">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M18 6 6 18M6 6l12 12"/>
-            </svg>
-        </button>
-        <div class="modal-header">
-            <h3 class="modal-title">Оставить заявку</h3>
-            <p class="modal-subtitle">Перезвоним в течение 15 минут и ответим на вопросы</p>
-            <p class="modal-product js-order-product" hidden></p>
-        </div>
-
-        <form class="modal-form-premium" id="orderForm" data-form-type="catalog_order">
-            <input type="text" name="hp_email" class="form-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-            <input type="hidden" name="action" value="premium_form_submit">
-            <input type="hidden" name="product_name" class="js-order-product-field" value="">
-            <input type="hidden" name="page_url" value="<?php echo esc_url($_SERVER['REQUEST_URI'] ?? ''); ?>">
-
-            <div class="form-group form-group-premium">
-                <input type="text" name="name" placeholder="Ваше имя *" required>
-                <span class="form-error"></span>
-            </div>
-            <div class="form-group form-group-premium">
-                <input type="tel" name="phone" placeholder="+7 (___) ___-__-__ *" required>
-                <span class="form-error"></span>
-            </div>
-            <div class="form-group form-group-premium">
-                <textarea name="comment" rows="3" placeholder="Комментарий (необязательно)"></textarea>
-            </div>
-
-            <label class="form-consent"><input type="checkbox" name="consent" required checked> Согласен на обработку персональных данных</label>
-
-
-            <button type="submit" class="btn-premium btn-full btn-gold">
-                <span class="spinner"></span>
-                <span class="btn-text">Отправить заявку</span>
-                <svg class="btn-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-            </button>
-            <p class="form-privacy">Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой конфиденциальности</a></p>
-        </form>
-    </div>
-</div>
+    <?php
+};
+$ss_comment = '<div class="form-group"><label class="ss-field__label" for="order-comment">Что важно учесть <span class="ss-field__opt">— необязательно</span></label><textarea class="ss-input" id="order-comment" name="comment" rows="3" placeholder="Населённый пункт, сколько человек живёт, сроки"></textarea></div>';
+$ss_modal('order', 'Получить расчёт', 'Перезвоним, уточним условия участка и рассчитаем оборудование, монтаж и доставку.', 'raschet', 'Получить расчёт', $ss_comment);
+$ss_modal('callback', 'Заказать звонок', 'Оставьте номер — перезвоним в рабочее время.', 'callback', 'Жду звонка');
+$ss_modal('engineer', 'Вызвать инженера', 'Инженер приедет на участок, проверит условия и составит смету.', 'engineer', 'Вызвать инженера', '<div class="form-group"><label class="ss-field__label" for="engineer-address">Населённый пункт <span class="ss-field__opt">— необязательно</span></label><input class="ss-input" id="engineer-address" type="text" name="address"></div>');
+?>
 
 <div class="cookie-consent" id="cookieConsent" role="dialog" aria-live="polite" aria-label="Уведомление об использовании cookie" hidden>
     <div class="cookie-consent__inner">
@@ -323,6 +134,7 @@ if (function_exists('izex_pro_render_dock')) {
     </div>
 </div>
 
+<!--
 <script>
     (function () {
         var KEY = 'cookie_consent_accepted';
@@ -344,6 +156,7 @@ if (function_exists('izex_pro_render_dock')) {
         }
     })();
 </script>
+-->
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
     (function(m,e,t,r,i,k,a){
@@ -351,11 +164,11 @@ if (function_exists('izex_pro_render_dock')) {
         m[i].l=1*new Date();
         for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
         k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=109479860', 'ym');
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=<?php echo (int) izex_metrika_id(); ?>', 'ym');
 
-    ym(109479860, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+    ym(<?php echo (int) izex_metrika_id(); ?>, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
 </script>
-<noscript><div><img src="https://mc.yandex.ru/watch/109479860" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<noscript><div><img src="https://mc.yandex.ru/watch/<?php echo (int) izex_metrika_id(); ?>" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
 <?php
 // printSocialFloat() отключён: прежний блок соцсетей висел по центру справа и

@@ -18,6 +18,8 @@ $d = izex_pro_station_data($station_id);
 // Карточка не совпала с фильтром в URL. С JS атрибут игнорируется (видимость
 // считает catalog-instant.js), без JS — скрывается стилем в <noscript>.
 $server_hidden = !empty($args['server_hidden']);
+$is_topas = izex_station_is_topas($station_id);
+$in_stock = station_is_in_stock($station_id);
 ?>
 
 <article class="pro-card"
@@ -41,16 +43,19 @@ $server_hidden = !empty($args['server_hidden']);
             echo get_the_post_thumbnail($station_id, 'medium_large', array(
                 'loading'  => 'lazy',
                 'decoding' => 'async',
-                'alt'      => $d['title'] . ' — септик ТОПАС',
+                'alt'      => $is_topas ? $d['title'] . ' — септик ТОПАС' : $d['title'],
                 'itemprop' => 'image',
                 'sizes'    => '(max-width: 600px) 92vw, (max-width: 1024px) 45vw, 360px',
             ));
             ?>
         </a>
-        <span class="pro-card__badge">В наличии</span>
+        <?php if ($in_stock) : ?>
+            <span class="pro-card__badge">В наличии</span>
+        <?php endif; ?>
         <?php if ($d['is_hit']) : ?>
             <span class="pro-card__badge pro-card__badge--hit">Хит продаж</span>
         <?php endif; ?>
+        <?php if ($is_topas) : ?>
         <button type="button"
                 class="pro-card__cmp js-compare-toggle"
                 data-compare-id="<?php echo esc_attr($station_id); ?>"
@@ -60,6 +65,7 @@ $server_hidden = !empty($args['server_hidden']);
             </svg>
             <span class="station-compare__label">Сравнить</span>
         </button>
+        <?php endif; ?>
     </div>
 
     <div class="pro-card__body">
@@ -88,7 +94,7 @@ $server_hidden = !empty($args['server_hidden']);
         <div class="pro-card__prices" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
             <meta itemprop="priceCurrency" content="RUB">
             <meta itemprop="price" content="<?php echo esc_attr($d['price']); ?>">
-            <link itemprop="availability" href="https://schema.org/InStock">
+            <link itemprop="availability" href="https://schema.org/<?php echo $in_stock ? 'InStock' : 'PreOrder'; ?>">
             <?php
             // Ценовое якорение перевёрнуто (задача #10): крупно — итог «под ключ»,
             // мелко и серым — из чего он складывается. Раньше 23 px занимала цена

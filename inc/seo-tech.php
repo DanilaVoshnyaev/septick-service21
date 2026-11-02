@@ -191,8 +191,11 @@ function izex_robots_txt($output)
         $extra .= 'Disallow: /*&' . $param . '=' . "\n";
     }
 
+    // Новые фильтры каталога (brand, users и др.) не закрываем: на них ведут
+    // ссылки с главной, а от индексации их убирает noindex в inc/redesign.php.
+    $clean = function_exists('ss_catalog_filter_params') ? array_unique(array_merge($params, ss_catalog_filter_params())) : $params;
     $extra .= "\n# Для Яндекса: склеиваем параметры фильтра с чистым URL\n"
-        . 'Clean-param: ' . implode('&', $params) . "\n";
+        . 'Clean-param: ' . implode('&', $clean) . "\n";
 
     return $output . $extra;
 }

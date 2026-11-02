@@ -44,6 +44,7 @@ function izex_render_topas_models($atts)
 
     $query = new WP_Query(array(
         'post_type'      => 'stations',
+        'post__not_in'   => izex_non_topas_station_ids(),
         'posts_per_page' => -1,
         'post_status'    => 'publish',
         'no_found_rows'  => true,
@@ -99,66 +100,12 @@ add_shortcode('topas_models', 'izex_render_topas_models');
  * Форма подбора септика для инженера: [septik_podbor].
  *
  * Автоматической цены здесь нет — ответы уходят в обычную заявку
- * (тип «Подбор септика»), инженер считает смету сам. В каждом вопросе
- * есть «Не знаю», обязательны только имя и телефон.
+ * (тип «Подбор септика»), инженер считает смету сам. Разметка — ss_render_podbor().
  *
  * @return string
  */
 function izex_render_septik_podbor()
 {
-    $dunno = 'Не знаю';
-    $questions = array(
-        array('Населённый пункт', 'text', 'Например: Чебоксары, д. Сятракасы'),
-        array('Сколько человек живёт постоянно', 'select', array('1–2', '3–4', '5–6', '7–8', '9–10', 'больше 10')),
-        array('Как живёте в доме', 'select', array('Круглый год', 'Летом и наездами', 'Дом ещё строится')),
-        array('Ванна или джакузи', 'select', array('Есть ванна', 'Только душ', 'Джакузи или большая ванна')),
-        array('На какой глубине труба выходит из дома', 'select', array('до 60 см', '60–90 см', 'глубже 90 см')),
-        array('Грунт на участке', 'select', array('Песок', 'Суглинок', 'Глина')),
-        array('Грунтовые воды', 'select', array('Глубоко', 'Близко, весной подтапливает')),
-        array('Куда отводить очищенную воду', 'select', array('В канаву', 'В грунт на участке', 'Не решили')),
-        array('Бюджет на септик под ключ', 'select', array('до 150 тыс. ₽', '150–200 тыс. ₽', '200–250 тыс. ₽', 'больше 250 тыс. ₽')),
-        array('Когда планируете установку', 'select', array('В ближайший месяц', 'В этом сезоне', 'Позже, пока выбираю')),
-        array('Марка (необязательно)', 'select', array('ТОПАС', 'Юнилос Астра', 'Эко-Гранд', 'Евролос', 'Итал Био', 'КИТ', 'Евробион', 'Биодевайс')),
-    );
-
-    ob_start(); ?>
-    <form class="modal-form-premium podbor-form" data-form-type="podbor">
-        <input type="text" name="hp_email" class="form-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <div class="podbor-form__grid">
-            <?php foreach ($questions as $i => $q) : ?>
-                <label class="podbor-form__field">
-                    <span class="podbor-form__label"><?php echo esc_html($q[0]); ?></span>
-                    <?php if ($q[1] === 'text') : ?>
-                        <input type="text" data-label="<?php echo esc_attr($q[0]); ?>" placeholder="<?php echo esc_attr($q[2]); ?>">
-                    <?php else : ?>
-                        <select data-label="<?php echo esc_attr($q[0]); ?>">
-                            <option value=""><?php echo esc_html($i === count($questions) - 1 ? 'Не важно' : $dunno); ?></option>
-                            <?php foreach ($q[2] as $option) : ?>
-                                <option><?php echo esc_html($option); ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    <?php endif; ?>
-                </label>
-            <?php endforeach; ?>
-        </div>
-        <div class="podbor-form__contacts">
-            <div class="form-group form-group-premium">
-                <input type="text" name="name" placeholder="Ваше имя *" required>
-                <span class="form-error"></span>
-            </div>
-            <div class="form-group form-group-premium">
-                <input type="tel" name="phone" placeholder="+7 (___) ___-__-__ *" required>
-                <span class="form-error"></span>
-            </div>
-        </div>
-        <label class="form-consent"><input type="checkbox" name="consent" required checked> Согласен на обработку персональных данных</label>
-        <button type="submit" class="btn-premium btn-full btn-gold">
-            <span class="spinner"></span>
-            <span class="btn-text">Отправить инженеру</span>
-        </button>
-        <p class="form-privacy">Инженер перезвонит, уточнит детали и предложит 2–3 подходящие станции с ценой под ключ. Нажимая кнопку, вы соглашаетесь с <a href="/privacy/">политикой конфиденциальности</a></p>
-    </form>
-    <?php
-    return ob_get_clean();
+    return ss_render_podbor();
 }
 add_shortcode('septik_podbor', 'izex_render_septik_podbor');

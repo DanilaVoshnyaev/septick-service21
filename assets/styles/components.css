@@ -849,3 +849,11 @@ textarea,
         min-height: 720px;
     }
 }
+
+/* Заголовки — Montserrat: шрифт и так загружается (preload в izex_resource_hints),
+   но раньше нигде не применялся. Основной текст остаётся системным. */
+h1, h2, h3,
+.section-title,
+.hero-title {
+    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}

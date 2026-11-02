@@ -104,7 +104,10 @@ function izex_pro_station_data($post_id)
         // поэтому отдаём и слагаемые: станция + базовый монтаж.
         'install'     => izex_pro_install_base(),
         'turnkey'     => $display > 0 ? $display + izex_pro_install_base() : 0,
-        'people_text' => $people_text,
+        // В админке пишут по-разному («2-4», «3–5 человек», «5–6»), в карточках
+        // нужен один вид: «3–5 чел.» или «до 4 чел.».
+        'people_text' => $people_text === '' || !$people_max ? $people_text
+            : ($people_min === $people_max ? 'до ' . $people_max : $people_min . '–' . $people_max) . ' чел.',
         'people_min'  => $people_min,
         'people_max'  => $people_max,
         'disposal'    => $disposal,
@@ -141,6 +144,7 @@ function izex_pro_find_hero_station()
 {
     $query = new WP_Query(array(
         'post_type'      => 'stations',
+        'post__not_in'   => izex_non_topas_station_ids(),
         'posts_per_page' => -1,
         'post_status'    => 'publish',
         'no_found_rows'  => true,
@@ -441,7 +445,7 @@ function izex_pro_render_mobile_bar()
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15h6M9 11h2"/>
                 </svg>
             </span>
-            <span>Заявка</span>
+            <span>Расчёт</span>
         </button>
     </nav>
     <?php

@@ -685,18 +685,14 @@ $(function () {
 
             // Проверка согласия на обработку ПД (152-ФЗ): без галочки отправку блокируем
             const $consent = $form.find('input[name="consent"]');
-            if ($consent.length && !$consent.is(':checked')) {
-                PremiumForms.showConsentError($form);
-                PremiumForms.showToast('warning', 'Требуется согласие', 'Отметьте согласие на обработку персональных данных');
-                return;
-            }
-            PremiumForms.clearConsentError($form);
 
             // Ответы формы подбора (поля с data-label) дописываем в комментарий,
             // чтобы инженер получил их в письме, в MAX и в админке.
             const answers = [];
             $form.find('[data-label]').each(function() {
-                answers.push($(this).data('label') + ': ' + ($(this).val() || 'не знаю'));
+                const $field = $(this);
+                const value = $field.is('fieldset') ? $field.find('input:checked').val() : $field.val();
+                answers.push($field.data('label') + ': ' + (value || 'не указано'));
             });
             const comment = $form.find('[name="comment"]').val() || '';
 
@@ -721,8 +717,15 @@ $(function () {
 
             // Валидация на клиенте
             const errors = PremiumForms.validate(data);
+            PremiumForms.clearConsentError($form);
+            if ($consent.length && !$consent.is(':checked')) {
+                PremiumForms.showConsentError($form);
+                if (!errors.length) $consent.trigger('focus');
+            }
             if (errors.length) {
                 PremiumForms.showErrors($form, errors);
+            }
+            if (errors.length || ($consent.length && !$consent.is(':checked'))) {
                 return;
             }
             PremiumForms.clearErrors($form);
@@ -740,28 +743,17 @@ $(function () {
                 timeout: 15000,
                 success: function(response) {
                     if (response.success) {
-                        PremiumForms.showToast('success', 'Заявка отправлена', response.data.message || premiumFormVars.messages.success);
-                        PremiumForms.reachGoal(formType);
-                        $form[0].reset();
+                        PremiumForms.reachGoalOnce(formType);
+                        PremiumForms.showSent($form, response.data.message || premiumFormVars.messages.success);
 
-                        // Закрытие модального окна если есть
-                        const $modal = $form.closest('.modal-premium');
-                        if ($modal.length) {
-                            $modal.removeClass('active');
-                            document.body.style.overflow = '';
-                        }
-
-                        // Редирект если указан
-                        if (response.data.redirect) {
-                            setTimeout(() => { window.location.href = response.data.redirect; }, 1500);
-                        }
                     } else {
-                        PremiumForms.showToast('error', 'Ошибка', response.data.message || premiumFormVars.messages.error);
+                        PremiumForms.showFormError($form, response.data && response.data.message);
                     }
                 },
-                error: function(xhr, status, error) {
-                    console.error('Form error:', error);
-                    PremiumForms.showToast('error', 'Ошибка сети', 'Проверьте подключение к интернету');
+                error: function(xhr) {
+                    const body = xhr.responseJSON && xhr.responseJSON.data;
+                    const message = body && (body.message || (body.errors || []).join('. '));
+                    PremiumForms.showFormError($form, message || 'Не удалось отправить: проверьте интернет и попробуйте ещё раз или позвоните нам.');
                 },
                 complete: function() {
                     $btn.prop('disabled', false).removeClass('loading').html(originalBtnText);
@@ -771,9 +763,6 @@ $(function () {
 
         validate: function(data) {
             const errors = [];
-            if (!data.name || data.name.trim().length < 2) {
-                errors.push({ field: 'name', message: premiumFormVars.messages.validation.name });
-            }
             const phoneClean = data.phone.replace(/[^\d+]/g, '');
             if (!phoneClean || phoneClean.length < 11) {
                 errors.push({ field: 'phone', message: premiumFormVars.messages.validation.phone });
@@ -785,7 +774,7 @@ $(function () {
             PremiumForms.clearErrors($form);
             errors.forEach(err => {
                 const $field = $form.find(`[name="${err.field}"]`);
-                $field.addClass('error');
+                $field.addClass('error').attr('aria-invalid', 'true');
                 $field.closest('.form-group').find('.form-error').text(err.message).addClass('visible');
             });
             // Фокус на первом ошибочном поле
@@ -793,16 +782,50 @@ $(function () {
         },
 
         clearErrors: function($form) {
-            $form.find('.form-group input').removeClass('error');
+            $form.find('.form-group input').removeClass('error').removeAttr('aria-invalid');
             $form.find('.form-error').removeClass('visible').text('');
         },
 
+        // Подтверждение прямо в форме: посетитель видит, что заявка дошла,
+        // и не отправляет её второй раз.
+        showSent: function($form, message) {
+            const $box = $('<div class="ss-sent" role="status" tabindex="-1"></div>');
+            $box.append('<p class="ss-sent__title">Заявка получена</p>');
+            $box.append($('<p class="ss-sent__text"></p>').text(message));
+            $form.find('.ss-form-error').remove();
+            $form.children().not('script').hide();
+            $form.append($box);
+            $box.trigger('focus');
+        },
+
+        showFormError: function($form, message) {
+            $form.find('.ss-form-error').remove();
+            $form.find('button[type="submit"]').before(
+                $('<p class="ss-form-error" role="alert"></p>').text(message || premiumFormVars.messages.error)
+            );
+        },
+
+        // Цель считаем один раз на тип формы за визит: повторная отправка
+        // той же формы не раздувает статистику обращений.
+        reachGoalOnce: function(formType) {
+            const key = 'izex_goal_' + formType;
+            try {
+                if (sessionStorage.getItem(key)) return;
+                sessionStorage.setItem(key, '1');
+            } catch (e) {}
+            PremiumForms.reachGoal(formType);
+        },
+
         showConsentError: function($form) {
-            $form.find('.form-consent').addClass('error');
+            const $label = $form.find('.form-consent').addClass('error');
+            if (!$label.next('.ss-consent-error').length) {
+                $label.after('<p class="form-error visible ss-consent-error" role="alert">Отметьте согласие, без него мы не можем принять заявку</p>');
+            }
         },
 
         clearConsentError: function($form) {
             $form.find('.form-consent').removeClass('error');
+            $form.find('.ss-consent-error').remove();
         },
 
         // Отправка цели в Яндекс.Метрику на успешную заявку (ТЗ 5.4).
