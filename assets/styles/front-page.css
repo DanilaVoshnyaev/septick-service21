@@ -783,3 +783,39 @@
     background: var(--bg-secondary);
     padding: clamp(64px, 9vw, 100px) 0 clamp(64px, 9vw, 100px);
 }
+
+/* Ряд марок в первом экране главной */
+.hero-brands {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    max-width: 720px;
+    margin: 18px auto 0;
+}
+
+.hero-brands__label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+}
+
+.hero-brands a {
+    padding: 5px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: var(--radius-pill);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    text-decoration: none;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.hero-brands a:hover {
+    border-color: var(--brand);
+    color: #fff;
+}
+
+.hero-layout:has(.pro-herocard) .hero-brands {
+    justify-content: flex-start;
+    margin-left: 0;
+}

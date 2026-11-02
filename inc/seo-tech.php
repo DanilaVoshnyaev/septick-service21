@@ -67,6 +67,26 @@ add_filter('wp_robots', 'izex_filtered_catalog_robots');
 add_filter('wpseo_robots_array', 'izex_filtered_catalog_robots');
 
 /**
+ * Rank Math хранит директивы как значения ('index' => 'noindex'), а не флаги.
+ *
+ * @param array<string,string> $robots Директивы Rank Math.
+ * @param bool                 $noindex Нужно ли закрыть страницу.
+ * @return array<string,string>
+ */
+function izex_rank_math_noindex($robots, $noindex)
+{
+    if ($noindex) {
+        $robots['index'] = 'noindex';
+        $robots['follow'] = 'follow';
+    }
+    return $robots;
+}
+
+add_filter('rank_math/frontend/robots', function ($robots) {
+    return izex_rank_math_noindex($robots, izex_is_filtered_catalog() || is_category() || is_tag() || is_date());
+});
+
+/**
  * Canonical отфильтрованной выдачи — на страницу без параметров.
  *
  * @param string $canonical Текущий canonical.
@@ -82,15 +102,16 @@ function izex_filtered_catalog_canonical($canonical)
         : (string) get_post_type_archive_link('stations');
 }
 add_filter('wpseo_canonical', 'izex_filtered_catalog_canonical');
+add_filter('rank_math/frontend/canonical', 'izex_filtered_catalog_canonical');
 
 /**
- * Без Yoast canonical ядра тоже должен указывать на чистый URL.
+ * Без SEO-плагина canonical ядра тоже должен указывать на чистый URL.
  *
  * @return void
  */
 function izex_filtered_catalog_core_canonical()
 {
-    if (!defined('WPSEO_VERSION') && izex_is_filtered_catalog()) {
+    if (!defined('WPSEO_VERSION') && !defined('RANK_MATH_VERSION') && izex_is_filtered_catalog()) {
         remove_action('wp_head', 'rel_canonical');
         echo '<link rel="canonical" href="' . esc_url(izex_filtered_catalog_canonical('')) . '">' . "\n";
     }
@@ -136,9 +157,12 @@ add_filter('wp_robots', 'izex_category_noindex');
 add_filter('wpseo_robots_array', 'izex_category_noindex');
 
 // Рубрики и метки — вне sitemap.
-add_filter('wpseo_sitemap_exclude_taxonomy', function ($excluded, $taxonomy) {
+function izex_sitemap_exclude_taxonomy($excluded, $taxonomy)
+{
     return in_array($taxonomy, array('category', 'post_tag'), true) ? true : $excluded;
-}, 10, 2);
+}
+add_filter('wpseo_sitemap_exclude_taxonomy', 'izex_sitemap_exclude_taxonomy', 10, 2);
+add_filter('rank_math/sitemap/exclude_taxonomy', 'izex_sitemap_exclude_taxonomy', 10, 2);
 
 /**
  * robots.txt: закрываем параметры фильтра и служебные пути.

@@ -10,7 +10,7 @@ get_header();
 $company   = getCompanyContacts();
 $phones    = getCarbonPhones();
 $email     = getCarbonEmail();
-$work_time = getCarbonFields('work_time');
+$work_time = getCarbonFields('work_time') ?: $company['work_time'];
 $address   = getCarbonAddress();
 $map_link  = getCarbonAddressLink();
 ?>
@@ -79,11 +79,15 @@ $map_link  = getCarbonAddressLink();
                     <div class="contact-card">
                         <div class="contact-card__icon">
                             <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                                <?php if ($office || $no_office) : ?>
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                                <?php else : ?>
+                                    <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                                <?php endif; ?>
                             </svg>
                         </div>
                         <h2 class="contact-card__title">
-                            <?php echo $no_office && !$office ? 'Как мы работаем' : 'Адрес и режим работы'; ?>
+                            <?php echo $office ? 'Адрес и режим работы' : ($no_office ? 'Как мы работаем' : 'Режим работы'); ?>
                         </h2>
                         <div class="contact-card__body">
                             <?php if (!empty($office)) : ?>

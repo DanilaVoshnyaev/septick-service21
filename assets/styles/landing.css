@@ -1,0 +1,244 @@
+/* Посадочные страницы под поисковые запросы (page-landing.php). */
+
+.landing-page {
+    padding: 2rem 0 3rem;
+}
+
+.landing-hero {
+    background: var(--surface);
+    border-top: 4px solid var(--brand);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    padding: 2.5rem 2rem;
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+.landing-hero__title {
+    margin: 0 0 0.75rem;
+    color: var(--ink);
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    line-height: 1.2;
+}
+
+.landing-hero__lead {
+    max-width: 720px;
+    margin: 0 auto 1.5rem;
+    color: var(--ink-muted);
+    font-size: var(--fs-lead);
+    line-height: 1.55;
+}
+
+.landing-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem 1.5rem;
+}
+
+.landing-hero__phone {
+    color: var(--brand-ink);
+    font-size: var(--fs-lead);
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.landing-hero__phone:hover {
+    color: var(--brand-strong);
+}
+
+/* Текст из редактора */
+.landing-content {
+    max-width: 860px;
+    margin: 0 auto 2.5rem;
+    color: var(--ink);
+    font-size: var(--fs-base);
+    line-height: 1.7;
+}
+
+.landing-content > h2 {
+    margin: 2.5rem 0 1rem;
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+    line-height: 1.3;
+}
+
+.landing-content > h3 {
+    margin: 1.75rem 0 0.75rem;
+    font-size: 1.15rem;
+}
+
+.landing-content p {
+    margin: 0 0 1rem;
+}
+
+.landing-content > ul,
+.landing-content > ol {
+    margin: 0 0 1.25rem;
+    padding-left: 1.4rem;
+}
+
+/* Тема глобально сбрасывает маркеры списков — в тексте статьи они нужны */
+.landing-content > ul {
+    list-style: disc;
+}
+
+.landing-content > ol {
+    list-style: decimal;
+}
+
+.landing-content > ul > li::marker,
+.landing-content > ol > li::marker {
+    color: var(--brand-ink);
+    font-weight: 600;
+}
+
+/* wpautop ставит <br> между шорткодами, идущими подряд */
+.landing-content > br {
+    display: none;
+}
+
+.landing-content > ul > li,
+.landing-content > ol > li {
+    margin-bottom: 0.4rem;
+}
+
+.landing-content a {
+    color: var(--brand-ink);
+}
+
+.landing-content table {
+    width: 100%;
+    margin: 0 0 1.5rem;
+    border-collapse: collapse;
+    font-size: var(--fs-small);
+}
+
+.landing-content th,
+.landing-content td {
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+}
+
+.landing-content th {
+    background: var(--line-soft);
+    font-weight: 600;
+}
+
+/* Выделенная плашка: «важно», «итог» */
+.landing-note {
+    margin: 1.5rem 0;
+    padding: 1rem 1.25rem;
+    background: var(--brand-soft);
+    border-left: 4px solid var(--brand);
+    border-radius: var(--radius-sm);
+}
+
+/* Блоки темы внутри текста шире колонки текста */
+.landing-content > section,
+.landing-content > .calc,
+.landing-models {
+    margin: 1.5rem 0;
+}
+
+.landing-models__title {
+    margin: 0 0 1.25rem;
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+}
+
+.landing-models__more {
+    margin: 1rem 0 0;
+    text-align: center;
+}
+
+.landing-models__more a {
+    color: var(--brand-ink);
+    font-weight: 600;
+}
+
+@media (max-width: 640px) {
+    .landing-hero {
+        padding: 1.75rem 1rem;
+    }
+
+    .landing-content {
+        font-size: 15px;
+    }
+
+    .landing-content table {
+        font-size: 13px;
+    }
+
+    .landing-content th,
+    .landing-content td {
+        padding: 0.5rem 0.35rem;
+    }
+
+    .landing-content td {
+        white-space: nowrap;
+    }
+}
+
+/* Форма подбора [septik_podbor] */
+.podbor-form {
+    margin: 1.5rem 0 2.5rem;
+    padding: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+}
+
+.podbor-form__grid,
+.podbor-form__contacts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.podbor-form__field {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.35rem;
+}
+
+.podbor-form__label {
+    color: var(--ink-2);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.podbor-form__field select,
+.podbor-form__field input {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    color: var(--ink);
+    font: inherit;
+    font-size: 15px;
+}
+
+.podbor-form__field select:focus,
+.podbor-form__field input:focus {
+    outline: none;
+    background: var(--surface);
+    border-color: var(--brand);
+}
+
+.podbor-form .form-group {
+    margin: 0;
+}
+
+@media (max-width: 640px) {
+    .podbor-form {
+        padding: 1rem;
+    }
+}

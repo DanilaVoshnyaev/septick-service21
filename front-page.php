@@ -34,20 +34,20 @@ $company = getCompanyContacts();
 
                     <!-- Заголовок -->
                     <h1 class="hero-title animate-fade-up delay-1">
-                        Септики ТОПАС в Чебоксарах и Чувашии<br>
-                        <span class="gradient-text">для дома и дачи без переплат!</span>
+                        Септики и автономная канализация под ключ<br>
+                        <span class="gradient-text">в Чебоксарах и Чувашии</span>
                     </h1>
 
                     <!-- Подзаголовок -->
                     <p class="hero-subtitle animate-fade-up delay-2">
-                        Более 1000 выполненных монтажей. Бесплатная доставка по всей <?php echo $company['region']; ?>,
-                        выезд инженера и официальная гарантия на оборудование и работы.
+                        Подберём станцию под ваш дом, участок и бюджет и рассчитаем оборудование,
+                        доставку и монтаж. Более 1000 выполненных монтажей, выезд инженера бесплатно.
                     </p>
 
                     <!-- Кнопки -->
                     <div class="hero-buttons animate-fade-up delay-4">
-                        <a href="#calc" class="btn-premium btn-primary">
-                            <span class="btn-text">Подобрать станцию за 30 секунд</span>
+                        <a href="/podbor-septika/" class="btn-premium btn-primary">
+                            <span class="btn-text">Подобрать септик</span>
                             <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M5 12h14M12 5l7 7-7 7"/>
                             </svg>
@@ -61,6 +61,17 @@ $company = getCompanyContacts();
                             <span>Вызвать инженера бесплатно</span>
                         </button>
                     </div>
+                    <nav class="hero-brands animate-fade-up delay-4" aria-label="Марки септиков">
+                        <span class="hero-brands__label">Марки:</span>
+                        <a href="/stations/">ТОПАС</a>
+                        <a href="/septik-unilos-astra/">Юнилос Астра</a>
+                        <a href="/septik-eko-grand/">Эко-Гранд</a>
+                        <a href="/septik-evrolos/">Евролос</a>
+                        <a href="/septik-ital-bio/">Итал Био</a>
+                        <a href="/septik-kit/">КИТ</a>
+                        <a href="/septik-evrobion/">Евробион</a>
+                        <a href="/septik-biodevice/">Биодевайс</a>
+                    </nav>
                     <?php // Строка доверия: монтажи, год начала работы, смета в договоре,
                           // срок гарантии. Факты берутся из настроек темы, пункты без
                           // данных выпадают (задача #11). ?>
@@ -320,7 +331,7 @@ $company = getCompanyContacts();
                       // вместо 179 КБ jpg) с jpg-фолбэком — задача #25. ?>
                 <div class="catalog-cta-premium" style="margin-top: 20px;">
                     <div class="catalog-cta-premium--block">
-                        <p>Не нашли подходящую модель? <strong>Мы поставляем всю линейку ТОПАС</strong></p>
+                        <p>Не нашли подходящую модель? <strong>Мы поставляем всю линейку ТОПАС</strong> и <a href="/montazh-septika-lyuboj-marki/">монтируем септики других марок</a></p>
                         <a href="tel:<?php echo $company['phone_clean']; ?>" class="phone-link-premium"><?php echo $company['phone']; ?></a>
                         <span>— подберем индивидуально за 5 минут</span>
                     </div>
@@ -704,7 +715,7 @@ $company = getCompanyContacts();
                     на участок, подбираем оборудование, рассчитываем стоимость монтажа
                     и предоставляем гарантию на все выполненные работы. Выполняем
                     сервисное обслуживание, чистку и ремонт септиков ТОПАС, а также
-                    станций других производителей<?php if ($link_works) : ?> —
+                    <a href="/obsluzhivanie-septikov-lyubyh-marok/">станций других производителей</a><?php if ($link_works) : ?> —
                     посмотрите <a href="<?php echo esc_url($link_works); ?>">примеры выполненных монтажей</a><?php endif; ?>.
                 </p>
             </div>

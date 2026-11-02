@@ -1122,7 +1122,7 @@ body {
 
 .footer-grid {
     display: grid;
-    grid-template-columns: 1.4fr 1fr 1.2fr;
+    grid-template-columns: 1.3fr 0.9fr 1.1fr 1.1fr;
     gap: 40px;
 }
 
@@ -4063,6 +4063,7 @@ body {
 
 /* Текущая страница (последний элемент Yoast) */
 .breadcrumbs-wrapper .yoast-breadcrumbs .breadcrumb_last,
+.breadcrumbs-wrapper .yoast-breadcrumbs .last,
 .breadcrumbs-wrapper .yoast-breadcrumbs [aria-current="page"] {
     color: #1e293b;
     font-weight: 600;

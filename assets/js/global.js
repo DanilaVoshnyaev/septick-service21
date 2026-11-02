@@ -586,6 +586,43 @@ $(function () {
             this.bindEvents();
             this.initPhoneMask();
             this.initToastContainer();
+            this.rememberSource();
+            this.bindContactGoals();
+        },
+
+        // Откуда пришёл посетитель: первый заход за сессию — внешний сайт,
+        // метки utm_* и страница входа. Уходит в заявку как «Источник».
+        rememberSource: function() {
+            try {
+                if (sessionStorage.getItem('izex_source')) return;
+                var parts = [];
+                var ref = document.referrer || '';
+                if (ref && ref.indexOf(location.hostname) === -1) {
+                    parts.push('с ' + ref.replace(/^https?:\/\//, '').split('/')[0]);
+                } else if (!ref) {
+                    parts.push('прямой заход');
+                }
+                var params = new URLSearchParams(location.search);
+                ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term'].forEach(function(k) {
+                    if (params.get(k)) parts.push(k + '=' + params.get(k));
+                });
+                parts.push('вход: ' + location.pathname);
+                sessionStorage.setItem('izex_source', parts.join(', '));
+            } catch (e) {}
+        },
+
+        source: function() {
+            try { return sessionStorage.getItem('izex_source') || ''; } catch (e) { return ''; }
+        },
+
+        // Звонок и мессенджер — такие же обращения, как форма.
+        bindContactGoals: function() {
+            $(document).on('click', 'a[href^="tel:"]', function() {
+                PremiumForms.goal('click_phone');
+            });
+            $(document).on('click', 'a[href*="max.ru/"], a[href*="wa.me/"], a[href*="t.me/"]', function() {
+                PremiumForms.goal('click_messenger');
+            });
         },
 
         bindEvents: function() {
@@ -655,6 +692,14 @@ $(function () {
             }
             PremiumForms.clearConsentError($form);
 
+            // Ответы формы подбора (поля с data-label) дописываем в комментарий,
+            // чтобы инженер получил их в письме, в MAX и в админке.
+            const answers = [];
+            $form.find('[data-label]').each(function() {
+                answers.push($(this).data('label') + ': ' + ($(this).val() || 'не знаю'));
+            });
+            const comment = $form.find('[name="comment"]').val() || '';
+
             // Сбор данных
             const data = {
                 action: 'premium_form_submit',
@@ -663,7 +708,8 @@ $(function () {
                 name: $form.find('[name="name"]').val(),
                 phone: $form.find('[name="phone"]').val(),
                 address: $form.find('[name="address"]').val() || '',
-                comment: $form.find('[name="comment"]').val() || '',
+                comment: answers.length ? answers.join(String.fromCharCode(10)) + (comment ? String.fromCharCode(10) + comment : '') : comment,
+                source: PremiumForms.source(),
                 product_id: $form.find('[name="product_id"]').val() || 0,
                 product_name: $form.find('[name="product_name"]').val() || '',
                 consent: $consent.length ? ($consent.is(':checked') ? 1 : 0) : '',
@@ -762,14 +808,18 @@ $(function () {
         // Отправка цели в Яндекс.Метрику на успешную заявку (ТЗ 5.4).
         // Общая цель form_submit + уточнённая form_<тип> для сегментации.
         reachGoal: function(formType) {
+            PremiumForms.goal('form_submit');
+            if (formType) {
+                PremiumForms.goal('form_' + formType);
+            }
+        },
+
+        goal: function(name) {
             if (typeof window.ym !== 'function') return;
             var id = (window.premiumFormVars && premiumFormVars.metrikaId) ? premiumFormVars.metrikaId : null;
             if (!id) return;
             try {
-                window.ym(id, 'reachGoal', 'form_submit');
-                if (formType) {
-                    window.ym(id, 'reachGoal', 'form_' + formType);
-                }
+                window.ym(id, 'reachGoal', name);
             } catch (e) {}
         },
 

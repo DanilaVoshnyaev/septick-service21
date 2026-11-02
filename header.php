@@ -48,7 +48,7 @@ $company = getCompanyContacts();
                         <?php // Логотип: файл 216px под показ в 108px (retina). Прежний
                               // logo-transparent.png весил 532 КБ и грузился на каждой странице. ?>
                         <img src="<?=assets('/images/logo-transparent-216.png')?>"
-                             alt="Сервис Септик21 — септики ТОПАС в Чебоксарах"
+                             alt="Сервис Септик21 — септики ТОПАС и других марок в Чебоксарах"
                              width="108" height="49" fetchpriority="high" decoding="async">
                     </a>
 
@@ -65,7 +65,7 @@ $company = getCompanyContacts();
                                 echo '<li><a href="/stations/">Каталог</a></li>';
                                 echo '<li><a href="' . esc_url(izex_prices_page_url()) . '">Цены</a></li>';
                                 echo '<li><a href="/services/">Услуги</a></li>';
-                                echo '<li><a href="' . esc_url(get_post_type_archive_link('works')) . '">География и объекты</a></li>';
+                                echo '<li><a href="' . esc_url(get_post_type_archive_link('works')) . '">Наши работы</a></li>';
                                 echo '<li><a href="/about/">О компании</a></li>';
                                 echo '<li><a href="/reviews/">Отзывы</a></li>';
                                 echo '</ul>';
@@ -137,7 +137,7 @@ $company = getCompanyContacts();
         <div class="mobile-menu-panel">
 
             <div class="mobile-menu-header">
-                <a href="<?php echo esc_url(home_url('/')); ?>" class="mobile-menu-logo">ТОПАС</a>
+                <a href="<?php echo esc_url(home_url('/')); ?>" class="mobile-menu-logo">Сервис Септик21</a>
                 <button class="mobile-menu-close" aria-label="Закрыть меню">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
                 </button>
@@ -158,6 +158,7 @@ $company = getCompanyContacts();
                         echo '<li><a href="' . esc_url(get_post_type_archive_link('works')) . '">Наши работы</a></li>';
                         echo '<li><a href="/about/">О компании</a></li>';
                         echo '<li><a href="/reviews/">Отзывы</a></li>';
+                        echo '<li><a href="/contacts/">Контакты</a></li>';
                         echo '</ul>';
                     },
                     'items_wrap' => '<ul class="%2$s">%3$s</ul>',
@@ -198,7 +199,17 @@ $company = getCompanyContacts();
         </div>
     </div>
 
-    <?php if (!is_front_page() && function_exists('yoast_breadcrumb')) : ?>
+    <?php if (!is_front_page() && function_exists('rank_math_the_breadcrumbs')) : ?>
+        <div class="breadcrumbs-wrapper">
+            <div class="container">
+                <?php rank_math_the_breadcrumbs(array(
+                    'wrap_before' => '<nav class="yoast-breadcrumbs" aria-label="Хлебные крошки">',
+                    'wrap_after'  => '</nav>',
+                    'separator'   => '&gt;',
+                )); ?>
+            </div>
+        </div>
+    <?php elseif (!is_front_page() && function_exists('yoast_breadcrumb')) : ?>
         <div class="breadcrumbs-wrapper">
             <div class="container">
                 <?php yoast_breadcrumb('<nav class="yoast-breadcrumbs" aria-label="Хлебные крошки">', '</nav>'); ?>

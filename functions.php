@@ -230,7 +230,7 @@ function izex_scripts()
 
     if (!$needs_catalog_ui && is_singular()) {
         $content = (string) get_post_field('post_content', get_queried_object_id());
-        foreach (array('topas_calculator', 'topas_compare_inline', 'topas_estimate') as $shortcode) {
+        foreach (array('topas_calculator', 'topas_compare_inline', 'topas_estimate', 'topas_models') as $shortcode) {
             if (has_shortcode($content, $shortcode)) {
                 $needs_catalog_ui = true;
                 break;
@@ -306,6 +306,9 @@ function izex_scripts()
     // Страница «Цены» (4.4).
     if ($template === 'page-prices.php') {
         izex_enqueue_theme_style('prices', '/assets/styles/prices.css');
+    }
+    if ($template === 'page-landing.php') {
+        izex_enqueue_theme_style('landing', '/assets/styles/landing.css');
     }
 
 //    if (is_singular() && comments_open() && get_option('thread_comments')) {
@@ -567,6 +570,11 @@ require get_template_directory() . '/inc/seo-schema.php';
 require get_template_directory() . '/inc/seo-tech.php';
 
 /**
+ * Посадочные страницы под поисковые запросы: шаблон и подборка станций.
+ */
+require get_template_directory() . '/inc/landing.php';
+
+/**
  * SEO: meta-теги, Open Graph, canonical, Schema.org, robots.txt.
  * При установке SEO-плагина (Yoast/Rank Math) — закомментировать строку ниже.
  */
@@ -594,8 +602,8 @@ function izex_remove_wp_version_query($src)
 }
 
 // ===== SEO для архива услуг (P0): человекочитаемый Title + meta description =====
-// Активируем только если SEO-плагин (Yoast) не управляет мета-тегами.
-if (!defined('WPSEO_VERSION')) {
+// Активируем только если SEO-плагин (Yoast или Rank Math) не управляет мета-тегами.
+if (!defined('WPSEO_VERSION') && !defined('RANK_MATH_VERSION')) {
     add_filter('document_title_parts', 'izex_services_archive_title');
     add_action('wp_head', 'izex_services_archive_meta_description', 1);
 }
@@ -917,6 +925,7 @@ function handle_premium_form_submit() {
     $comment = sanitize_textarea_field($_POST['comment'] ?? '');
     $product_id = isset($_POST['product_id']) ? intval($_POST['product_id']) : 0;
     $product_name = sanitize_text_field($_POST['product_name'] ?? '');
+    $source = sanitize_text_field($_POST['source'] ?? '');
 
     // Валидация
     $errors = [];
@@ -958,6 +967,7 @@ function handle_premium_form_submit() {
         'catalog_order' => 'Заказ из каталога',
         'station_order' => 'Заказ станции',
         'consultation'  => 'Консультация (с главной)',
+        'podbor'        => 'Подбор септика',
     );
     $form_label = $form_labels[$form_type] ?? $form_type;
 
@@ -994,6 +1004,7 @@ function handle_premium_form_submit() {
     if ($referer && $referer !== $page_url) {
         $message .= $row('Источник перехода', "<a href='" . esc_url($referer) . "'>" . esc_html($referer) . "</a>");
     }
+    $message .= $row('Откуда пришёл', esc_html($source));
     $message .= $row('Дата и время', esc_html($datetime));
     $message .= $row('Согласие на обработку ПД', $consent === '0' ? 'Нет' : 'Да (' . esc_html($datetime) . ')');
     $message .= $row('IP-адрес', esc_html($ip));
@@ -1047,6 +1058,7 @@ function handle_premium_form_submit() {
     update_post_meta($lead_id, '_lead_email', $email_lead);
     update_post_meta($lead_id, '_lead_product', trim($product_name . ($product_id ? " (ID {$product_id})" : '')));
     update_post_meta($lead_id, '_lead_page_url', $page_url);
+    update_post_meta($lead_id, '_lead_source', $source);
     update_post_meta($lead_id, '_lead_ip', $ip);
     update_post_meta($lead_id, '_lead_ua', $user_agent);
     update_post_meta($lead_id, '_lead_consent', $consent === '0' ? 'Нет' : 'Да');
@@ -1064,6 +1076,9 @@ function handle_premium_form_submit() {
     }
     if ($page_url) {
         $max_text .= "Страница: " . $page_url . "\n";
+    }
+    if ($source) {
+        $max_text .= "Откуда пришёл: " . $source . "\n";
     }
     $max_text .= "Время: " . $datetime;
     servis_notify_max($max_text);
@@ -1302,6 +1317,7 @@ function servis_lead_metabox_render($post)
         '_lead_address'   => 'Адрес',
         '_lead_comment'   => 'Комментарий',
         '_lead_page_url'  => 'Страница заявки',
+        '_lead_source'    => 'Откуда пришёл',
         '_lead_consent'   => 'Согласие на обработку ПД',
         '_lead_ip'        => 'IP-адрес',
         '_lead_ua'        => 'Устройство',
